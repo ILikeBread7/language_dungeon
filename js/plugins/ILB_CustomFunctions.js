@@ -35,7 +35,7 @@ var $f = $f || {};
         const realMoveSpeed = $gamePlayer.realMoveSpeed();
         for (; currentEnemyIndex < events.length; currentEnemyIndex++) {
             const event = events[currentEnemyIndex];
-            if (!event || event.isMoving()) {
+            if (!event || event._erased || event.isMoving() || !event.event().meta || !event.event().meta.enemy) {
                 continue;
             }
 
@@ -67,7 +67,11 @@ var $f = $f || {};
     Game_Event.prototype.unlock = function() {
         _Game_Event_unlock.call(this);
         this.isAttacking = false;
-        moveEnemies();
+        if ($gameSwitches.value(1)) { // Attack cancelled
+            $gameSwitches.setValue(1, false);
+        } else {
+            moveEnemies();
+        }
     }
 
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;

@@ -5,5 +5,6 @@ var $plugins =
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
 {"name":"EventFloatingText","status":true,"description":"Displays floating text above events on the map.","parameters":{}},
 {"name":"ILB_QuickTest","status":true,"description":"Auto starts the game","parameters":{}},
-{"name":"ILB_CustomFunctions","status":true,"description":"Exposes a global object $f to store custom functions for use in script calls.","parameters":{}}
+{"name":"ILB_CustomFunctions","status":true,"description":"Exposes a global object $f to store custom functions for use in script calls.","parameters":{}},
+{"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"2","MinRoomSize":"4","MaxRoomSize":"7","ShowOuterWall":"OFF"}}
 ];
