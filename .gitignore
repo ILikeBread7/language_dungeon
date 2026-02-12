@@ -11,3 +11,4 @@ js/*.js
 !js/plugins.js
 js/plugins/*.js
 !js/plugins/ILB_*
+!js/plugins/SAN_MapGenerator.js
