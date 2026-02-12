@@ -1,0 +1,13 @@
+.vscode
+save
+audio
+fonts
+img/*
+!img/pictures
+icon
+movies
+js/libs
+js/*.js
+!js/plugins.js
+js/plugins/*.js
+!js/plugins/ILB_*
