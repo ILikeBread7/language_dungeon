@@ -135,6 +135,32 @@ var $f = $f || {};
         $eventText.set(event.eventId(), event.quiz.question);
     }
 
+    $f.placePortal = (x, y) => {
+        const portalEvent = $gameMap.events().find(event => event && event.event().meta && event.event().meta.portal);
+        if (!portalEvent) {
+            console.warn('No portal event!');
+            return;
+        }
+
+        portalEvent.setPosition(x, y);
+        $gameSwitches.setValue(2, true);    // Portal showing switch
+    }
+
+    $f.enemyHit = enemyEvent => {
+        if (enemyEvent.hit) {
+            $eventText.clear(enemyEvent.eventId());
+            if (enemyEvent.event().meta.portalEnemy) {
+                $f.placePortal(enemyEvent.x, enemyEvent.y);
+            }
+            $gameMap.eraseEvent(enemyEvent.eventId());
+
+        } else {
+            enemyEvent.isStunned = true;
+            enemyEvent.hit = true;
+            $f.setEnemyText(enemyEvent);
+        }
+    }
+
     function pickRandom(array) {
         const randomIndex = Math.floor(Math.random() * array.length);
         return array[randomIndex];
