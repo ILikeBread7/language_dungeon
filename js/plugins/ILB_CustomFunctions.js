@@ -51,7 +51,7 @@ var $f = $f || {};
                 event.start();
                 currentEnemyIndex++;
                 return;
-            } else if (playerDistance <= distanceToFollow) {
+            } else if (playerDistance <= distanceToFollow || event.isSameRoomWithPlayer()) {
                 event.moveTowardPlayer();
             } else {
                 event.moveRandom();
@@ -66,6 +66,8 @@ var $f = $f || {};
     const _Game_Event_unlock = Game_Event.prototype.unlock;
     Game_Event.prototype.unlock = function() {
         _Game_Event_unlock.call(this);
+
+        console.log(this.event().meta)
 
         if (!this.event().meta || !this.event().meta.enemy) {
             return;
