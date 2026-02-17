@@ -26,7 +26,7 @@
 
 var $f = $f || {};
 
-(function() {
+(function () {
 
     const distanceToFollow = 3;
     let currentEnemyIndex = 0;
@@ -64,7 +64,7 @@ var $f = $f || {};
     }
 
     const _Game_Event_unlock = Game_Event.prototype.unlock;
-    Game_Event.prototype.unlock = function() {
+    Game_Event.prototype.unlock = function () {
         _Game_Event_unlock.call(this);
 
         console.log(this.event().meta)
@@ -82,7 +82,7 @@ var $f = $f || {};
     }
 
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
-    Game_Party.prototype.increaseSteps = function() {
+    Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
         moveEnemies();
     };
@@ -104,14 +104,14 @@ var $f = $f || {};
         }
 
         const randomQuestion = pickRandom(quizData);
-        const answers = [ randomQuestion.answer ];
+        const answers = [randomQuestion.answer];
         for (let i = 0; i < 3; i++) {
             let randomAnswer;
             let answer;
             do {
                 randomAnswer = pickRandom(quizData);
                 answer = randomAnswer.answer;
-            } while(answers.includes(answer));
+            } while (answers.includes(answer));
             answers.push(answer);
         }
 
@@ -186,7 +186,7 @@ var $f = $f || {};
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const randomIndex = Math.floor(Math.random() * (i + 1));
-            
+
             const tmp = array[i];
             array[i] = array[randomIndex];
             array[randomIndex] = tmp;
@@ -194,6 +194,31 @@ var $f = $f || {};
 
         return array;
     }
+
+    const _Game_CharacterBase_checkEventTriggerTouchFront = Game_CharacterBase.prototype.checkEventTriggerTouchFront;
+    Game_CharacterBase.prototype.checkEventTriggerTouchFront = function (d) {
+        console.log(d);
+        console.log('!!!!')
+        // if (d % 2 !== 0) {
+        //     var horz = ((d === 1 || d === 7) ? 4 : 6);
+        //     var vert = ((d === 1 || d === 3) ? 2 : 8);
+        //     var x2 = $gameMap.roundXWithDirection(this.x, horz);
+        //     var y2 = $gameMap.roundYWithDirection(this.y, vert);
+        //     this.checkEventTriggerTouch(x2, y2);
+        //     if (!$gameMap.isEventRunning()) this.checkEventTriggerTouch(this.x, y2);
+        //     if (!$gameMap.isEventRunning()) this.checkEventTriggerTouch(x2, this.y);
+        // } else {
+            _Game_CharacterBase_checkEventTriggerTouchFront.call(this, d)
+        // }
+    };
+
+    const _Game_CharacterBase_moveDiagonally = Game_CharacterBase.prototype.moveDiagonally;
+	Game_CharacterBase.prototype.moveDiagonally = function(horz, vert) {
+        _Game_CharacterBase_moveDiagonally.call(this, horz, vert);
+		if (!this.isMovementSucceeded()) {
+            this.checkEventTriggerTouchFront(this._diagDir);
+        };
+	};
 
     const quizData = [
         { question: 'aku', answer: '私' },

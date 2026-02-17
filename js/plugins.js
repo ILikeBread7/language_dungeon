@@ -6,5 +6,7 @@ var $plugins =
 {"name":"EventFloatingText","status":true,"description":"Displays floating text above events on the map.","parameters":{}},
 {"name":"ILB_QuickTest","status":true,"description":"Auto starts the game","parameters":{}},
 {"name":"ILB_CustomFunctions","status":true,"description":"Exposes a global object $f to store custom functions for use in script calls.","parameters":{}},
-{"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"2","MinRoomSize":"4","MaxRoomSize":"10","MinRooms":"6","MaxRooms":"8","ShowOuterWall":"OFF"}}
+{"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"2","MinRoomSize":"4","MaxRoomSize":"10","MinRooms":"6","MaxRooms":"8","ShowOuterWall":"OFF"}},
+{"name":"GALV_DiagonalMovement","status":false,"description":"(v.1.5) Just a basic diagonal movement plugin. Written for compatibility with other Galv plugins.","parameters":{"Diagonal Mouse":"true","Diagonal Charset":"true","Diagonal Speed":"100","Block Diagonal":"true"}},
+{"name":"VE_DiagonalMovement","status":true,"description":"v1.00 - Allows diagonal movement for player and events.","parameters":{"Diagonal Adjust":"true","Diagonal Events":"true","Diagonal Fix":"false","Diagonal Trigger":"true","Corner Passability":"false\r"}}
 ];
