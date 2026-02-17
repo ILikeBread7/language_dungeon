@@ -136,14 +136,24 @@ var $f = $f || {};
     }
 
     $f.placePortal = (x, y) => {
-        const portalEvent = $gameMap.events().find(event => event && event.event().meta && event.event().meta.portal);
-        if (!portalEvent) {
+        const portalData = $dataMap.events.find(event => event && event.meta && event.meta.portal);
+        if (!portalData) {
             console.warn('No portal event!');
             return;
         }
 
-        portalEvent.setPosition(x, y);
-        $gameSwitches.setValue(2, true);    // Portal showing switch
+        const event = new Game_Event($gameMap.mapId(), portalData.id);
+        $gameMap._events.push(event);
+        event._eventId = $gameMap._events.indexOf(event);
+        event.setPosition(x, y);
+        addEventSprite(event);
+    };
+
+    function addEventSprite(event) {
+        const sprite = new Sprite_Character(event);
+        const spriteset = SceneManager._scene._spriteset;
+        spriteset._characterSprites.push(sprite);
+        spriteset._tilemap.addChild(sprite);
     }
 
     $f.enemyHit = enemyEvent => {
