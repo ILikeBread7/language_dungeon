@@ -25,6 +25,14 @@
  * MaxRoomSizeがMinRoomSizeより小さい場合、MinRoomSizeと同じ値に補正されます。
  * @default 10
  * 
+ * @param MinRooms
+ * @desc Minimun number of rooms
+ * @default 2
+ * 
+ * @param MaxRooms
+ * @desc Minimun number of rooms
+ * @default 5
+ * 
  * @param ShowOuterWall
  * @desc 部屋の外側の壁を表示します。（ONで有効）
  * @default ON
@@ -781,8 +789,11 @@ Game_MapGeneratorRoomAndPass.prototype.generateMap = function() {
         this._maxRoomSize = this._minRoomSize;
     }
     this._minBlockSize = this._minRoomSize + (this._wallHeight + 1) * 2 + 2;
-    this._minRooms = 2;
-    this._maxRooms = 5;
+    this._minRooms = Number(PluginManager.parameters('SAN_MapGenerator')['MinRooms']);
+    this._maxRooms = Number(PluginManager.parameters('SAN_MapGenerator')['MaxRooms']);
+    if (this._maxRooms < this._minRooms) {
+        this._maxRooms = this._minRooms;
+    }
     this._adjacentBlockIndexList = [];
     var block = {
         x:1,
