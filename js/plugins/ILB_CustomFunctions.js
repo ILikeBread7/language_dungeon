@@ -213,6 +213,16 @@ var $f = $f || {};
         this.setDirectionFix(lastDirectionFix);
     };
 
+    $f.setDirection = (character, dir) => {
+        if (dir % 2 === 0) {
+            character._diagonal = 0;
+            character.setDirection(dir);
+        } else {
+            character._diagonal = dir;
+            character.diagonalDirection();
+        }
+    }
+
     const quizData = [
         { question: 'aku', answer: '私' },
         { question: 'kau', answer: 'あなた' },
