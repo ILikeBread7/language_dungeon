@@ -63,6 +63,8 @@ var $f = $f || {};
         }
     }
 
+    $f.moveEnemies = moveEnemies;
+
     const _Game_Event_unlock = Game_Event.prototype.unlock;
     Game_Event.prototype.unlock = function () {
         _Game_Event_unlock.call(this);
