@@ -145,11 +145,15 @@ var $f = $f || {};
         }
 
         const event = new Game_Event($gameMap.mapId(), portalData.id);
+        addEvent(event, x, y);
+    };
+
+    function addEvent(event, x = 0, y = 0) {
         $gameMap._events.push(event);
-        event._eventId = $gameMap._events.indexOf(event);
+        event._eventId = $gameMap._events.length - 1;
         event.setPosition(x, y);
         addEventSprite(event);
-    };
+    }
 
     function addEventSprite(event) {
         const sprite = new Sprite_Character(event);
@@ -194,31 +198,6 @@ var $f = $f || {};
 
         return array;
     }
-
-    const _Game_CharacterBase_checkEventTriggerTouchFront = Game_CharacterBase.prototype.checkEventTriggerTouchFront;
-    Game_CharacterBase.prototype.checkEventTriggerTouchFront = function (d) {
-        console.log(d);
-        console.log('!!!!')
-        // if (d % 2 !== 0) {
-        //     var horz = ((d === 1 || d === 7) ? 4 : 6);
-        //     var vert = ((d === 1 || d === 3) ? 2 : 8);
-        //     var x2 = $gameMap.roundXWithDirection(this.x, horz);
-        //     var y2 = $gameMap.roundYWithDirection(this.y, vert);
-        //     this.checkEventTriggerTouch(x2, y2);
-        //     if (!$gameMap.isEventRunning()) this.checkEventTriggerTouch(this.x, y2);
-        //     if (!$gameMap.isEventRunning()) this.checkEventTriggerTouch(x2, this.y);
-        // } else {
-            _Game_CharacterBase_checkEventTriggerTouchFront.call(this, d)
-        // }
-    };
-
-    const _Game_CharacterBase_moveDiagonally = Game_CharacterBase.prototype.moveDiagonally;
-	Game_CharacterBase.prototype.moveDiagonally = function(horz, vert) {
-        _Game_CharacterBase_moveDiagonally.call(this, horz, vert);
-		if (!this.isMovementSucceeded()) {
-            this.checkEventTriggerTouchFront(this._diagDir);
-        };
-	};
 
     const quizData = [
         { question: 'aku', answer: '私' },
