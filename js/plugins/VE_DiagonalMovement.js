@@ -546,6 +546,9 @@ VictorEngine.DiagonalMovement = VictorEngine.DiagonalMovement || {};
 			this._diagonal = direction;
 			this.diagonalMovement(direction);
 			if (this.needDiagonalFix()) this.diagonalMovementFix(direction);
+			if (!this.isMovementSucceeded()) {
+				this.checkEventTriggerThere([0,1,2]);
+			}
 		} else {
 			this._diagonal = 0;
 			VictorEngine.DiagonalMovement.executeMove.call(this, direction);
@@ -561,7 +564,6 @@ VictorEngine.DiagonalMovement = VictorEngine.DiagonalMovement || {};
 				var x2 = $gameMap.roundXWithDirection(this.x, horz);
 				var y2 = $gameMap.roundYWithDirection(this.y, vert);
 				this.startMapEvent(x2, y2, triggers, true);
-				console.log(x2, y2)
 			}
 		} else {
 			VictorEngine.DiagonalMovement.checkEventTriggerThere.call(this, triggers);

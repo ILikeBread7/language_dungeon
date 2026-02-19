@@ -213,6 +213,21 @@ var $f = $f || {};
         this.setDirectionFix(lastDirectionFix);
     };
 
+    const _Game_Player_findDirectionTo = Game_Player.prototype.findDirectionTo;
+    Game_Player.prototype.findDirectionTo = function(goalX, goalY) {
+        const deltaX = goalX - this.x;
+        const deltaY = goalY - this.y;
+
+        if (Math.abs(deltaX) === 1 && Math.abs(deltaY) === 1 && $gameMap.eventsXy(goalX, goalY).length > 0) {
+            if (deltaX < 0 && deltaY > 0) return 1;
+            if (deltaX > 0 && deltaY > 0) return 3;
+            if (deltaX < 0 && deltaY < 0) return 7;
+            if (deltaX > 0 && deltaY < 0) return 9;
+        }
+
+        return _Game_Player_findDirectionTo.call(this, goalX, goalY);
+    }
+
     $f.setDirection = (character, dir) => {
         if (dir % 2 === 0) {
             character._diagonal = 0;
