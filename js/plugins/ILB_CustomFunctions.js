@@ -199,6 +199,20 @@ var $f = $f || {};
         return array;
     }
 
+    const _Game_Character_moveBackward = Game_Character.prototype.moveBackward;
+    Game_Character.prototype.moveBackward = function() {
+        if (!this.isDiagonal()) {
+            _Game_Character_moveBackward.call(this);
+            return;
+        }
+
+        var lastDirectionFix = this.isDirectionFixed();
+        this.setDirectionFix(true);
+        this.diagonalMovement(this.reverseDir(this._diagonal));
+        if (this.needDiagonalFix()) this.diagonalMovementFix(this._diagonal);
+        this.setDirectionFix(lastDirectionFix);
+    };
+
     const quizData = [
         { question: 'aku', answer: '私' },
         { question: 'kau', answer: 'あなた' },
