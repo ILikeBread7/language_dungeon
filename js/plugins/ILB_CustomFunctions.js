@@ -146,15 +146,19 @@ var $f = $f || {};
     }
 
     $f.placePortal = (x, y) => {
-        const portalData = $dataMap.events.find(event => event && event.meta && event.meta.portal);
-        if (!portalData) {
-            console.warn('No portal event!');
+        $f.placeEvent(x, y, 'portal');
+    };
+
+    $f.placeEvent = (x, y, eventTag) => {
+        const eventData = $dataMap.events.find(event => event && event.meta && event.meta[eventTag]);
+        if (!eventData) {
+            console.warn(`No event with tag: ${eventTag}!`);
             return;
         }
 
-        const event = new Game_Event($gameMap.mapId(), portalData.id);
+        const event = new Game_Event($gameMap.mapId(), eventData.id);
         addEvent(event, x, y);
-    };
+    }
 
     function addEvent(event, x = 0, y = 0) {
         $gameMap._events.push(event);
@@ -175,6 +179,8 @@ var $f = $f || {};
             $eventText.clear(enemyEvent.eventId());
             if (enemyEvent.event().meta.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
+            } else if (Math.random() < 0.1) {
+                $f.placeEvent(enemyEvent.x, enemyEvent.y, 'item');
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
 
@@ -183,6 +189,20 @@ var $f = $f || {};
             enemyEvent.hit = true;
             $f.setEnemyText(enemyEvent);
         }
+    }
+
+    $f.useFloorItem = itemId => {
+        const actor = $gameParty.leader();
+        const item = $dataItems[itemId];
+
+        SoundManager.playUseItem();
+
+        const action = new Game_Action(actor);
+        action.setItem(itemId);
+
+        actor.startAnimation(item.animationId);
+        action.apply(actor);
+        action.applyGlobal();
     }
 
     function pickRandom(array, start = 0, amount = array.length - start) {
@@ -235,6 +255,21 @@ var $f = $f || {};
 
         return _Game_Player_findDirectionTo.call(this, goalX, goalY);
     }
+
+    const _Game_Event_isTriggerIn = Game_Event.prototype.isTriggerIn;
+    Game_Event.prototype.isTriggerIn = function(triggers) {
+        const meta = this.event().meta;
+        if (meta && meta.triggers) {
+            let metaTriggers = meta.triggers;
+            if (typeof metaTriggers === 'string') {
+                metaTriggers = JSON.parse(metaTriggers);
+                meta.triggers = metaTriggers;
+            }
+            return metaTriggers.some(metaTrigger => triggers.contains(metaTrigger));
+        }
+
+        return _Game_Event_isTriggerIn.call(this, triggers);
+    };
 
     $f.setDirection = (character, dir) => {
         if (dir % 2 === 0) {
