@@ -31,6 +31,8 @@ var $f = $f || {};
     const QUIZ_START = 0;
     const QUIZ_AMOUNT = 100;
 
+    let goodAnswers;    // Use load progress function to initialize
+
     const distanceToFollow = 3;
     let currentEnemyIndex = 0;
     function moveEnemies() {
@@ -112,7 +114,7 @@ var $f = $f || {};
             return;
         }
 
-        const randomQuestion = pickRandom(quizData, QUIZ_START, QUIZ_AMOUNT);
+        const randomQuestion = pickRandomNotCorrect(quizData, QUIZ_START, QUIZ_AMOUNT);
         const answers = [randomQuestion.answer];
         for (let i = 0; i < 3; i++) {
             let randomAnswer;
@@ -175,6 +177,11 @@ var $f = $f || {};
     }
 
     $f.enemyHit = enemyEvent => {
+        if (!enemyEvent.answeredWrong) {
+            $f.rememberProgress(enemyEvent.quiz.question, true);
+        }
+        enemyEvent.answeredWrong = false;
+
         if (enemyEvent.hit) {
             $eventText.clear(enemyEvent.eventId());
             if (enemyEvent.event().meta.portalEnemy) {
@@ -209,6 +216,11 @@ var $f = $f || {};
         amount = Math.min(amount, array.length - start);
         const randomIndex = start + Math.floor(Math.random() * amount);
         return array[randomIndex];
+    }
+
+    function pickRandomNotCorrect(array, start = 0, amount = array.length - start) {
+        const questions = array.slice(start, start + amount).filter(({question}) => !goodAnswers.get(question));
+        return pickRandom(questions);
     }
 
     /**
@@ -280,6 +292,31 @@ var $f = $f || {};
             character._diagonal = dir;
             character.diagonalDirection();
         }
+    }
+
+    $f.loadProgress = () => {
+        goodAnswers = new Map(Object.entries(getProgressVar()));
+    };
+
+    $f.rememberProgress = (question, isCorrect) => {
+        const correctCount = isCorrect
+            ? ((goodAnswers.get(question) || 0) + 1)
+            : 0;
+
+        goodAnswers.set(question, correctCount);
+        getProgressVar()[question] = correctCount;
+
+        console.log(getProgressVar())
+    }
+
+    function getProgressVar() {
+        const PROGRESS_VAR_ID = 10;
+        let progressVar = $gameVariables.value(PROGRESS_VAR_ID);
+        if (typeof progressVar !== 'object') {
+            progressVar = {};
+            $gameVariables.setValue(PROGRESS_VAR_ID, progressVar);
+        }
+        return progressVar;
     }
 
     const quizData = [
