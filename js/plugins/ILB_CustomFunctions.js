@@ -28,6 +28,9 @@ var $f = $f || {};
 
 (function () {
 
+    const QUIZ_START = 0;
+    const QUIZ_AMOUNT = 100;
+
     const distanceToFollow = 3;
     let currentEnemyIndex = 0;
     function moveEnemies() {
@@ -109,13 +112,13 @@ var $f = $f || {};
             return;
         }
 
-        const randomQuestion = pickRandom(quizData);
+        const randomQuestion = pickRandom(quizData, QUIZ_START, QUIZ_AMOUNT);
         const answers = [randomQuestion.answer];
         for (let i = 0; i < 3; i++) {
             let randomAnswer;
             let answer;
             do {
-                randomAnswer = pickRandom(quizData);
+                randomAnswer = pickRandom(quizData, QUIZ_START, QUIZ_AMOUNT);
                 answer = randomAnswer.answer;
             } while (answers.includes(answer));
             answers.push(answer);
@@ -182,8 +185,8 @@ var $f = $f || {};
         }
     }
 
-    function pickRandom(array) {
-        const randomIndex = Math.floor(Math.random() * array.length);
+    function pickRandom(array, start = 0, amount = array.length - start) {
+        const randomIndex = start + Math.floor(Math.random() * amount);
         return array[randomIndex];
     }
 
@@ -246,6 +249,7 @@ var $f = $f || {};
     const quizData = [
         { question: 'aku', answer: '私' },
         { question: 'kau', answer: 'あなた' },
+        { question: 'yang', answer: 'どれの' },
         { question: 'tidak', answer: 'いいえ' },
         { question: 'ini', answer: 'これ' },
         { question: 'itu', answer: 'それ' },
@@ -261,50 +265,70 @@ var $f = $f || {};
         { question: 'tak', answer: 'ない' },
         { question: 'mereka', answer: '彼らは' },
         { question: 'anda', answer: 'あなた' },
+        { question: 'tahu', answer: '知る' },
+        { question: 'dengan', answer: 'と' },
         { question: 'saya', answer: '私' },
         { question: 'dari', answer: 'から' },
         { question: 'ya', answer: 'はい' },
         { question: 'tapi', answer: 'しかし' },
         { question: 'kami', answer: '私たちは' },
         { question: 'ke', answer: 'に' },
+        { question: 'harus', answer: 'しなければならない' },
         { question: 'sudah', answer: 'すでに' },
         { question: 'kamu', answer: 'あなた' },
         { question: 'adalah', answer: 'は' },
         { question: 'orang', answer: '人' },
         { question: 'saja', answer: 'ただ' },
+        { question: 'seperti', answer: 'のように' },
         { question: 'ingin', answer: 'したい' },
         { question: 'jika', answer: 'もし' },
+        { question: 'pergi', answer: '行く' },
         { question: 'hanya', answer: 'のみ' },
         { question: 'semua', answer: '全て' },
         { question: 'sekarang', answer: '今' },
+        { question: 'sini', answer: 'ここ' },
         { question: 'jadi', answer: 'それで' },
         { question: 'dalam', answer: 'で' },
+        { question: 'bukan', answer: 'いいえ' },
+        { question: 'baik', answer: '良い' },
         { question: 'bagaimana', answer: 'どうやって' },
         { question: 'jangan', answer: 'しないでください' },
         { question: 'lagi', answer: 'また' },
         { question: 'punya', answer: '持っている' },
+        { question: 'lebih', answer: 'もっと' },
         { question: 'oh', answer: 'おお' },
         { question: 'pada', answer: 'の上' },
+        { question: 'mungkin', answer: '可能' },
         { question: 'kalian', answer: 'あなた' },
+        { question: 'lakukan', answer: 'する' },
         { question: 'karena', answer: 'なぜなら' },
         { question: 'sangat', answer: 'とても' },
         { question: 'satu', answer: '1つ' },
+        { question: 'juga', answer: 'また' },
+        { question: 'apakah', answer: 'かどうか' },
         { question: 'mau', answer: 'したい' },
+        { question: 'pernah', answer: '一度' },
         { question: 'siapa', answer: '誰が' },
         { question: 'telah', answer: 'もっている' },
+        { question: 'ayo', answer: '来て' },
         { question: 'hal', answer: '案件' },
         { question: 'saat', answer: '一瞬' },
         { question: 'kenapa', answer: 'なぜ' },
+        { question: 'hari', answer: '日' },
+        { question: 'kembali', answer: '戻る' },
         { question: 'atau', answer: 'または' },
         { question: 'datang', answer: '来る' },
         { question: 'begitu', answer: 'それで' },
         { question: 'sesuatu', answer: '何か' },
         { question: 'banyak', answer: 'たくさん' },
         { question: 'benar', answer: '正しい' },
+        { question: 'kasih', answer: '愛' },
         { question: 'menjadi', answer: 'なる' },
         { question: 'melihat', answer: '見る' },
+        { question: 'terjadi', answer: '起こる' },
         { question: 'melakukan', answer: 'する' },
         { question: 'terima', answer: '受け入れる' },
+        { question: 'tentang', answer: 'について' },
         { question: 'lihat', answer: '見て' },
         { question: 'seorang', answer: '1つの' },
         { question: 'bahwa', answer: 'それ' },
@@ -312,8 +336,13 @@ var $f = $f || {};
         { question: 'hei', answer: 'おい' },
         { question: 'bagus', answer: '良い' },
         { question: 'bilang', answer: '言った' },
+        { question: 'masih', answer: 'まだ' },
         { question: 'oke', answer: 'わかった' },
+        { question: 'lain', answer: '他の' },
+        { question: 'sana', answer: 'そこには' },
+        { question: 'waktu', answer: '時間' },
         { question: 'baiklah', answer: 'わかった' },
+        { question: 'tempat', answer: '場所' },
         { question: 'mana', answer: 'どこ' },
         { question: 'keluar', answer: '外出' },
         { question: 'lalu', answer: 'それから' },
