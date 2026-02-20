@@ -69,8 +69,6 @@ var $f = $f || {};
     Game_Event.prototype.unlock = function () {
         _Game_Event_unlock.call(this);
 
-        console.log(this.event().meta)
-
         if (!this.event().meta || !this.event().meta.enemy) {
             return;
         }
@@ -140,7 +138,6 @@ var $f = $f || {};
             correct: correctIndex,
             incorrect: incorrectIndexes
         };
-        console.log(event.quiz)
 
         $eventText.set(event.eventId(), event.quiz.question);
     }

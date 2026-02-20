@@ -394,7 +394,7 @@ Game_MapGenerator.prototype.setEvent = function(event, targetSymbols, targetArea
             }
         }
         $gameMap._events.push(event);
-        event._eventId = $gameMap._events.indexOf(event);
+        event._eventId = $gameMap._events.length - 1;
         event.setPosition(x, y);
         return {x:x, y:y}
     } else {
