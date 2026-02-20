@@ -26,11 +26,11 @@
  * @default 10
  * 
  * @param MinRooms
- * @desc Minimun number of rooms
+ * @desc Minimum number of rooms
  * @default 2
  * 
  * @param MaxRooms
- * @desc Minimun number of rooms
+ * @desc Maximum number of rooms
  * @default 5
  * 
  * @param ShowOuterWall
