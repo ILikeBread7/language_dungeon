@@ -89,6 +89,12 @@ var $f = $f || {};
         moveEnemies();
     };
 
+    Scene_Map.prototype.checkGameover = function() {
+        if ($gameParty.isAllDead()) {
+            $gameTemp.reserveCommonEvent(7); // Game Over Common Event
+        }
+    }
+
     function distance(entity1, entity2) {
         return Math.max(
             Math.abs(entity1.x - entity2.x),
