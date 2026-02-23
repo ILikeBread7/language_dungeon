@@ -29,8 +29,9 @@ var $f = $f || {};
 (function () {
 
     const QUIZ_START = 0;
-    const QUIZ_AMOUNT = 100;
+    const QUIZ_ADD = 20;
 
+    let quizAmount = 20;
     let goodAnswers;    // Use load progress function to initialize
 
     const distanceToFollow = 3;
@@ -106,7 +107,19 @@ var $f = $f || {};
     }
 
     $f.setEnemyTexts = () => {
+        alreadyAsked = [];
         $gameMap.events().forEach($f.setEnemyText);
+    }
+
+    let alreadyAsked = [];
+    function pickRandomEligibleQuestion() {
+        const goodAnswersFilter = quizAmount > quizData.length
+            ? () => true
+            : entry => !goodAnswers.get(entry.question);
+        return pickRandomFiltered(
+            entry => goodAnswersFilter(entry) && !alreadyAsked.includes(entry),
+            quizData, QUIZ_START, quizAmount
+        );
     }
 
     $f.setEnemyText = event => {
@@ -114,13 +127,19 @@ var $f = $f || {};
             return;
         }
 
-        const randomQuestion = pickRandomNotCorrect(quizData, QUIZ_START, QUIZ_AMOUNT);
+        let randomQuestion = pickRandomEligibleQuestion();
+        while (!randomQuestion) {
+            quizAmount += QUIZ_ADD;
+            randomQuestion = pickRandomEligibleQuestion();
+        }
+        alreadyAsked.push(randomQuestion);
+
         const answers = [randomQuestion.answer];
         for (let i = 0; i < 3; i++) {
             let randomAnswer;
             let answer;
             do {
-                randomAnswer = pickRandom(quizData, QUIZ_START, QUIZ_AMOUNT);
+                randomAnswer = pickRandom(quizData, QUIZ_START, quizAmount);
                 answer = randomAnswer.answer;
             } while (answers.includes(answer));
             answers.push(answer);
@@ -223,6 +242,14 @@ var $f = $f || {};
         return pickRandom(questions);
     }
 
+    function pickRandomFiltered(filter, array, start = 0, amount = array.length - start) {
+        const questions = array.slice(start, start + amount).filter(filter);
+        if (questions.length === 0) {
+            return;
+        }
+        return pickRandom(questions);
+    }
+
     /**
      * 
      * @param {[]} array 
@@ -271,6 +298,10 @@ var $f = $f || {};
 
     const _Game_Event_isTriggerIn = Game_Event.prototype.isTriggerIn;
     Game_Event.prototype.isTriggerIn = function(triggers) {
+        if (this._trigger === null) {
+            return false;
+        }
+
         const meta = this.event().meta;
         if (meta && meta.triggers) {
             let metaTriggers = meta.triggers;
