@@ -337,7 +337,7 @@ var $f = $f || {};
         goodAnswers.set(question, correctCount);
         getProgressVar()[question] = correctCount;
 
-        console.log(getProgressVar())
+        Game_Interpreter.prototype.pluginCommand('Persistent', ['Save']);
     }
 
     function getProgressVar() {
