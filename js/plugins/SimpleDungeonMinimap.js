@@ -89,7 +89,6 @@ class Sprite_DungeonMinimap extends Sprite {
         this._tileSize = tileSize;
         this.x = offsets.x;
         this.y = offsets.y;
-        this.z = 1999;
     }
 
     update() {
