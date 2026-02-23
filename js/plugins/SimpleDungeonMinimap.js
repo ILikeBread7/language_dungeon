@@ -89,6 +89,7 @@ class Sprite_DungeonMinimap extends Sprite {
         this._tileSize = tileSize;
         this.x = offsets.x;
         this.y = offsets.y;
+        this.opacity = Math.floor(255 * 0.8);
     }
 
     update() {
