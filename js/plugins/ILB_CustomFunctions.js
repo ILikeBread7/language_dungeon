@@ -90,6 +90,7 @@ var $f = $f || {};
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
     Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
+        DungeonMinimap.visit($gamePlayer.x, $gamePlayer.y);
         moveEnemies();
     };
 

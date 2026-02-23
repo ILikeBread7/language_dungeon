@@ -1102,7 +1102,7 @@ Game_Map.prototype.setup = function(mapId) {
 // マップクラスのタイルID
 Sanshiro.Game_MapGenerator.Game_Map_tileId = Game_Map.prototype.tileId
 Game_Map.prototype.tileId = function(x, y, z) {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         return this._mapGenerator.tileId(x, y, z);
     }
     return Sanshiro.Game_MapGenerator.Game_Map_tileId.call(this, x, y, z);
@@ -1111,7 +1111,7 @@ Game_Map.prototype.tileId = function(x, y, z) {
 // マップクラスのマップデータ
 Sanshiro.Game_MapGenerator.Game_Map_data = Game_Map.prototype.data
 Game_Map.prototype.data = function() {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         return this._mapGenerator.data();
     }
     return Sanshiro.Game_MapGenerator.Game_Map_data.call(this);
@@ -1120,7 +1120,7 @@ Game_Map.prototype.data = function() {
 // マップクラスの通行判定
 Sanshiro.Game_MapGenerator.Game_Map_isPassable = Game_Map.prototype.isPassable
 Game_Map.prototype.isPassable = function(x, y, d) {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         return this._mapGenerator.isPassable(x, y, d);
     }
     return Sanshiro.Game_MapGenerator.Game_Map_isPassable.call(this, x, y, d);
@@ -1144,34 +1144,34 @@ Game_Map.prototype.generateMap = function(mapType) {
 };
 
 // 自動生成マップ判定
-Game_Map.prototype.isGenegratedMap = function() {
+Game_Map.prototype.isGeneratedMap = function() {
     return !!this._mapGenerator && this._mapGenerator.isReady();
 };
 
 // ツルハシ
 Game_Map.prototype.pickel = function() {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         this._mapGenerator.pickel();
     }
 };
 
 // バクダン
 Game_Map.prototype.bomb = function(x, y) {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         this._mapGenerator.bomb(x, y);
     }
 };
 
 // 大部屋
 Game_Map.prototype.bigRoom = function() {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         this._mapGenerator.bigRoom();
     }
 };
 
 // 壁生成
 Game_Map.prototype.makeWall = function(x, y) {
-    if (this.isGenegratedMap()) {
+    if (this.isGeneratedMap()) {
         this._mapGenerator.makeWall(x, y);
     }
 };
@@ -1182,7 +1182,7 @@ Game_Map.prototype.makeWall = function(x, y) {
 // キャラクタークラス
 
 Game_Character.prototype.currentRoom = function () {
-    if (!$gameMap.isGenegratedMap ||
+    if (!$gameMap.isGeneratedMap ||
         !($gameMap.mapGenerator() instanceof Game_MapGeneratorRoomAndPass))
     {
         return undefined;
