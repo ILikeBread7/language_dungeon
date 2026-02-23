@@ -251,7 +251,7 @@ const _createDisplayObjects = Scene_Map.prototype.createDisplayObjects;
 Scene_Map.prototype.createDisplayObjects = function() {
     _createDisplayObjects.call(this);
     this._dungeonMinimap = new Sprite_DungeonMinimap();
-    this.addChild(this._dungeonMinimap);
+    this._spriteset.addChild(this._dungeonMinimap);
 };
 
 function distance(entity1, entity2) {
