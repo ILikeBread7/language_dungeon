@@ -90,7 +90,6 @@ var $f = $f || {};
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
     Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
-        DungeonMinimap.visit($gamePlayer.x, $gamePlayer.y);
         moveEnemies();
     };
 
@@ -207,7 +206,7 @@ var $f = $f || {};
             if (enemyEvent.event().meta.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.1) {
-                $f.placeEvent(enemyEvent.x, enemyEvent.y, 'item');
+                $f.placeEvent(enemyEvent.x, enemyEvent.y, 'potion');
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
 
