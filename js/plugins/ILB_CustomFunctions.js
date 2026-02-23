@@ -90,6 +90,9 @@ var $f = $f || {};
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
     Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
+        if ($gameSwitches.value(2)) { // 2 - portal used
+            return;
+        }
         moveEnemies();
     };
 
