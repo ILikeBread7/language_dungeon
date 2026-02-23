@@ -87,10 +87,20 @@ var $f = $f || {};
         }
     }
 
-    const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
-    Game_Party.prototype.increaseSteps = function () {
-        _Game_Party_increaseSteps.call(this);
-        moveEnemies();
+    const _moveStraight = Game_Player.prototype.moveStraight;
+    Game_Player.prototype.moveStraight = function(d) {
+        _moveStraight.call(this, d);
+        if (this.isMovementSucceeded()) {
+            moveEnemies();
+        }
+    };
+
+    const _moveDiagonal = Game_Player.prototype.moveDiagonally;
+    Game_Player.prototype.moveDiagonally = function(h, v) {
+        _moveDiagonal.call(this, h, v);
+        if (this.isMovementSucceeded()) {
+            moveEnemies();
+        }
     };
 
     Scene_Map.prototype.checkGameover = function() {
