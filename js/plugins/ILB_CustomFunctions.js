@@ -234,6 +234,28 @@ var $f = $f || {};
         action.applyGlobal();
     }
 
+    $f.getFloorItem = () => {
+        const x = $gamePlayer.x;
+        const y = $gamePlayer.y;
+        return $gameMap.eventsXy(x, y)
+            .find(event => event && !event._erased && event.event().meta && event.event().meta.item);
+    }
+
+    $f.triggerFloorItemEvent = () => {
+        const floorItem = $f.getFloorItem();
+        if (floorItem) {
+            floorItem.start();
+        }
+    }
+
+    const _Game_Switches_value = Game_Switches.prototype.value;
+    Game_Switches.prototype.value = function(switchId) {
+        if (switchId === 4) {
+            return !!$f.getFloorItem();
+        }
+        return _Game_Switches_value.call(this, switchId);
+    };
+
     function pickRandom(array, start = 0, amount = array.length - start) {
         amount = Math.min(amount, array.length - start);
         const randomIndex = start + Math.floor(Math.random() * amount);
@@ -299,24 +321,24 @@ var $f = $f || {};
         return _Game_Player_findDirectionTo.call(this, goalX, goalY);
     }
 
-    const _Game_Event_isTriggerIn = Game_Event.prototype.isTriggerIn;
-    Game_Event.prototype.isTriggerIn = function(triggers) {
-        if (this._trigger === null) {
-            return false;
-        }
+    // const _Game_Event_isTriggerIn = Game_Event.prototype.isTriggerIn;
+    // Game_Event.prototype.isTriggerIn = function(triggers) {
+    //     if (this._trigger === null) {
+    //         return false;
+    //     }
 
-        const meta = this.event().meta;
-        if (meta && meta.triggers) {
-            let metaTriggers = meta.triggers;
-            if (typeof metaTriggers === 'string') {
-                metaTriggers = JSON.parse(metaTriggers);
-                meta.triggers = metaTriggers;
-            }
-            return metaTriggers.some(metaTrigger => triggers.contains(metaTrigger));
-        }
+    //     const meta = this.event().meta;
+    //     if (meta && meta.triggers) {
+    //         let metaTriggers = meta.triggers;
+    //         if (typeof metaTriggers === 'string') {
+    //             metaTriggers = JSON.parse(metaTriggers);
+    //             meta.triggers = metaTriggers;
+    //         }
+    //         return metaTriggers.some(metaTrigger => triggers.contains(metaTrigger));
+    //     }
 
-        return _Game_Event_isTriggerIn.call(this, triggers);
-    };
+    //     return _Game_Event_isTriggerIn.call(this, triggers);
+    // };
 
     $f.setDirection = (character, dir) => {
         if (dir % 2 === 0) {

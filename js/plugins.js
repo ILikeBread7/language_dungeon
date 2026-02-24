@@ -9,5 +9,6 @@ var $plugins =
 {"name":"VE_DiagonalMovement","status":true,"description":"v1.00 - Allows diagonal movement for player and events.","parameters":{"Diagonal Adjust":"true","Diagonal Events":"true","Diagonal Fix":"false","Diagonal Trigger":"true","Corner Passability":"false\r"}},
 {"name":"ILB_CustomFunctions","status":true,"description":"Exposes a global object $f to store custom functions for use in script calls.","parameters":{}},
 {"name":"SimpleDungeonMinimap","status":true,"description":"Dungeon Minimap (SAN_MapGenerator) – PMD Style\nClean ES6 version + enemies + items","parameters":{"Tile size":"12","Event show distance":"3","X offset":"Math.floor(Graphics.width / 4)","Y offset":"Math.floor(Graphics.height / 4)"}},
-{"name":"JKL_PersistentData","status":true,"description":"Jackkel's Persistent Data Plugin (v5)","parameters":{"Persistent Switches":"","Save Switches when Set":"","Persistent Variables":"10","Save Variables when Set":""}}
+{"name":"JKL_PersistentData","status":true,"description":"Jackkel's Persistent Data Plugin (v5)","parameters":{"Persistent Switches":"","Save Switches when Set":"","Persistent Variables":"10","Save Variables when Set":""}},
+{"name":"ILB_CustomMainMenuOption","status":true,"description":"Adds custom options to the main menu which run common events.","parameters":{"Options List":"[9,\"Floor\",0,4]"}}
 ];
