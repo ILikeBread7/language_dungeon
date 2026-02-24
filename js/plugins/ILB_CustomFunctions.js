@@ -250,7 +250,7 @@ var $f = $f || {};
 
     const _Game_Switches_value = Game_Switches.prototype.value;
     Game_Switches.prototype.value = function(switchId) {
-        if (switchId === 4) {
+        if (switchId === 4) {   // isFloorItem switch
             return !!$f.getFloorItem();
         }
         return _Game_Switches_value.call(this, switchId);
