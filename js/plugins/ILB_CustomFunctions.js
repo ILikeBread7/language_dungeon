@@ -118,7 +118,7 @@ var $f = $f || {};
     function pickRandomEligibleQuestion() {
         const goodAnswersFilter = quizAmount > quizData.length
             ? () => true
-            : entry => !goodAnswers.get(entry.question);
+            : entry => (goodAnswers.get(entry.question) || 0) <= 0;
         return pickRandomFiltered(
             entry => goodAnswersFilter(entry) && !alreadyAsked.includes(entry),
             quizData, QUIZ_START, quizAmount
@@ -157,7 +157,8 @@ var $f = $f || {};
             answers: answers,
             correct: correctIndex,
             incorrect: incorrectIndexes,
-            answeredWrong: []
+            answeredWrong: [],
+            incorrectAnswersToMark: -(goodAnswers.get(randomQuestion.question) || 0) || 1
         };
 
         $eventText.set(event.eventId(), event.quiz.question);
@@ -177,6 +178,10 @@ var $f = $f || {};
         quiz.answeredWrong.forEach(wrongAnswerIndex => {
             $gameVariables.setValue(wrongAnswerIndex + 12, INCORRECT_COLOR);
         });
+        const incorrectAnswersToMark = Math.min(quiz.incorrectAnswersToMark, 2);
+        for (let i = 0; i < incorrectAnswersToMark; i++) {
+            $gameVariables.setValue(quiz.incorrect[i] + 12, INCORRECT_COLOR);
+        }
 
         $gameVariables.setValue(9, quiz.correct);
     };
@@ -397,8 +402,8 @@ var $f = $f || {};
     $f.rememberProgress = (question, isCorrect) => {
         const currentAnswerValue = (goodAnswers.get(question) || 0);
         const correctCount = isCorrect
-            ? (currentAnswerValue + 1)
-            : (currentAnswerValue - 1);
+            ? (Math.max(currentAnswerValue, 0) + 1)
+            : (Math.min(currentAnswerValue, 0) - 1);
 
         goodAnswers.set(question, correctCount);
         getProgressVar()[question] = correctCount;
