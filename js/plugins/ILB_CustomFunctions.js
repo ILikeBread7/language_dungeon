@@ -182,8 +182,10 @@ var $f = $f || {};
     };
 
     $f.answeredWrong = (event, answerIndex) => {
+        if (event.quiz.answeredWrong.length === 0) {
+            $f.rememberProgress(event.quiz.question, false);
+        }
         event.quiz.answeredWrong.push(answerIndex);
-        $f.rememberProgress(event.quiz.question, false);
     }
 
     $f.placePortal = (x, y) => {
@@ -393,9 +395,10 @@ var $f = $f || {};
     };
 
     $f.rememberProgress = (question, isCorrect) => {
+        const currentAnswerValue = (goodAnswers.get(question) || 0);
         const correctCount = isCorrect
-            ? ((goodAnswers.get(question) || 0) + 1)
-            : 0;
+            ? (currentAnswerValue + 1)
+            : (currentAnswerValue - 1);
 
         goodAnswers.set(question, correctCount);
         getProgressVar()[question] = correctCount;
