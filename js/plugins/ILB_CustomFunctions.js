@@ -252,24 +252,44 @@ var $f = $f || {};
         action.applyGlobal();
     }
 
-    $f.getFloorItem = () => {
+    function isFloorItem() {
         const x = $gamePlayer.x;
         const y = $gamePlayer.y;
         return $gameMap.eventsXy(x, y)
-            .find(event => event && !event._erased && event.event().meta && event.event().meta.item);
+            .some(event => event && !event._erased && event.event().meta && event.event().meta.item);
     }
 
-    $f.triggerFloorItemEvent = () => {
-        const floorItem = $f.getFloorItem();
-        if (floorItem) {
-            floorItem.start();
+    $f.getFloorItems = () => {
+        const x = $gamePlayer.x;
+        const y = $gamePlayer.y;
+        return $gameMap.eventsXy(x, y)
+            .filter(event => event && !event._erased && event.event().meta && event.event().meta.item);
+    }
+
+    $f.triggerFloorItemEvents = () => {
+        const items = $f.getFloorItems();
+        helper(0);
+
+        function helper(index) {
+            const item = items[index];
+
+            if (index < items.length - 1) {    // Do for all but the last element
+                const baseUnlock = item.unlock;
+                item.unlock = () => {
+                    item.unlock = baseUnlock;
+                    baseUnlock.call(item);
+                    helper(index + 1);
+                };
+            }
+
+            item.start();
         }
     }
 
     const _Game_Switches_value = Game_Switches.prototype.value;
     Game_Switches.prototype.value = function(switchId) {
         if (switchId === 4) {   // isFloorItem switch
-            return !!$f.getFloorItem();
+            return isFloorItem();
         }
         return _Game_Switches_value.call(this, switchId);
     };
