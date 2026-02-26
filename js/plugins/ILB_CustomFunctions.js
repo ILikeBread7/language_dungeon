@@ -156,10 +156,34 @@ var $f = $f || {};
             question: randomQuestion.question,
             answers: answers,
             correct: correctIndex,
-            incorrect: incorrectIndexes
+            incorrect: incorrectIndexes,
+            answeredWrong: []
         };
 
         $eventText.set(event.eventId(), event.quiz.question);
+    }
+
+    $f.setQuestionVariables = (event) => {
+        const DEFAULT_COLOR = 0;
+        const INCORRECT_COLOR = 10;
+        const quiz = event.quiz;
+
+        $gameVariables.setValue(4, quiz.question);
+
+        quiz.answers.forEach((answer, index) => {
+            $gameVariables.setValue(index + 12, DEFAULT_COLOR);
+            $gameVariables.setValue(index + 5, answer);
+        });
+        quiz.answeredWrong.forEach(wrongAnswerIndex => {
+            $gameVariables.setValue(wrongAnswerIndex + 12, INCORRECT_COLOR);
+        });
+
+        $gameVariables.setValue(9, quiz.correct);
+    };
+
+    $f.answeredWrong = (event, answerIndex) => {
+        event.quiz.answeredWrong.push(answerIndex);
+        $f.rememberProgress(event.quiz.question, false);
     }
 
     $f.placePortal = (x, y) => {
@@ -192,10 +216,11 @@ var $f = $f || {};
     }
 
     $f.enemyHit = enemyEvent => {
-        if (!enemyEvent.answeredWrong) {
+        if (enemyEvent.quiz.answeredWrong.length === 0) {
             $f.rememberProgress(enemyEvent.quiz.question, true);
+        } else {
+            enemyEvent.quiz.answeredWrong = [];
         }
-        enemyEvent.answeredWrong = false;
 
         if (enemyEvent.hit) {
             $eventText.clear(enemyEvent.eventId());
