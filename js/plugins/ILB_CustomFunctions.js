@@ -150,14 +150,7 @@ var $f = $f || {};
 
         shuffle(answers);
         const correctIndex = answers.findIndex(answer => answer === randomQuestion.answer);
-        const incorrectIndexes = [];
-        for (let i = 0; i < 2; i++) {
-            const incorrectAnswersIndexes = answers
-                .map((_, index) => index)
-                .filter(index => index !== correctIndex && !incorrectIndexes.includes(index));
-            const randomIndexIndex = Math.floor(Math.random() * incorrectAnswersIndexes.length);
-            incorrectIndexes.push(incorrectAnswersIndexes[randomIndexIndex]);
-        }
+        const incorrectIndexes = shuffle(answers.map((_, index) => index).filter(index => index !== correctIndex));
 
         event.quiz = {
             question: randomQuestion.question,
