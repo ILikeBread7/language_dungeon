@@ -34,7 +34,7 @@ var $f = $f || {};
     let quizAmount = 20;
     let goodAnswers;    // Use load progress function to initialize
 
-    const distanceToFollow = 3;
+    const distanceToFollow = 5;
     let currentEnemyIndex = 0;
     function moveEnemies() {
         const events = $gameMap.events();
@@ -57,11 +57,8 @@ var $f = $f || {};
                 event.start();
                 currentEnemyIndex++;
                 return;
-            } else if (playerDistance <= distanceToFollow || event.isSameRoomWithPlayer()) {
-                event.moveTowardPlayer();
-            } else {
-                event.moveRandom();
             }
+            moveEnemy(event, $gamePlayer, playerDistance);
         }
 
         if (currentEnemyIndex >= events.length) {
@@ -70,6 +67,64 @@ var $f = $f || {};
     }
 
     $f.moveEnemies = moveEnemies;
+
+    function moveEnemy(enemy, player, playerDistance) {
+        const directions = Array(10).fill(0);
+        directions[0] = directions[5] = Number.MIN_SAFE_INTEGER;
+        const keepDirectionValue = 1;
+        const followPlayerValue = 10;
+        const followPlayerDiagonalValue = 6;
+        let minValueThreshold = 0;
+        
+        directions[getActualDirection(enemy)] += keepDirectionValue;
+
+        if (playerDistance <= distanceToFollow || enemy.isSameRoomWithPlayer()) {
+            minValueThreshold = 1;
+            const xDiff = player.x - enemy.x;
+            const yDiff = player.y - enemy.y;
+
+            if (xDiff > 0) {
+                directions[6] += followPlayerValue;
+                directions[9] += followPlayerDiagonalValue;
+                directions[3] += followPlayerDiagonalValue;
+            } else if (xDiff < 0) {
+                directions[4] += followPlayerValue;
+                directions[7] += followPlayerDiagonalValue;
+                directions[1] += followPlayerDiagonalValue;
+            }
+
+            if (yDiff > 0) {
+                directions[2] += followPlayerValue;
+                directions[1] += followPlayerDiagonalValue;
+                directions[3] += followPlayerDiagonalValue;
+            } else if (yDiff < 0) {
+                directions[8] += followPlayerValue;
+                directions[7] += followPlayerDiagonalValue;
+                directions[9] += followPlayerDiagonalValue;
+            }
+        }
+
+        const sortedDirections = shuffle(
+            directions
+                .map((value, index) => ({ dir: index, value }))
+                .filter(({value}) => value >= minValueThreshold)
+        ).sort((dir1, dir2) => dir2.value - dir1.value)
+        .map(({dir}) => dir);
+
+        for (let i = 0; i < sortedDirections.length; i++) {
+            const dir = sortedDirections[i];
+            $f.setDirection(enemy, dir);
+            enemy.moveForward();
+            if (enemy.isMovementSucceeded()) {
+                break;
+            }
+        }
+
+    }
+
+    function getActualDirection(enemy) {
+        return enemy._diagonal || enemy.direction();
+    }
 
     const _Game_Event_unlock = Game_Event.prototype.unlock;
     Game_Event.prototype.unlock = function () {
@@ -90,9 +145,6 @@ var $f = $f || {};
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
     Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
-        if ($gameSwitches.value(2)) { // 2 - portal used
-            return;
-        }
         moveEnemies();
     };
 
