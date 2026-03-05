@@ -166,7 +166,9 @@ var $f = $f || {};
 
     const _Game_Event_unlock = Game_Event.prototype.unlock;
     Game_Event.prototype.unlock = function () {
+        const oldDirection = getActualDirection(this);
         _Game_Event_unlock.call(this);
+        setDirection(this, oldDirection);
 
         if (!this.event().meta || !this.event().meta.enemy) {
             return;
@@ -475,7 +477,7 @@ var $f = $f || {};
     //     return _Game_Event_isTriggerIn.call(this, triggers);
     // };
 
-    $f.setDirection = (character, dir) => {
+    function setDirection(character, dir) {
         if (dir % 2 === 0) {
             character._diagonal = 0;
             character.setDirection(dir);
@@ -484,6 +486,8 @@ var $f = $f || {};
             character.diagonalDirection();
         }
     }
+
+    $f.setDirection = setDirection;
 
     $f.loadProgress = () => {
         goodAnswers = new Map(Object.entries(getProgressVar()));
