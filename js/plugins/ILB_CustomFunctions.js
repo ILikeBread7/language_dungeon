@@ -69,17 +69,20 @@ var $f = $f || {};
     $f.moveEnemies = moveEnemies;
 
     function moveEnemy(enemy, player, playerDistance) {
-        const directions = Array(10).fill(0);
+        const initialValue = 1;
+        const directions = Array(10).fill(initialValue);
         directions[0] = directions[5] = Number.MIN_SAFE_INTEGER;
-        const keepDirectionValue = 1;
+        const reverseDirectionPenalty = 1;
+        const moveAwayFromPlayerPenalty = 3;
+        const moveAwayFromPlayerDiagonalPenalty = Math.floor(moveAwayFromPlayerPenalty / 2) + 1;
         const followPlayerValue = 10;
-        const followPlayerDiagonalValue = 6;
-        let minValueThreshold = 0;
+        const followPlayerDiagonalValue = Math.floor(followPlayerValue / 2) + 1;
+        let minValueThreshold = initialValue - reverseDirectionPenalty;
         
-        directions[getActualDirection(enemy)] += keepDirectionValue;
+        directions[enemy.reverseDir(getActualDirection(enemy))] -= reverseDirectionPenalty;
 
         if (playerDistance <= distanceToFollow || enemy.isSameRoomWithPlayer()) {
-            minValueThreshold = 1;
+            minValueThreshold = initialValue - moveAwayFromPlayerPenalty;
             const xDiff = player.x - enemy.x;
             const yDiff = player.y - enemy.y;
 
@@ -87,20 +90,30 @@ var $f = $f || {};
                 directions[6] += followPlayerValue;
                 directions[9] += followPlayerDiagonalValue;
                 directions[3] += followPlayerDiagonalValue;
+                subtractMoveAwayLeftPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
             } else if (xDiff < 0) {
                 directions[4] += followPlayerValue;
                 directions[7] += followPlayerDiagonalValue;
                 directions[1] += followPlayerDiagonalValue;
+                subtractMoveAwayRightPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
+            } else {
+                subtractMoveAwayLeftPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
+                subtractMoveAwayRightPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
             }
 
             if (yDiff > 0) {
                 directions[2] += followPlayerValue;
                 directions[1] += followPlayerDiagonalValue;
                 directions[3] += followPlayerDiagonalValue;
+                subtractMoveAwayUpPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
             } else if (yDiff < 0) {
                 directions[8] += followPlayerValue;
                 directions[7] += followPlayerDiagonalValue;
                 directions[9] += followPlayerDiagonalValue;
+                subtractMoveAwayDownPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
+            } else {
+                subtractMoveAwayUpPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
+                subtractMoveAwayDownPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty);
             }
         }
 
@@ -111,15 +124,40 @@ var $f = $f || {};
         ).sort((dir1, dir2) => dir2.value - dir1.value)
         .map(({dir}) => dir);
 
+        const oldDirection = getActualDirection(enemy);
         for (let i = 0; i < sortedDirections.length; i++) {
             const dir = sortedDirections[i];
             $f.setDirection(enemy, dir);
             enemy.moveForward();
             if (enemy.isMovementSucceeded()) {
-                break;
+                return;
             }
         }
+        $f.setDirection(enemy, oldDirection);
+    }
 
+    function subtractMoveAwayLeftPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty) {
+        directions[4] -= moveAwayFromPlayerPenalty;
+        directions[1] -= moveAwayFromPlayerDiagonalPenalty;
+        directions[7] -= moveAwayFromPlayerDiagonalPenalty;
+    }
+
+    function subtractMoveAwayRightPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty) {
+        directions[6] -= moveAwayFromPlayerPenalty;
+        directions[3] -= moveAwayFromPlayerDiagonalPenalty;
+        directions[9] -= moveAwayFromPlayerDiagonalPenalty;
+    }
+
+    function subtractMoveAwayUpPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty) {
+        directions[8] -= moveAwayFromPlayerPenalty;
+        directions[7] -= moveAwayFromPlayerDiagonalPenalty;
+        directions[9] -= moveAwayFromPlayerDiagonalPenalty;
+    }
+
+    function subtractMoveAwayDownPenalties(directions, moveAwayFromPlayerPenalty, moveAwayFromPlayerDiagonalPenalty) {
+        directions[2] -= moveAwayFromPlayerPenalty;
+        directions[1] -= moveAwayFromPlayerDiagonalPenalty;
+        directions[3] -= moveAwayFromPlayerDiagonalPenalty;
     }
 
     function getActualDirection(enemy) {
