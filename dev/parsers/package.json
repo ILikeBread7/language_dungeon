@@ -1,0 +1,12 @@
+{
+  "name": "parsers",
+  "version": "1.0.0",
+  "description": "Parsers for Language Dungeon",
+  "type": "module",
+  "main": "example_sentences.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

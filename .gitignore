@@ -14,3 +14,4 @@ js/plugins/*.js
 !js/plugins/SAN_MapGenerator.js
 !js/plugins/VE_DiagonalMovement.js
 !js/plugins/SimpleDungeonMinimap.js
+dev/parsers/example_text.txt
