@@ -15,3 +15,4 @@ js/plugins/*.js
 !js/plugins/VE_DiagonalMovement.js
 !js/plugins/SimpleDungeonMinimap.js
 dev/parsers/example_texts
+dev/parsers/wordlists
