@@ -70,6 +70,35 @@ function preprocessText(text) {
 }
 
 function removeFluff(text) {
+    // remove [] references, headings, and empty lines
+    text = text.replaceAll(/\[(\d|[a-z])+\]/g, '')
+        .replaceAll(/^.*(?<![.!?])\n?$/gm, '')
+        .replaceAll(/^\s+/gm, '');
+
+    // protect ellipsis
+    text = text.replaceAll(/\.\.\./g, "§ELLIPSIS§");
+
+    // protect common abbreviations
+    text = text.replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\./g, "$1§DOT§");
+
+    // protect parentheses
+    const parens = [];
+    text = text.replaceAll(/\([^()]*\)/g, m => {
+        parens.push(m);
+        return `§PAREN${parens.length-1}§`;
+    });
+
+    // split
+    text = text.replaceAll(/([.!?])\s+/g, "$1\n");
+
+    // restore
+    text = text.replaceAll(/§ELLIPSIS§/g, "...");
+    text = text.replaceAll(/§DOT§/g, ".");
+    text = text.replaceAll(/§PAREN(\d+)§/g, (_, i) => parens[i]);
+
+    return text;
+
+
     return text
         .replaceAll(/\[(\d|[a-z])+\]/g, '')
         .replaceAll(/^.*(?<![.!?])\n?$/gm, '')
