@@ -11,21 +11,38 @@ const XML_ENTITY_MAP = {
     apos: "'"
 };
 
-const LANGUAGE_PARAMS = [ '--lang', '-l' ];
+const params = {
+    languageFile: '',
+    parseOnly: false,
+    unknownArgument: false
+};
+const LANGUAGE_ARGS = [ '--lang', '-l' ];
+const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const args = process.argv.slice(2);
 const files = [];
-let languageFile = '';
 for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    if (LANGUAGE_PARAMS.includes(arg)) {
-        i++;
-        languageFile = args[i];
-        continue;
+    if (arg.startsWith('-')) {
+        if (LANGUAGE_ARGS.includes(arg)) {
+            i++;
+            params.languageFile = args[i];
+            continue;
+        } else if (PARSE_ONLY_ARGS.includes(arg)) {
+            params.parseOnly = true;
+            continue;
+        } else {
+            params.unknownArgument = true;
+            console.warn(`Unknown argument: ${arg}`);
+            continue;
+        }
     }
     files.push(arg);
 }
+if (params.unknownArgument) {
+    process.exit(0);
+}
 
-const words = fs.readFileSync(languageFile, 'utf8').split('\n');
+const words = fs.readFileSync(params.languageFile, 'utf8').split('\n');
 const wordsFrequencyMap = new Map(words.map((word, index) => [ word, index + 1 ]));
 let text = '';
 files.forEach(filename => {
@@ -33,6 +50,10 @@ files.forEach(filename => {
     const preprocessFunction = filename.endsWith('.xml') ? preprocessXml : preprocessTxt;
     text += preprocessFunction(fileText) + '\n';
 });
+if (params.parseOnly) {
+    console.log(text);
+    process.exit(0);
+}
 const sentences = text.split('\n');
 
 const read = readline.createInterface({ input: stdin, output: stdout });
