@@ -66,8 +66,10 @@ read.on('line', word => {
         return;
     }
     
+    const singleWordScore = wordsFrequencyMap.get(word);
     console.log(` --- ${word}:`);
     sentences
+        .filter(({ score }) => score > singleWordScore)
         .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
         .slice(0, 5)
         .forEach(({ sentence }) => console.log(sentence));
