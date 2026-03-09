@@ -202,7 +202,8 @@ function preprocessTxt(text) {
 function splitParser(text) {
     const PERIOD_CHARS = '.!?。！？';
     const OPEN_PAREN_CHARS = '(「『‚„“';
-    const CLOSE_PAREN_CHARS = ')」』‘“”';
+    const END_QUOTE_CHARS = '」』‘“”';
+    const CLOSE_PAREN_CHARS = ')' + END_QUOTE_CHARS;
     const QUOTE_CHAR = '"';
     const NEWLINE_CHAR = '\n';
 
@@ -230,7 +231,17 @@ function splitParser(text) {
         } else if (NEWLINE_CHAR === char) {
             if (parens === 0 && !insideQuotes) {
                 const sentence = text.substring(sentenceStart, i);
-                if (sentence && !sentence.match(ALPHABET_REGEX)) {
+                if (
+                    sentence
+                    // Sentence is from a language that doesn't need punctuation to end sentences
+                    && (
+                        !sentence.match(ALPHABET_REGEX) || (
+                            // Sentence ends with a quote closed American-style, punctuation inside the quote - "Example."
+                            END_QUOTE_CHARS.includes(sentence[sentence.length - 1])
+                            && PERIOD_CHARS.includes(sentence[sentence.length - 2])
+                        )
+                    )
+                ) {
                     split.push(sentence);
                 }
             }
