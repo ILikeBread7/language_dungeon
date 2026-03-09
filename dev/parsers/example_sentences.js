@@ -2,6 +2,9 @@ import fs from 'node:fs'
 import * as readline from 'node:readline';
 import { stdin, stdout } from 'node:process';
 
+const LANGUAGE_ARGS = [ '--lang', '-l' ];
+const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
+
 const XML_ENTITY_MAP = {
     nbsp: ' ',
     lt: '<',
@@ -11,14 +14,14 @@ const XML_ENTITY_MAP = {
     apos: "'"
 };
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
+const ALPHABET_REGEX = /[a-z\s]+/ig;
+const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、—]/g;
 
 const params = {
     languageFile: '',
     parseOnly: false,
     unknownArgument: false
 };
-const LANGUAGE_ARGS = [ '--lang', '-l' ];
-const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const args = process.argv.slice(2);
 const files = [];
 for (let i = 0; i < args.length; i++) {
@@ -86,10 +89,13 @@ function processSentences(sentences, wordsFrequencyMap) {
     sentences
         .map(sentence => {
             const sentenceLowerCase = sentence.toLowerCase();
-            if (processedSentences.has(sentenceLowerCase)) {
+            const uniqueSentence = sentenceLowerCase
+                .replaceAll(PUNCTUATION_REGEX, '')
+                .trim();
+            if (processedSentences.has(uniqueSentence)) {
                 return [ 0, sentence ];
             }
-            processedSentences.add(sentenceLowerCase);
+            processedSentences.add(uniqueSentence);
             return [ processSentence(sentence, wordsFrequencyMap, sentenceLowerCase), sentence ];
         })
         .filter(([ processedSentence ]) => processedSentence && (processedSentence.score > 0 && processedSentence.score < UNKNOWN_WORD_PENALTY))
@@ -115,33 +121,33 @@ function addToMap(map, key, value) {
  * @returns {{ words: string[], score: number} | null} null if not applicable
  */
 function processSentence(sentence, wordsFrequencyMap, sentenceLowerCase = sentence.toLowerCase()) {
-    if (sentence.includes(' ')) {
-        // If sentence is not capitalized skip
-        if (!sentence.match(/^"?[A-Z]/)) {
-            return null;
-        }
+    const isAlphabet = sentence.match(ALPHABET_REGEX);
 
-        // If the sentence has an uneven number of quotes skip
-        const quotes = sentence.match(/"/g);
-        if (quotes && quotes.length % 2 !== 0) {
-            return null;
-        }
-
-        const split = sentenceLowerCase
-            .split(/[\s,"—'.]/)
-            .filter(Boolean);
-        const uniqueWords = [...new Set(split)];
-
-        return {
-            words: uniqueWords,
-            score: uniqueWords.reduce(
-                (acc, currentWord) => acc + (wordsFrequencyMap.get(currentWord) || UNKNOWN_WORD_PENALTY),
-                0
-            )
-        };
+    // If sentence is not capitalized skip
+    if (isAlphabet && !sentence.match(/^["„“]?[A-Z]/)) {
+        return null;
     }
 
-    return null;
+    const split = splitSentence(sentenceLowerCase, isAlphabet);
+    const uniqueWords = [...new Set(split)];
+
+    return {
+        words: uniqueWords,
+        score: uniqueWords.reduce(
+            (acc, currentWord) => acc + (wordsFrequencyMap.get(currentWord) || UNKNOWN_WORD_PENALTY),
+            0
+        )
+    };
+}
+
+function splitSentence(sentence, isAlphabet) {
+    if (isAlphabet) {
+        return sentence
+            .split(/[\s,、"—'.!?。！？(「『‚„“)」』‘“”]/)
+            .filter(Boolean);
+    }
+
+    return []; // TODO later for non alphabet based languages
 }
 
 function preprocessXml(text) {
@@ -177,11 +183,63 @@ function decodeEntities(str) {
 }
 
 function preprocessTxt(text) {
-    return text
+    text = text
         .replaceAll(/\[(\d|[a-z])+\]/g, '')
-        .replaceAll(/^.*(?<![.!?])\n?$/gm, '')
-        .replaceAll(/([.!?])(?=\s+(?!["')]))/g, '$1\n')
+        .replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\./ig, '$1__@__')
+        .replaceAll(/\b([A-Z])\./g, '$1__@__')
+        .replaceAll(/ [.]{3} /g, ' __@@@__ ');
+
+    text = splitParser(text).join('\n');
+
+    text = text
         .replaceAll(/^\s+/gm, '')
-        .replaceAll(/ [.]{3}\n/g, ' ... ')
-        .replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\.\n/ig, '$1.')
+        .replaceAll(/ __@@@__ /g, ' ... ')
+        .replaceAll(/__@__/g, '.');
+
+    return text;
+}
+
+function splitParser(text) {
+    const PERIOD_CHARS = '.!?。！？';
+    const OPEN_PAREN_CHARS = '(「『‚„“';
+    const CLOSE_PAREN_CHARS = ')」』‘“”';
+    const QUOTE_CHAR = '"';
+    const NEWLINE_CHAR = '\n';
+
+    const split = [];
+    let parens = 0;
+    let insideQuotes = false;
+    for (let i = 0, sentenceStart = 0; i < text.length; i++) {
+        const char = text[i];
+        if (QUOTE_CHAR === char) {
+            insideQuotes = !insideQuotes;
+        } else if (OPEN_PAREN_CHARS.includes(char)) {
+            parens++;
+        } else if (CLOSE_PAREN_CHARS.includes(char)) {
+            parens--;
+            if (parens < 0) {
+                i = text.indexOf(NEWLINE_CHAR, i + 1) || text.length;
+            }
+        } else if (parens === 0 && !insideQuotes && PERIOD_CHARS.includes(char)) {
+            while (PERIOD_CHARS.includes(text[i + 1])) {
+                i++;
+            }
+            const lastPeriodIndex = i + 1;
+            split.push(text.substring(sentenceStart, lastPeriodIndex));
+            sentenceStart = lastPeriodIndex;
+        } else if (NEWLINE_CHAR === char) {
+            if (parens === 0 && !insideQuotes) {
+                const sentence = text.substring(sentenceStart, i);
+                if (sentence && !sentence.match(ALPHABET_REGEX)) {
+                    split.push(sentence);
+                }
+            }
+
+            parens = 0;
+            insideQuotes = false;
+            sentenceStart = i + 1;
+        }
+    }
+
+    return split;
 }
