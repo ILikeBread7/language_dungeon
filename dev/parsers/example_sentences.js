@@ -4,6 +4,8 @@ import { stdin, stdout } from 'node:process';
 
 const LANGUAGE_ARGS = [ '--lang', '-l' ];
 const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
+const JSON_ARGS = [ '--json', '-j' ];
+const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 
 const XML_ENTITY_MAP = {
     nbsp: ' ',
@@ -20,8 +22,18 @@ const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、�
 const params = {
     languageFile: '',
     parseOnly: false,
+    json: false,
+    prod: false,
     unknownArgument: false
 };
+
+const JSON_DEV_CONFIG = {
+    spaces: 2
+};
+const JSON_PROD_CONFIG = {
+    spaces: 0
+}
+
 const args = process.argv.slice(2);
 const files = [];
 for (let i = 0; i < args.length; i++) {
@@ -33,6 +45,13 @@ for (let i = 0; i < args.length; i++) {
             continue;
         } else if (PARSE_ONLY_ARGS.includes(arg)) {
             params.parseOnly = true;
+            continue;
+        } else if (JSON_ARGS.includes(arg)) {
+            params.json = true;
+            continue;
+        } else if (JSON_PROD_ARGS.includes(arg)) {
+            params.json = true;
+            params.prod = true;
             continue;
         } else {
             params.unknownArgument = true;
@@ -61,22 +80,38 @@ if (params.parseOnly) {
 const sentences = text.split('\n');
 const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
 
+const jsonResult = {};
 const read = readline.createInterface({ input: stdin, output: stdout });
 read.on('line', word => {
-    const sentences = wordsToSentencesMap.get(word);
+    let sentences = wordsToSentencesMap.get(word);
     if (!sentences) {
-        console.log(` --- No sentences found for word: ${word}`);
+        if (!params.json) {
+            console.log(` --- No sentences found for word: ${word}`);
+        }
         return;
     }
     
     const singleWordScore = wordsFrequencyMap.get(word);
-    console.log(` --- ${word}:`);
-    sentences
+    sentences = sentences
         .filter(({ score }) => score > singleWordScore)
         .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
         .slice(0, 5)
-        .forEach(({ sentence }) => console.log(sentence));
+        .map(({ sentence }) => sentence);
+
+    if (params.json) {
+        jsonResult[word] = sentences;
+    } else {
+        console.log(` --- ${word}:`);
+        sentences.forEach(sentence => console.log(sentence));
+    }
 });
+
+if (params.json) {
+    const jsonConfig = params.prod ? JSON_PROD_CONFIG : JSON_DEV_CONFIG;
+    read.on('close', () => {
+        console.log(JSON.stringify(jsonResult, null, jsonConfig.spaces));
+    });
+}
 
 /**
  * 
