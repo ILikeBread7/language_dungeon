@@ -10,6 +10,7 @@ const XML_ENTITY_MAP = {
     quot: '"',
     apos: "'"
 };
+const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
 
 const params = {
     languageFile: '',
@@ -55,67 +56,90 @@ if (params.parseOnly) {
     process.exit(0);
 }
 const sentences = text.split('\n');
+const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
 
 const read = readline.createInterface({ input: stdin, output: stdout });
 read.on('line', word => {
+    const sentences = wordsToSentencesMap.get(word);
+    if (!sentences) {
+        console.log(` --- No sentences found for word: ${word}`);
+        return;
+    }
+    
     console.log(` --- ${word}:`);
-    const processedSentences = new Set();
     sentences
-        .map(sentence => {
-            const sentenceLowerCase = sentence.toLocaleLowerCase();
-            if (processedSentences.has(sentenceLowerCase)) {
-                return [ 0, sentence ];
-            }
-            processedSentences.add(sentenceLowerCase);
-            return [ processSentence(word, sentence), sentence ];
-        })
-        .filter(([ score ]) => score > 0)
-        .sort((x1, x2) => x1[0] - x2[0])
+        .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
         .slice(0, 5)
-        .forEach(([ , sentence ]) => console.log(sentence));
+        .forEach(({ sentence }) => console.log(sentence));
 });
 
 /**
  * 
- * @param {string} word 
- * @param {string} sentence 
- * @returns {number} score, 0 if not applicable
+ * @param {string[]} sentences 
+ * @param {Map<string, number>} wordsFrequencyMap 
  */
-function processSentence(word, sentence) {
-    const sentenceLowerCase = sentence.toLowerCase();
-    word = word.toLowerCase();
+function processSentences(sentences, wordsFrequencyMap) {
+    const sentencesForWords = new Map();
+    const processedSentences = new Set();
+    sentences
+        .map(sentence => {
+            const sentenceLowerCase = sentence.toLowerCase();
+            if (processedSentences.has(sentenceLowerCase)) {
+                return [ 0, sentence ];
+            }
+            processedSentences.add(sentenceLowerCase);
+            return [ processSentence(sentence, wordsFrequencyMap, sentenceLowerCase), sentence ];
+        })
+        .filter(([ processedSentence ]) => processedSentence && (processedSentence.score > 0 && processedSentence.score < UNKNOWN_WORD_PENALTY))
+        .forEach(([ processedSentence, sentence ]) => processedSentence.words.forEach(word => addToMap(sentencesForWords, word, { sentence, score: processedSentence.score })));
 
-    if (!sentenceLowerCase.includes(word)) {
-        return 0;
+    return sentencesForWords;
+}
+
+function addToMap(map, key, value) {
+    const entry = map.get(key);
+    if (!entry) {
+        map.set(key, [ value ]);
+    } else {
+        entry.push(value);
     }
+}
 
+/**
+ * 
+ * @param {string} sentence 
+ * @param {Map<string, number>} wordsFrequencyMap 
+ * @param {string} [sentenceLowerCase=sentence.toLowerCase()] 
+ * @returns {{ words: string[], score: number} | null} null if not applicable
+ */
+function processSentence(sentence, wordsFrequencyMap, sentenceLowerCase = sentence.toLowerCase()) {
     if (sentence.includes(' ')) {
         // If sentence is not capitalized skip
         if (!sentence.match(/^"?[A-Z]/)) {
-            return 0;
+            return null;
         }
 
         // If the sentence has an uneven number of quotes skip
         const quotes = sentence.match(/"/g);
         if (quotes && quotes.length % 2 !== 0) {
-            return 0;
+            return null;
         }
 
         const split = sentenceLowerCase
             .split(/[\s,"—'.]/)
             .filter(Boolean);
+        const uniqueWords = [...new Set(split)];
 
-        if (!split.includes(word)) {
-            return 0;
-        }
-
-        return split.reduce(
-            (acc, currentWord) => acc + (word === currentWord ? 0 : (wordsFrequencyMap.get(currentWord) || (wordsFrequencyMap.size + 1))),
-            0
-        );
+        return {
+            words: uniqueWords,
+            score: uniqueWords.reduce(
+                (acc, currentWord) => acc + (wordsFrequencyMap.get(currentWord) || UNKNOWN_WORD_PENALTY),
+                0
+            )
+        };
     }
 
-    return 0;
+    return null;
 }
 
 function preprocessXml(text) {
