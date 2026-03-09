@@ -183,5 +183,5 @@ function preprocessTxt(text) {
         .replaceAll(/([.!?])(?=\s+(?!["')]))/g, '$1\n')
         .replaceAll(/^\s+/gm, '')
         .replaceAll(/ [.]{3}\n/g, ' ... ')
-        .replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\.\n/g, '$1.')
+        .replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\.\n/ig, '$1.')
 }
