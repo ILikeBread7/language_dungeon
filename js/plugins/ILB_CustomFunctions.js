@@ -28,6 +28,11 @@ var $f = $f || {};
 
 (function () {
 
+    let sentences = null;
+    fetch('js/plugins/data/id_sentences.json')
+        .then(response => response.json())
+        .then(data => sentences = data);
+
     const QUIZ_START = 0;
     const QUIZ_ADD = 20;
 
@@ -276,7 +281,38 @@ var $f = $f || {};
         }
 
         $gameVariables.setValue(9, quiz.correct);
+        $gameVariables.setValue(16, addWordColor(getExampleSentence(quiz.question), quiz.question));
     };
+
+    const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
+    Window_Base.prototype.convertEscapeCharacters = function(text) {
+        // Call twice to escape nested character sequences
+        text = _Window_Base_convertEscapeCharacters.call(this, text);
+        return _Window_Base_convertEscapeCharacters.call(this, text);
+    }
+
+    function getExampleSentence(word) {
+        if (!sentences) {
+            return '';
+        }
+
+        const wordSentences = sentences[word];
+        if (!wordSentences) {
+            return '';
+        }
+
+        return pickRandom(wordSentences);
+    }
+
+    function addWordColor(sentence, word) {
+        console.log(sentence, word)
+        const wordRegexString = `(${word})`;
+        const replacerString = '\\c[3]$1\\c[0]'
+        if (sentence.includes(' ')) {
+            return sentence.replace(new RegExp(`\\b${wordRegexString}\\b`, 'ig'), replacerString);
+        }
+        return sentence.replace(new RegExp(wordRegexString, 'ig'), replacerString);
+    }
 
     $f.answeredWrong = (event, answerIndex) => {
         if (event.quiz.answeredWrong.length === 0) {
