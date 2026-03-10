@@ -221,7 +221,7 @@ var $f = $f || {};
             ? () => true
             : entry => {
                 const [ score, lastAnsweredQuizLevel ] = goodAnswers.get(entry.question) || [ 0, quizLevel ];
-                return score <= Math.log2(lastAnsweredQuizLevel - quizLevel + 1);
+                return score <= Math.log2(quizLevel - lastAnsweredQuizLevel + 1);
             };
         return pickRandomFiltered(
             entry => goodAnswersFilter(entry) && !alreadyAsked.includes(entry),
