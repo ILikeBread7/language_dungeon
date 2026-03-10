@@ -34,10 +34,14 @@ var $f = $f || {};
         .then(data => sentences = data);
 
     const QUIZ_START = 0;
-    const QUIZ_ADD = 20;
+    const QUIZ_ENTRIES_PER_LEVEL = 20;
 
-    let quizAmount = 20;
+    let quizLevel = 1;
     let goodAnswers;    // Use load progress function to initialize
+
+    function getQuizEntriesNumber(quizLevel) {
+        return quizLevel * QUIZ_ENTRIES_PER_LEVEL;
+    }
 
     const distanceToFollow = 5;
     let currentEnemyIndex = 0;
@@ -213,12 +217,15 @@ var $f = $f || {};
 
     let alreadyAsked = [];
     function pickRandomEligibleQuestion() {
-        const goodAnswersFilter = quizAmount > quizData.length
+        const goodAnswersFilter = QUIZ_START + getQuizEntriesNumber(quizLevel) > quizData.length
             ? () => true
-            : entry => (goodAnswers.get(entry.question) || 0) <= 0;
+            : entry => {
+                const [ score, lastAnsweredQuizLevel ] = goodAnswers.get(entry.question) || [ 0, quizLevel ];
+                return score <= Math.log2(lastAnsweredQuizLevel - quizLevel + 1);
+            };
         return pickRandomFiltered(
             entry => goodAnswersFilter(entry) && !alreadyAsked.includes(entry),
-            quizData, QUIZ_START, quizAmount
+            quizData, QUIZ_START, getQuizEntriesNumber(quizLevel)
         );
     }
 
@@ -229,7 +236,7 @@ var $f = $f || {};
 
         let randomQuestion = pickRandomEligibleQuestion();
         while (!randomQuestion) {
-            quizAmount += QUIZ_ADD;
+            quizLevel++;
             randomQuestion = pickRandomEligibleQuestion();
         }
         alreadyAsked.push(randomQuestion);
@@ -239,7 +246,7 @@ var $f = $f || {};
             let randomAnswer;
             let answer;
             do {
-                randomAnswer = pickRandom(quizData, QUIZ_START, quizAmount);
+                randomAnswer = pickRandom(quizData, QUIZ_START, getQuizEntriesNumber(quizLevel));
                 answer = randomAnswer.answer;
             } while (answers.includes(answer));
             answers.push(answer);
@@ -255,7 +262,7 @@ var $f = $f || {};
             correct: correctIndex,
             incorrect: incorrectIndexes,
             answeredWrong: [],
-            incorrectAnswersToMark: -(goodAnswers.get(randomQuestion.question) || 0) || 1
+            incorrectAnswersToMark: -(goodAnswers.get(randomQuestion.question) || [ 0 ])[0]
         };
 
         $eventText.set(event.eventId(), event.quiz.question);
@@ -332,7 +339,7 @@ var $f = $f || {};
 
         [...uniqueWordsSet]
             .map(word => word.toLowerCase())
-            .filter(word => !goodAnswers.get(word) && quizAnswersMap.has(word))
+            .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= 0 && quizAnswersMap.has(word))
             .forEach(word => sentence = sentence.replace(
                     new RegExp(`\\b(${word})\\b`, 'ig'),
                     `$1${SPACE_CODE}${LEFT_PAREN_CODE}${quizAnswersMap.get(word)}${RIGHT_PAREN_CODE}`
@@ -358,7 +365,7 @@ var $f = $f || {};
 
     $f.answeredWrong = (event, answerIndex) => {
         if (event.quiz.answeredWrong.length === 0) {
-            $f.rememberProgress(event.quiz.question, false);
+            $f.rememberProgress(event.quiz.question, quizLevel, false);
         }
         event.quiz.answeredWrong.push(answerIndex);
     }
@@ -394,7 +401,7 @@ var $f = $f || {};
 
     $f.enemyHit = enemyEvent => {
         if (enemyEvent.quiz.answeredWrong.length === 0) {
-            $f.rememberProgress(enemyEvent.quiz.question, true);
+            $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
         } else {
             enemyEvent.quiz.answeredWrong = [];
         }
@@ -569,16 +576,23 @@ var $f = $f || {};
 
     $f.loadProgress = () => {
         goodAnswers = new Map(Object.entries(getProgressVar()));
+        quizLevel = [...goodAnswers.values()].reduce((acc, curr) => acc = Math.max(acc, curr[1]), 1);
     };
 
-    $f.rememberProgress = (question, isCorrect) => {
-        const currentAnswerValue = (goodAnswers.get(question) || 0);
-        const correctCount = isCorrect
-            ? (Math.max(currentAnswerValue, 0) + 1)
-            : (Math.min(currentAnswerValue, 0) - 1);
+    $f.rememberProgress = (question, quizLevel, isCorrect) => {
+        const answerValue = (goodAnswers.get(question) || [ 0, quizLevel ]);
 
-        goodAnswers.set(question, correctCount);
-        getProgressVar()[question] = correctCount;
+        answerValue[1] = quizLevel;
+        answerValue[0] = isCorrect
+            ? (Math.max(answerValue[0], 0) + 1)
+            : (Math.min(answerValue[0], 0) - 1);
+
+        goodAnswers.set(question, answerValue);
+        getProgressVar()[question] = answerValue;
+        console.log (
+            Object.entries(getProgressVar()).map(entry => `${entry[0]}: [ ${entry[1][0]}, ${entry[1][1]} ]`).join('\n')
+        );
+        console.log(quizLevel);
 
         Game_Interpreter.prototype.pluginCommand('Persistent', ['Save']);
     }
