@@ -589,10 +589,6 @@ var $f = $f || {};
 
         goodAnswers.set(question, answerValue);
         getProgressVar()[question] = answerValue;
-        console.log (
-            Object.entries(getProgressVar()).map(entry => `${entry[0]}: [ ${entry[1][0]}, ${entry[1][1]} ]`).join('\n')
-        );
-        console.log(quizLevel);
 
         Game_Interpreter.prototype.pluginCommand('Persistent', ['Save']);
     }
