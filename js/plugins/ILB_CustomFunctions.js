@@ -28,6 +28,42 @@ var $f = $f || {};
 
 (function () {
 
+    const _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
+    Game_Interpreter.prototype.pluginCommand = function(command, args) {
+        if (command === '$f') {
+            const functionName = args[0];
+            const params = args.slice(1).map(mapPluginCommandParam);
+            $f[functionName](...params);
+            return;
+        }
+        _Game_Interpreter_pluginCommand.call(this, command, args);
+    }
+
+    function mapPluginCommandParam(param) {
+        if (!isNaN(param)) {
+            return Number(param);
+        }
+
+        if (
+            (param.startsWith('"') && param.endsWith('"'))
+            || (param.startsWith("'") && param.endsWith("'"))
+        ) {
+            return param
+                .substring(1, param.length - 1)
+                .replace(/(?<!\\)_/g, ' ')
+                .replace(/\\_/g, '_');
+        }
+
+        const gameData = /\$(gameVariables|gameSwitches)\.value\((\d+)\)/g.exec(param);
+        if (gameData) {
+            return window[`$${gameData[1]}`].value(gameData[2]);
+        }
+    }
+
+    $f.test = (...params) => {
+        params.forEach(param => console.log(param, typeof param))
+    }
+
     let sentences = null;
     fetch('js/plugins/data/id_sentences.json')
         .then(response => response.json())
