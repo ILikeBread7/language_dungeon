@@ -576,7 +576,7 @@ var $f = $f || {};
 
     $f.loadProgress = () => {
         goodAnswers = new Map(Object.entries(getProgressVar()));
-        quizLevel = [...goodAnswers.values()].reduce((acc, curr) => acc = Math.max(acc, curr[1]), 1);
+        quizLevel = [...goodAnswers.values()].reduce((acc, curr) => Math.max(acc, curr[1]), 1);
     };
 
     $f.rememberProgress = (question, quizLevel, isCorrect) => {
