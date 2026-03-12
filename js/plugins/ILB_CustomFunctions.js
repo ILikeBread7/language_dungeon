@@ -635,6 +635,40 @@ var $f = $f || {};
         return progressVar;
     }
 
+    $f.setDictionaryText = () => {
+        const DICTIONARY_TEXT_VAR_ID = 17;
+        const text = getDictionaryText();
+        $gameVariables.setValue(DICTIONARY_TEXT_VAR_ID, text);
+    };
+
+    function getDictionaryText() {
+        const entries = getDictionaryEntries();
+        if (!entries.length) {
+            return;
+        }
+
+        return entries.join('\n');
+    }
+
+    const dictionaryPageLength = 16;
+    let dictionaryEntryIndex = 0;
+    let dictionaryEntries = [];
+    function getDictionaryEntries() {
+        if (dictionaryEntryIndex === 0) {
+            dictionaryEntries = $gameMap.events()
+                .filter(event => event && !event._erased && event.event().meta && event.event().meta.enemy && (goodAnswers.get(event.quiz.question) || [ 0 ])[0] <= 0)
+                .map(enemy => `\\c[3]${enemy.quiz.question}\\c[0]: ${enemy.quiz.answers[enemy.quiz.correct]}`);
+        }
+
+        if (dictionaryEntryIndex < dictionaryEntries.length) {
+            dictionaryEntryIndex += dictionaryPageLength;
+            return dictionaryEntries.slice(dictionaryEntryIndex - dictionaryPageLength, dictionaryEntryIndex);
+        } else {
+            dictionaryEntryIndex = 0;
+            return dictionaryEntries = [];
+        }
+    }
+
     const quizData = [
         { question: 'aku', answer: '私' },
         { question: 'kau', answer: 'あなた' },
