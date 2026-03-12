@@ -60,10 +60,6 @@ var $f = $f || {};
         }
     }
 
-    $f.test = (...params) => {
-        params.forEach(param => console.log(param, typeof param))
-    }
-
     let sentences = null;
     fetch('js/plugins/data/id_sentences.json')
         .then(response => response.json())
