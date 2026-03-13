@@ -65,25 +65,6 @@ var $f = $f || {};
         .then(response => response.json())
         .then(data => sentences = data);
 
-    let dictionary = null;
-    let dictionaryMap = null;
-    fetch('js/plugins/data/ja-id-wiktionary.json')
-        .then(response => response.json())
-        .then(data => dictionary = data)
-        .then(data => dictionaryMap = new Map(data.map(entry => [ entry.word, entry ])));
-
-    function getGloss(word) {
-        const entry = dictionaryMap.get(word);
-        if (!entry) {
-            return `== no gloss: ${quizAnswersMap.get(word)} ==`;
-        }
-        return mapEntryToGloss(entry);
-    }
-
-    function mapEntryToGloss(entry) {
-        return entry.senses.map(sense => sense.glosses.join(', ')).join('; ');
-    }
-
     const QUIZ_START = 0;
     const QUIZ_ENTRIES_PER_LEVEL = 20;
 
@@ -292,20 +273,19 @@ var $f = $f || {};
         }
         alreadyAsked.push(randomQuestion);
 
-        const questionGloss = getGloss(randomQuestion.question);
-        const answers = [ questionGloss ];
+        const answers = [randomQuestion.answer];
         for (let i = 0; i < 3; i++) {
             let randomAnswer;
             let answer;
             do {
                 randomAnswer = pickRandom(quizData, QUIZ_START, getQuizEntriesNumber(quizLevel));
-                answer = getGloss(randomAnswer.question);
+                answer = randomAnswer.answer;
             } while (answers.includes(answer));
             answers.push(answer);
         }
 
         shuffle(answers);
-        const correctIndex = answers.findIndex(answer => answer === questionGloss);
+        const correctIndex = answers.findIndex(answer => answer === randomQuestion.answer);
         const incorrectIndexes = shuffle(answers.map((_, index) => index).filter(index => index !== correctIndex));
 
         event.quiz = {
@@ -394,7 +374,7 @@ var $f = $f || {};
             .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= 0 && quizAnswersMap.has(word))
             .forEach(word => sentence = sentence.replace(
                     new RegExp(`\\b(${word})\\b`, 'ig'),
-                    `$1${SPACE_CODE}${LEFT_PAREN_CODE}${getGloss(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}`
+                    `$1${SPACE_CODE}${LEFT_PAREN_CODE}${quizAnswersMap.get(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}`
                 )
             );
 
