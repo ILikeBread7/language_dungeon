@@ -16,4 +16,6 @@ js/plugins/*.js
 !js/plugins/SimpleDungeonMinimap.js
 dev/parsers/example_texts
 dev/parsers/wordlists
+dev/parsers/wiktionary
+dev/parsers/unimorph
 js/plugins/data
