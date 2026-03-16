@@ -216,8 +216,8 @@ var $f = $f || {};
         }
 
         this.isAttacking = false;
-        if ($gameSwitches.value(1)) { // Attack cancelled
-            $gameSwitches.setValue(1, false);
+        if ($ns.attackCancelled) { 
+            $ns.attackCancelled = false;
         } else {
             moveEnemies();
         }
@@ -305,7 +305,7 @@ var $f = $f || {};
         const INCORRECT_COLOR = 10;
         const quiz = event.quiz;
 
-        $gameVariables.setValue(4, quiz.question);
+        $nv.question = quiz.question;
 
         quiz.answers.forEach((answer, index) => {
             $gameVariables.setValue(index + 12, DEFAULT_COLOR);
@@ -319,16 +319,13 @@ var $f = $f || {};
             $gameVariables.setValue(quiz.incorrect[i] + 12, INCORRECT_COLOR);
         }
 
-        $gameVariables.setValue(9, quiz.correct);
-        $gameVariables.setValue(
-            16,
-            addWordTranslations(
-                addWordColor(
-                    getExampleSentence(quiz.question),
-                    quiz.question
-                ),
-                quiz
-            )
+        $nv.correctAnswerIndex = quiz.correct;
+        $nv.exampleSentence = addWordTranslations(
+            addWordColor(
+                getExampleSentence(quiz.question),
+                quiz.question
+            ),
+            quiz
         );
     };
 
@@ -607,7 +604,7 @@ var $f = $f || {};
     $f.setDirection = setDirection;
 
     $f.loadProgress = () => {
-        goodAnswers = new Map(Object.entries(getProgressVar()));
+        goodAnswers = new Map(Object.entries($nv.progress));
         quizLevel = [...goodAnswers.values()].reduce((acc, curr) => Math.max(acc, curr[1]), 1);
     };
 
@@ -620,25 +617,13 @@ var $f = $f || {};
             : (Math.min(answerValue[0], 0) - 1);
 
         goodAnswers.set(question, answerValue);
-        getProgressVar()[question] = answerValue;
+        $nv.progress[question] = answerValue;
 
         Game_Interpreter.prototype.pluginCommand('Persistent', ['Save']);
     }
 
-    function getProgressVar() {
-        const PROGRESS_VAR_ID = 10;
-        let progressVar = $gameVariables.value(PROGRESS_VAR_ID);
-        if (typeof progressVar !== 'object') {
-            progressVar = {};
-            $gameVariables.setValue(PROGRESS_VAR_ID, progressVar);
-        }
-        return progressVar;
-    }
-
     $f.setDictionaryText = () => {
-        const DICTIONARY_TEXT_VAR_ID = 17;
-        const text = getDictionaryText();
-        $gameVariables.setValue(DICTIONARY_TEXT_VAR_ID, text);
+        $nv.dictionaryText = getDictionaryText();
     };
 
     function getDictionaryText() {
