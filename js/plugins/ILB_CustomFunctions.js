@@ -635,13 +635,14 @@ var $f = $f || {};
         return entries.join('\n');
     }
 
+    const dictionaryScoreThreshold = 1;
     const dictionaryPageLength = 16;
     let dictionaryEntryIndex = 0;
     let dictionaryEntries = [];
     function getDictionaryEntries() {
         if (dictionaryEntryIndex === 0) {
             dictionaryEntries = $gameMap.events()
-                .filter(event => event && !event._erased && event.event().meta && event.event().meta.enemy && (goodAnswers.get(event.quiz.question) || [ 0 ])[0] <= 0)
+                .filter(event => event && !event._erased && event.event().meta && event.event().meta.enemy && (goodAnswers.get(event.quiz.question) || [ 0 ])[0] <= dictionaryScoreThreshold)
                 .map(enemy => `\\c[3]${enemy.quiz.question}\\c[0]: ${enemy.quiz.answers[enemy.quiz.correct]}`);
         }
 
