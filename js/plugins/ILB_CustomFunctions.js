@@ -248,12 +248,12 @@ var $f = $f || {};
     }
 
     let alreadyAsked = [];
-    function pickRandomEligibleQuestion() {
+    function pickRandomEligibleQuestion(minScore = Number.MIN_SAFE_INTEGER) {
         const goodAnswersFilter = QUIZ_START + getQuizEntriesNumber(quizLevel) > quizData.length
             ? () => true
             : entry => {
                 const [ score, lastAnsweredQuizLevel ] = goodAnswers.get(entry.question) || [ 0, quizLevel ];
-                return score <= Math.log2(quizLevel - lastAnsweredQuizLevel + 1);
+                return score >= minScore && score <= Math.log2(quizLevel - lastAnsweredQuizLevel + 1);
             };
         return pickRandomFiltered(
             entry => goodAnswersFilter(entry) && !alreadyAsked.includes(entry),
@@ -266,7 +266,16 @@ var $f = $f || {};
             return;
         }
 
-        let randomQuestion = pickRandomEligibleQuestion();
+        let randomQuestion;
+        // For enemies that got hit use already known words if possible
+        if (event.hit) {
+            const minScore = 1;
+            randomQuestion = pickRandomEligibleQuestion(minScore);
+        }
+        if (!randomQuestion) {
+            randomQuestion = pickRandomEligibleQuestion();
+        }
+
         while (!randomQuestion) {
             quizLevel++;
             randomQuestion = pickRandomEligibleQuestion();
