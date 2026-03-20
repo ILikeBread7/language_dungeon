@@ -18,5 +18,3 @@ dev/parsers/example_texts
 dev/parsers/wordlists
 dev/parsers/wiktionary
 dev/parsers/unimorph
-dev/parsers/translations
-js/plugins/data

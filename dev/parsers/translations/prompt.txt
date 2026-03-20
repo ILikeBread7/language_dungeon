@@ -1,0 +1,20 @@
+I have a list of most frequent Indonesian words, intended for studying.
+I want you to include short translations in English and Japanese for each of the words.
+In English, if it's a verb in plain form, use the "to [verb]" form to avoid confusion.
+If it's in imperative form, or any other form, write the translation in the corresponding form, so no "to" for imperative, but do clarify anyway what form it's in for verbs not in the base form.
+In cases the translation would be ambiguous, disambiguate with another translation or a short explanation.
+If there are two or more words with the same translation also try to disambiguate them, if possible, by adding information about formality level or any other nuance that differentiates them.
+If any words depend on context also add that information.
+When adding multiple variations for tranlations use the slash / character to separate them.
+Don't refer to other Indonesian words in the explanations, they're going to be used for a quiz.
+For example: pindah to move (residence) 引っ越す menyewa to rent 借りる（賃貸する）Also, of there are any non-Indonesian words, please remove them (but do keep interjections, and loan-words if they're not spelled exactly the same an in English) and add them at the end, example:
+Indonesian word 1
+non-Indonesian word
+Indonesian word 2
+
+Indonesian word 1 ...explanation...
+Indonesian word 2 ...explanation...
+---
+non-Indonesian word
+
+Show the results in a table for easy copying.

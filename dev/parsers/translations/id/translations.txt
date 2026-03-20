@@ -1,0 +1,3000 @@
+aku	I (informal)	私（カジュアル）
+kau	you (informal / poetic)	あなた（古風・親しい）
+yang	which / that (relative marker)	〜の／関係代名詞
+tidak	not (general negation)	〜ない（否定）
+ini	this	これ
+itu	that	それ／あれ
+dan	and	そして
+dia	he / she (no gender distinction)	彼／彼女
+di	in / at / on (location preposition)	〜で／〜に
+akan	will (future marker)	〜するだろう
+apa	what	何
+kita	we (inclusive)	私たち（聞き手含む）
+untuk	for / to (purpose)	〜のために
+bisa	can / to be able to	できる
+ada	to exist / there is	ある／いる
+tak	not (informal / poetic negation)	〜ない（口語・詩的）
+mereka	they	彼ら
+anda	you (formal)	あなた（丁寧）
+tahu	to know (a fact)	知る
+dengan	with / by	〜と／〜で
+saya	I (formal)	私（丁寧）
+dari	from	〜から
+ya	yes	はい
+tapi	but	しかし
+kami	we (exclusive)	私たち（聞き手含まない）
+ke	to / toward	〜へ
+harus	must / have to	〜しなければならない
+sudah	already	すでに
+kamu	you (informal)	君／あなた（カジュアル）
+adalah	to be (formal equative)	である（形式的）
+orang	person	人
+saja	just / only	だけ
+seperti	like / as	〜のように
+ingin	to want (formal)	望む
+jika	if (formal)	もし〜なら
+pergi	to go	行く
+hanya	only	だけ
+semua	all / everything	すべて
+sekarang	now	今
+sini	here (near speaker)	ここ
+jadi	so / therefore / to become	だから／〜になる
+dalam	in / inside	〜の中で
+bukan	not (for nouns)	〜ではない
+baik	good / well	良い
+bagaimana	how	どうやって
+jangan	don't (imperative negation)	〜するな
+lagi	again / more	また／さらに
+punya	to have (informal)	持っている
+lebih	more	もっと
+oh	oh (interjection)	ああ
+pada	at / on (time / formal)	〜に（時間・形式的）
+mungkin	maybe / perhaps	たぶん
+kalian	you all (informal plural)	君たち
+lakukan	do (imperative)	しろ（命令形）
+karena	because	なぜなら
+sangat	very	とても
+satu	one	一つ
+juga	also / too	〜も
+apakah	question marker (formal)	〜か（疑問）
+mau	to want (informal)	欲しい／〜したい（カジュアル）
+pernah	ever (experience)	〜したことがある
+siapa	who	誰
+telah	already (formal)	すでに（形式的）
+ayo	let’s (invitation)	さあ〜しよう
+hal	thing / matter (formal)	事柄
+saat	when / moment	時
+kenapa	why (informal)	なぜ／どうして
+hari	day	日
+kembali	to return	戻る
+atau	or	または
+datang	to come	来る
+begitu	like that / so	そのように
+sesuatu	something	何か
+banyak	many / much	多い
+benar	correct / true	正しい
+kasih	to give (informal)	与える（カジュアル）
+menjadi	to become	〜になる
+melihat	to see	見る
+terjadi	to happen	起こる
+melakukan	to do / perform	行う
+terima	to receive (root / imperative-like)	受け取る
+tentang	about	〜について
+lihat	to see / look (imperative / root)	見ろ／見る
+seorang	a / an (classifier for person)	一人の
+bahwa	that (clause marker)	〜ということ
+kalau	if / when (informal)	もし〜なら（口語）
+hei	hey (interjection)	ねえ
+bagus	good / great (casual)	いいね／素晴らしい
+bilang	to say / tell (informal)	言う（カジュアル）
+masih	still	まだ
+oke	okay (loanword)	オーケー
+lain	other / another	他の
+sana	there (far from speaker)	あそこ
+waktu	time	時間
+baiklah	alright / okay then	よし／分かった
+tempat	place	場所
+mana	which / where (context-dependent)	どれ／どこ
+keluar	to go out / exit	出る
+lalu	then / after that	それから
+malam	night	夜
+maaf	sorry / excuse me	ごめんなさい／すみません
+membuat	to make / create	作る
+mati	to die / dead	死ぬ／死んだ
+sedang	currently / in progress	〜しているところ
+memiliki	to have / possess (formal)	所有する
+tahun	year	年
+sekali	once / very	一度／とても（強調）
+sampai	until / to arrive	〜まで／到着する
+anak	child	子供
+baru	new / just	新しい／ちょうど〜した
+dapat	to get / able to	得る／できる
+beberapa	some / several	いくつかの
+ayah	father	父
+sendiri	self / alone	自分自身／一人で
+katakan	say (imperative / formal)	言いなさい（命令）
+hidup	to live / life	生きる／人生
+mengapa	why (formal)	なぜ
+sebuah	a / an (classifier for things)	一つの
+perlu	need / necessary	必要である
+kan	right? / isn't it? (particle)	〜だよね
+sama	same / with (informal)	同じ／〜と（口語）
+tunggu	wait (imperative / root)	待て／待つ
+salah	wrong / mistake	間違い
+semuanya	everything / all	すべて
+rumah	house / home	家
+mengatakan	to say / state	述べる
+ia	he / she (formal / literary)	彼／彼女（文語）
+ketika	when (formal)	〜のとき
+masuk	to enter / go in	入る
+cepat	fast / quick	速い
+dengar	hear / listen (root / imperative)	聞け／聞く
+besar	big	大きい
+padaku	to me (object form)	私に
+disini	here (location)	ここに
+pikir	think (root)	考える
+pasti	definitely / sure	確かに
+ibu	mother	母
+masalah	problem	問題
+benar-benar	really / truly	本当に
+belum	not yet	まだ〜ない
+pak	sir / Mr. (informal respectful)	〜さん（男性）
+bicara	to talk / speak	話す
+dua	two	二つ
+tentu	of course	certainly	もちろん
+selamat	congratulations / safe	おめでとう／無事な
+cukup	enough	十分
+selalu	always	いつも
+tuhan	God	神
+suka	to like	好き
+seseorang	someone	誰か
+melakukannya	to do it	それをする
+pria	man (adult male)	男性
+setelah	after	〜の後で
+mengerti	to understand	理解する
+baik-baik	carefully / properly	ちゃんと
+tolong	please / help	お願いします／助けて
+dimana	where	どこ
+bahkan	even	〜さえ
+apa-apa	anything (negative context)	何も（否定文）
+berada	to be located / exist	存在する／いる
+menemukan	to find	見つける
+sedikit	a little	少し
+bertemu	to meet	会う
+mendapatkan	to obtain / get	得る
+percaya	to believe	信じる
+oleh	by (passive marker)	〜によって
+makan	to eat	食べる
+lama	long / old (time)	長い（時間）
+atas	on / above	〜の上に
+tinggal	to stay / live	住む／滞在する
+bekerja	to work	働く
+terlalu	too / excessively	〜すぎる
+wanita	woman (adult)	女性
+sebagai	as / role	〜として
+sayang	love / dear / pity	愛／残念
+kali	time (occurrence)	回
+tetap	stay / remain	留まる
+yakin	sure / confident	確信している
+cara	way / method	方法
+berhenti	to stop	止まる／やめる
+jalan	road / walk	道／歩く
+setiap	every	毎〜
+berpikir	to think (formal)	考える
+mulai	to begin	始める
+dunia	world	世界
+mari	let's (formal invitation)	さあ〜しましょう
+membunuh	to kill	殺す
+selama	during / for (duration)	〜の間
+luar	outside	外
+kecil	small	小さい
+pertama	first	最初
+sebelum	before	〜の前に
+diri	self	自己
+bersama	together	一緒に
+mengambil	to take	取る
+boleh	may / allowed to	〜してもよい
+merasa	to feel	感じる
+mencari	to search / look for	探す
+uang	money	お金
+apapun	anything	何でも
+senang	happy / glad	嬉しい
+butuh	to need (informal)	必要とする（口語）
+kurasa	I think (informal)	〜と思う
+ayolah	come on (encouragement)	さあ（促し）
+teman	friend	友達
+sebenarnya	actually	実は
+mencoba	to try	試す
+gadis	girl	少女
+dulu	before / used to	以前
+tanpa	without	〜なしで
+jam	hour / clock	時間／時計
+takkan	will not (future negation)	〜しないだろう
+buruk	bad	悪い
+para	(plural marker formal)	〜たち（形式的）
+polisi	police	警察
+membawa	to bring	持ってくる
+berapa	how many / how much	いくつ
+orang-orang	people (plural)	人々
+itulah	that is	それが〜だ
+ingat	to remember	覚えている
+kemudian	then / afterwards	その後
+siap	ready	準備ができている
+biarkan	let (imperative)	〜させておけ
+maksudku	I mean	つまり
+terus	continue / keep	続ける
+gila	crazy	狂っている
+tuan	sir (formal)	旦那様／〜さん
+sakit	sick / pain	病気／痛い
+tidur	to sleep	眠る
+pulang	to go home	帰る
+segera	immediately	すぐに
+seharusnya	should	〜すべき
+kepada	to (formal recipient)	〜に（形式的）
+memang	indeed	確かに
+takut	afraid	怖い
+dirimu	yourself	あなた自身
+halo	hello	こんにちは
+terlihat	to be seen / appear	見える
+nama	name	名前
+sial	damn (mild swear)	ちくしょう
+berbicara	to speak (formal)	話す
+minta	to ask / request	頼む
+kota	city	都市
+mobil	car	車
+membantu	to help	助ける
+terakhir	last / final	最後
+biasa	usual / ordinary	普通
+cinta	love	愛
+depan	front	前
+sepertinya	it seems	〜のようだ
+sebentar	a moment	ちょっと
+rasa	feeling / taste	感情／味
+bagian	part	部分
+bodoh	stupid	愚か
+sialan	damn it (stronger)	くそっ
+manusia	human	人間
+tiga	three	三つ
+berhasil	to succeed	成功する
+sungguh	truly / really	本当に
+mendengar	to hear	聞く
+tepat	exact / right	正確な
+bawah	below	下
+berikan	give (imperative)	与えろ
+ambil	take (imperative / root)	取れ
+pagi	morning	朝
+air	water	水
+keluarga	family	家族
+bawa	bring (root / imperative)	持って来い／持ってくる
+kehilangan	to lose	失う
+maafkan	forgive (imperative)	許して
+nanti	later	後で
+bagi	for / share	〜のために／分ける
+tangan	hand	手
+hebat	great / amazing	すごい
+menunggu	to wait	待つ
+ikut	to join / follow	参加する／従う
+masa	time / period	時代
+jauh	far	遠い
+pekerjaan	job / work	仕事
+ah	ah (interjection)	ああ
+berdua	two people together	二人で
+paling	most / superlative	最も
+peduli	to care	気にする
+aneh	strange	変な
+anak-anak	children	子供たち
+penting	important	重要
+tadi	earlier (today)	さっき
+si	(informal article)	その〜（口語）
+selesai	finished	終わった
+seluruh	entire	全体の
+ok	okay	オーケー
+meninggalkan	to leave behind	残して去る
+cuma	only (informal)	ただ〜だけ
+suatu	a certain	ある〜
+terbaik	best	最高
+khawatir	worried	心配している
+tua	old	古い／年を取った
+memberikan	to give (formal)	与える
+tenang	calm	落ち着いた
+hentikan	stop (imperative)	やめろ
+disana	there (far)	あそこに
+bisakah	can you? (question)	できますか
+coba	try (imperative)	試してみて
+uh	uh (interjection)	えーと
+menit	minute	分
+sekolah	school	学校
+duduk	to sit	座る
+sebelumnya	before / previously	以前に
+secara	in a manner (formal)	〜において
+maka	therefore (formal)	それゆえ
+besok	tomorrow	明日
+minum	to drink	飲む
+berarti	to mean	意味する
+bulan	month / moon	月
+bergerak	to move (physically)	動く
+sejak	since	〜以来
+hampir	almost	ほとんど
+kemari	come here (direction)	こちらへ
+kepala	head	頭
+astaga	oh my god	なんてことだ
+tetapi	but (formal)	しかし
+soal	matter / about	件／問題
+maksudmu	you mean	あなたの意味は
+menggunakan	to use	使う
+tau	know (informal)	知っている（口語）
+diam	silent / stay still	黙る／静か
+aman	safe	安全
+berjalan	to walk	歩く
+buat	make / do (informal)	作る（口語）
+sulit	difficult	難しい
+senjata	weapon	武器
+iya	yes (informal)	うん
+inginkan	to want (imperative / formal)	望め
+kapan	when	いつ
+sekitar	around / about	周り／約
+pintu	door	ドア
+nak	kid / child (address)	坊や／子供
+ayahku	my father	私の父
+memberi	to give	与える
+hati	heart	心
+kesempatan	opportunity / chance	機会
+nah	well / now	さて
+bermain	to play	遊ぶ
+cari	to look for (imperative / root)	探せ／探す
+dekat	near	近い
+mendapat	to get / receive	得る／受け取る
+bukankah	isn't it? / aren't they? (question)	〜ではないか
+jelas	clear / obvious	明らか
+nya	his / her / its (possessive)	彼の／彼女の
+tim	team	チーム
+dengannya	with him / her	彼／彼女と一緒に
+mudah	easy	簡単
+akhirnya	finally / eventually	ついに
+jatuh	to fall	落ちる
+kumohon	I beg	お願いします
+denganku	with me	私と一緒に
+agar	so that / in order to	〜するように
+benarkah	is it true? (question)	本当ですか
+berakhir	to end / finish	終わる
+ayahmu	your father	あなたの父
+memberitahu	to tell / inform	知らせる
+alasan	reason	理由
+menarik	interesting / attractive	面白い／魅力的
+cantik	beautiful	美しい
+kawan	friend / comrade	友達
+berubah	to change	変わる
+kupikir	I think	私は思う
+satu-satunya	the only one	唯一の
+keras	hard / strong	硬い／強い
+mata	eye	目
+dokter	doctor	医者
+lainnya	other / remaining	他の／残りの
+beritahu	tell (imperative)	言え
+kemana	to where?	どこへ
+serius	serious	真剣
+kuat	strong	強い
+bertanya	to ask	質問する
+minggu	week	週
+meminta	to ask / request	頼む
+membuatku	makes me (causal)	私を〜させる
+kerja	work / job	仕事
+bunuh	to kill (imperative)	殺せ
+pergilah	go (imperative)	行け
+kehidupan	life	人生
+berbeda	different	異なる
+berharap	to hope	望む
+bangun	to wake up / get up	起きる
+indah	beautiful	美しい
+menurutmu	in your opinion	あなたの意見では
+beri	give (imperative)	与えろ
+menyelamatkan	to save / rescue	救う
+kata	word	言葉
+hilang	to disappear / lose	失う／消える
+kabar	news	ニュース
+darah	blood	血
+dengarkan	listen (imperative)	聞け
+kamar	room	部屋
+lari	to run	走る
+kulakukan	I do (informal)	私がする
+berkata	to say	speak	言う
+menyenangkan	fun / enjoyable	楽しい
+dilakukan	to be done / performed	行われる
+kosong	empty	空
+belakang	back / rear	後ろ
+raja	king	王
+dasar	basic / fundamental	基本
+bajingan	bastard / jerk	くそ野郎
+biar	let (causal)	〜させる
+makanan	food	食べ物
+bantuan	help / assistance	助け
+dapatkan	get / obtain (imperative / root)	手に入れろ／得る
+meninggal	to die / pass away	亡くなる
+ruang	room / space	部屋／空間
+demi	for the sake of	〜のために
+kedua	second	二番目
+kekuatan	power / strength	力
+marah	angry	怒っている
+membiarkan	to let / allow	〜させる
+lepaskan	release (imperative)	放せ
+daripada	rather than	〜よりも
+buku	book	本
+menikah	to marry	結婚する
+berusaha	to try / strive	努力する
+diriku	myself	私自身
+rencana	plan	計画
+telepon	phone / call	電話／電話する
+kasus	case	事件／ケース
+perang	war	戦争
+pertanyaan	question	質問
+kapal	ship	船
+belajar	to study	勉強する
+suara	voice / sound	声／音
+lupa	to forget	忘れる
+muda	young	若い
+pikirkan	to think (imperative)	考えろ
+perjalanan	journey / trip	旅
+menuju	to go toward	向かう
+cerita	story	物語
+permisi	excuse me / pardon	すみません
+naik	to go up / ride	上がる／乗る
+langsung	directly / immediately	直接／すぐに
+membutuhkan	to need	必要とする
+tinggi	tall / high	高い
+kaki	foot / leg	足
+penuh	full	満杯
+sendirian	alone / by oneself	一人で
+negara	country / nation	国
+lima	five	五
+kematian	death	死
+anjing	dog	犬
+berdiri	to stand	立つ
+kecuali	except	〜を除いて
+kira	to guess / think	推測する／思う
+kapten	captain	船長／キャプテン
+rahasia	secret	秘密
+menang	to win	勝つ
+silakan	please / go ahead	どうぞ
+tanah	land / soil	土地
+bicarakan	talk about (imperative)	話せ
+lucu	funny	面白い
+buka	to open	開ける
+menunjukkan	to show	示す
+dirinya	himself / herself	彼／彼女自身
+agen	agent	代理人
+melalui	through / by	〜を通して
+rasanya	feels / tastes like	〜のように感じる
+sepanjang	along	〜に沿って
+akhir	end	終わり
+bu	madam / mother (informal)	奥様／母さん
+artinya	meaning / is	意味は
+pilihan	choice / option	選択
+nona	miss / young lady	お嬢さん
+terlambat	late	遅い
+pesta	party	パーティー
+mulia	noble / honorable	高貴／立派
+untukku	for me	私のために
+temukan	find (imperative / root)	見つけろ
+semakin	increasingly	ますます
+membunuhnya	to kill him / her	彼／彼女を殺す
+menurutku	in my opinion	私の意見では
+yah	yeah / yes (informal)	うん
+pun	also / even (emphasis particle, context-dependent)	～も / ～さえ
+padanya	to him / her	彼に／彼女に
+hai	hi (greeting)	やあ
+untukmu	for you	あなたのために
+melihatnya	to see it / him / her	それを見る／彼・彼女を見る
+amerika	America	アメリカ
+lihatlah	look! (imperative, emphasis)	見て！
+ibumu	your mother	あなたの母
+paham	to understand	理解する
+antara	between / among	～の間
+turun	to go down / descend	下がる
+ibuku	my mother	私の母
+namanya	his / her name / its name	彼・彼女の名前
+menerima	to receive	受け取る
+melawan	to fight / oppose	戦う／反対する
+membuatmu	to make you (do something)	あなたに～させる
+membuatnya	to make it / him / her	それ／彼・彼女に～させる
+bung	bro / man (informal address)	おい／兄弟
+kesalahan	mistake / error	間違い
+silahkan	please (polite invitation)	どうぞ
+lewat	to pass / go through	通る
+mencintaimu	to love you (romantic)	あなたを愛している
+sementara	while / temporary	～の間／一時的
+nomor	number	番号
+api	fire	火
+memilih	to choose	選ぶ
+pesawat	airplane	飛行機
+guru	teacher	先生
+bahagia	happy	幸せ
+waktunya	the time (has come) / its time	時間だ
+film	film / movie	映画
+tiba	to arrive	到着する
+bantu	help! (imperative) / to help	助ける／助けて
+melihatmu	to see you	あなたを見る
+panas	hot (temperature)	暑い
+bumi	earth	地球
+memakai	to wear / use	身につける／使う
+kubilang	I said (informal)	私が言った
+menemukannya	to find it	それを見つける
+segalanya	everything	すべて
+setidaknya	at least	少なくとも
+keren	cool (slang)	かっこいい
+jawab	answer! (imperative) / answer	答える／答えろ
+hidupku	my life	私の人生
+pesan	message / order	メッセージ／注文
+bertahan	to survive / endure	生き残る／耐える
+bayi	baby	赤ちゃん
+bahasa	language	言語
+kantor	office	事務所
+putri	daughter / princess	娘／王女
+empat	four	四
+tinggalkan	leave! (imperative)	去れ
+muncul	to appear	現れる
+omong	to talk (informal)	話す
+kenal	to know (personally)	知り合う
+perusahaan	company	会社
+awal	beginning	始まり
+anakku	my child	私の子供
+penjara	prison	刑務所
+setuju	to agree	同意する
+nyata	real	現実の
+sempurna	perfect	完璧
+semoga	hopefully	どうか
+janji	promise	約束
+bercanda	to joke	冗談を言う
+tampak	to seem / appear	見える
+pembunuh	murderer	殺人者
+siapapun	anyone	誰でも
+menghancurkan	to destroy	破壊する
+kesini	to here	ここへ
+membayar	to pay	支払う
+surat	letter	手紙
+kelas	class	授業
+beruntung	lucky	幸運な
+laki-laki	man / male	男性
+tampaknya	it seems	～のようだ
+ulang	repeat! / to repeat	繰り返す
+jumpa	meet	会う
+sebaiknya	should / better to	～したほうがいい
+menembak	to shoot	撃つ
+namun	however	しかし
+brengsek	bastard / damn (insult)	くそ野郎
+permainan	game	ゲーム
+bila	if (formal)	もし
+hal-hal	things (plural)	物事
+menjaga	to guard / take care	守る
+tahan	hold! / endure	耐える／持つ
+sering	often	よく
+tutup	close! / to close	閉める
+sang	the (honorific / classical)	～様
+pembunuhan	murder (act)	殺人
+perintah	order / command	命令
+semacam	kind of	～のような
+jahat	evil	悪い
+hubungan	relationship	関係
+terbang	to fly	飛ぶ
+dingin	cold	寒い
+mendapatkannya	to get it	それを得る
+berikutnya	next	次の
+mengetahui	to know (information)	知る
+pasukan	troops	部隊
+hati-hati	careful!	気をつけて
+laut	sea	海
+meskipun	although	～にもかかわらず
+sehingga	so that / therefore	そのため
+membawanya	to bring it	それを持ってくる
+sebabnya	the reason	理由
+perempuan	woman	女性
+segala	all / every	すべて
+menangkap	to catch	捕まえる
+harusnya	should (expectation)	～すべきだった
+kurang	less / lacking	足りない
+tanda	sign	印
+membeli	to buy	買う
+mundur	to retreat	後退する
+berbohong	to lie	嘘をつく
+mesin	machine	機械
+barang	item / goods	物
+berita	news	ニュース
+begini	like this	このように
+bukti	proof	証拠
+mimpi	dream	夢
+bisnis	business	ビジネス
+bukanlah	is not (emphatic)	～ではない
+menangis	to cry	泣く
+tembak	shoot!	撃て
+menulis	to write	書く
+menelepon	to call (phone)	電話する
+berbahaya	dangerous	危険
+kukatakan	I said (emphasis)	私が言った
+pikiran	thought / mind	考え
+mencuri	to steal	盗む
+terluka	injured	傷ついた
+tersebut	that (formal reference)	その
+pakai	use! / to use	使う
+berani	brave	勇敢
+agak	rather / somewhat	やや
+awak	crew / body (context-dependent)	乗組員／体
+melindungi	to protect	守る
+benda	object	物体
+membaca	to read	読む
+setengah	half	半分
+dariku	from me	私から
+hitam	black	黒
+musim	season	季節
+enak	tasty / pleasant	おいしい
+lagu	song	歌
+kemarin	yesterday	昨日
+tubuh	body	体
+siang	day / noon	昼
+memikirkan	to think about	考える
+inilah	this is (emphatic)	これが
+bersalah	guilty	有罪
+mengirim	to send	送る
+mengenai	about / concerning	～について
+namaku	my name	私の名前
+memutuskan	to decide	決める
+mengubah	to change	変える
+saling	each other	お互いに
+harap	hope / please (formal)	願う／どうか
+paman	uncle	おじ
+hingga	until	～まで
+mendengarkan	to listen	聞く
+selamanya	forever	永遠に
+terhadap	toward / against	～に対して
+saudara	sibling / relative (formal)	兄弟／親族
+hukum	law	法律
+menghilang	to disappear	消える
+tugas	task	任務
+betapa	how (exclamation)	なんと
+lupakan	forget!	忘れろ
+obat	medicine	薬
+hadiah	gift	贈り物
+manis	sweet	甘い
+sebelah	side	側
+bagiku	for me	私にとって
+merasakan	to feel	感じる
+menghabiskan	to spend / finish	使い果たす
+informasi	information	情報
+selain	besides	～以外
+sisi	side	側面
+kunci	key	鍵
+bebas	free	自由
+juta	million	百万
+istri	wife	妻
+menyukai	to like	好む
+mengikuti	to follow	従う
+keadaan	situation	状況
+milik	belonging to	～のもの
+pernikahan	marriage	結婚
+saatnya	it's time	時間だ
+kukira	I thought	私は思った
+menyukainya	to like it	それが好き
+entahlah	I don't know	さあ
+kesana	to there	あそこへ
+bersama-sama	together	一緒に
+benci	to hate	嫌う
+kakak	older sibling	兄／姉
+mengerikan	terrifying	恐ろしい
+pindah	to move (residence)	引っ越す
+berat	heavy	重い
+sadar	aware	気づいている
+merah	red	赤
+pribadi	personal	個人的
+arah	direction	方向
+temanku	my friend	私の友達
+menyesal	to regret	後悔する
+korban	victim	被害者
+wajah	face	顔
+membuka	to open	開ける
+enam	six	六
+presiden	president	大統領
+inggris	England / English	イギリス
+bergabung	to join	参加する
+lantai	floor	床
+udara	air	空気
+melewati	to pass through	通り過ぎる
+anggota	member	メンバー
+batu	stone	石
+gunakan	use! (imperative)	使え
+mengalami	to experience	経験する
+jujur	honest	正直
+pintar	smart	賢い
+sistem	system	システム
+putih	white	白
+sibuk	busy	忙しい
+menghentikan	to stop	止める
+memeriksa	to check	確認する
+dimulai	to begin (passive)	始まる
+berjanji	to promise	約束する
+bola	ball	ボール
+biasanya	usually	普通は
+nyonya	madam	夫人
+keamanan	security	安全
+mampu	able	できる
+bintang	star	星
+gagal	to fail	失敗する
+panjang	long	長い
+dolar	dollar	ドル
+bos	boss	上司
+musik	music	音楽
+panggil	call!	呼べ
+kereta	train	列車
+menyerah	to give up	諦める
+serangan	attack	攻撃
+musuh	enemy	敵
+mohon	please (formal request)	お願いします
+menyerang	to attack	攻撃する
+tanganmu	your hand	あなたの手
+pakaian	clothes	服
+foto	photo	写真
+membunuhmu	to kill you	あなたを殺す
+akal	sense / reason	理性
+kartu	card	カード
+mencintai	to love	愛する
+perasaan	feeling	感情
+tentara	soldier	兵士
+jenis	type	種類
+acara	event	イベント
+seberapa	how much	どれくらい
+matahari	sun	太陽
+mandi	to bathe	入浴する
+mempunyai	to have	持つ
+toko	shop	店
+membantumu	to help you	あなたを助ける
+maksud	meaning / intention	意味
+tunjukkan	show!	見せろ
+kuharap	I hope	私は願う
+petugas	officer	職員
+kecelakaan	accident	事故
+ruangan	room	部屋
+teman-teman	friends (plural)	友達たち
+memanggil	to call	呼ぶ
+makhluk	creature	生き物
+kabur	to escape	逃げる
+ternyata	it turns out	実は
+memulai	to start	始める
+tengah	middle	中央
+detik	second	秒
+terbuka	open (state)	開いている
+menurut	according to	～によると
+kulihat	I saw	私は見た
+kini	now	今
+hantu	ghost	幽霊
+jaga	guard! / to guard	守る
+cocok	suitable	合う
+tertawa	to laugh	笑う
+posisi	position	位置
+namamu	your name	あなたの名前
+selanjutnya	next	次に
+mengatakannya	to say it	それを言う
+keberatan	objection	異議
+mabuk	drunk	酔った
+tertarik	interested	興味がある
+catatan	note	メモ
+tujuan	goal	目的
+kanan	right (direction)	右
+kalah	to lose	負ける
+neraka	hell	地獄
+pukul	hit! / o'clock	打つ／～時
+planet	planet	惑星
+menyelesaikan	to finish	完了する
+khusus	special	特別
+panggilan	call	呼び出し
+masalahnya	the problem	問題
+hanyalah	only / merely	ただ～だけ
+periksa	check!	確認しろ
+hutan	forest	森
+ditemukan	found (passive)	見つかった
+menonton	to watch	見る
+utara	north	北
+utama	main	主な
+kamera	camera	カメラ
+memberitahumu	to tell you	あなたに伝える
+burung	bird	鳥
+dewa	god	神
+ayahnya	his / her father	父
+gak	no / not (informal)	～じゃない
+cahaya	light	光
+entah	who knows	さあ
+pantas	deserve	値する
+disebut	called (passive)	呼ばれる
+menginginkan	to want	欲しがる
+pahlawan	hero	英雄
+terlibat	involved	関与している
+operasi	operation	作戦／手術
+situasi	situation	状況
+melarikan	to run away (cause)	逃がす
+gambar	picture	画像
+kejahatan	crime	犯罪
+misi	mission	任務
+percayalah	believe me!	信じて
+perhatian	attention	注意
+gue	I / me (very informal slang)	俺
+membunuhku	to kill me	私を殺す
+kiri	left (direction)	左
+kalinya	the time / occurrence (nth time)	回（～回目）
+ketakutan	fear / being afraid (state)	恐怖／怖がっている状態
+menjual	to sell	売る
+kotak	box	箱
+terdengar	to be heard (passive)	聞こえる
+kuda	horse	馬
+berguna	useful	役に立つ
+sejauh	as far as / to the extent	～の範囲で
+pintunya	the door (possessive / contextual)	そのドア
+alam	nature	自然
+kemarilah	come here (imperative)	ここに来て
+mengganggu	to disturb	邪魔する
+pistol	pistol	ピストル
+sepertimu	like you	あなたのように
+ikuti	follow (imperative)	従え
+bahaya	danger	危険
+hubungi	contact (imperative)	連絡しろ
+hidupmu	your life	あなたの人生
+nenek	grandmother	祖母
+gelap	dark	暗い
+menyadari	to realize	気づく
+ahli	expert	専門家
+main	to play (informal / base)	遊ぶ
+kopi	coffee	コーヒー
+merupakan	to be / to constitute (formal)	～である
+memberimu	to give you	あなたに与える
+ratu	queen	女王
+kemungkinan	possibility	可能性
+bersamamu	with you	あなたと一緒に
+diterjemahkan	to be translated (passive)	翻訳される
+kejadian	incident / event	出来事
+laporan	report	報告
+balik	to return / back	戻る
+detektif	detective	探偵
+daftar	list / register	リスト
+es	ice	氷
+sejarah	history	歴史
+nyaman	comfortable	快適
+daging	meat	肉
+keputusan	decision	決定
+caranya	the way / method	方法
+ceritakan	tell (imperative)	話せ
+bernama	named / called	～という名前の
+istirahat	rest	休む／休憩
+layak	worthy / appropriate	値する／適切
+pertemuan	meeting	会議
+penjaga	guard	警備員
+alat	tool / device	道具
+kulit	skin	肌
+sesuai	appropriate / in accordance	適合する
+kebenaran	truth	真実
+persetan	damn it (vulgar)	くそっ
+temanmu	your friend	あなたの友達
+tiba-tiba	suddenly	突然
+penyihir	wizard	魔法使い
+sampah	trash	ゴミ
+bersumpah	to swear (oath)	誓う
+menghubungi	to contact	連絡する
+hak	right (legal / moral)	権利
+pemerintah	government	政府
+mendengarnya	to hear it	それを聞く
+darimu	from you	あなたから
+memastikan	to ensure	確認する
+lapar	hungry	空腹
+bohong	lie	嘘
+tanya	to ask	尋ねる
+bunga	flower / interest (context)	花／利息
+menjelaskan	to explain	説明する
+sih	particle (emphasis, informal)	～だよ（強調）
+emas	gold	金
+berasal	to originate	由来する
+malu	shy / embarrassed	恥ずかしい
+kaya	rich	金持ち
+dah	already (informal)	もう
+monster	monster	モンスター
+bersamaku	with me	私と一緒に
+mayat	corpse	死体
+minuman	drink	飲み物
+tangkap	catch (imperative / base)	捕まえろ
+bom	bomb	爆弾
+meja	table	テーブル
+pacar	boyfriend / girlfriend	恋人
+digunakan	to be used (passive)	使用される
+asing	foreign	外国の
+daerah	area	地域
+ikan	fish	魚
+angkat	lift / raise	持ち上げる
+pengacara	lawyer	弁護士
+milikku	mine	私のもの
+bau	smell (often bad)	匂い
+normal	normal	普通
+harapan	hope	希望
+ampun	mercy / oh my (exclamation)	慈悲／ああ
+butuhkan	need (imperative)	必要としろ
+bank	bank	銀行
+mengalahkan	to defeat	打ち負かす
+jiwa	soul	魂
+prajurit	soldier	兵士
+otak	brain	脳
+kabarmu	how are you (lit. your condition)	元気？
+miliki	to own (imperative / formal)	所有する
+menempatkan	to place	置く
+hotel	hotel	ホテル
+selatan	south	南
+lelah	tired	疲れた
+dapatkah	can you? (question form)	～できますか
+pohon	tree	木
+sebagian	part / some	一部
+menemui	to meet (someone)	会う
+apa-apaan	what the heck (informal)	何だよ
+berangkat	to depart	出発する
+pusat	center	中心
+tumbuh	to grow	成長する
+kerajaan	kingdom	王国
+dewasa	adult	大人
+maju	to advance / forward	前進する
+menjawab	to answer	答える
+menutup	to close	閉じる
+pastikan	make sure (imperative)	確認しろ
+ibunya	his / her mother	彼／彼女の母
+urusan	matter / business	用事
+diluar	outside	外で
+rusak	broken	壊れた
+lahir	to be born	生まれる
+terkenal	famous	有名
+latihan	practice	練習
+katanya	he / she said	～と言った
+tersisa	remaining	残っている
+tewas	to die (violent / formal)	死亡する
+tembakan	shot / gunshot	発砲
+keparat	bastard (insult)	くそ野郎
+gedung	building	建物
+istriku	my wife	私の妻
+luka	wound	傷
+kesepakatan	agreement	合意
+kelihatannya	it seems	～のようだ
+membangun	to build	建てる
+rambut	hair	髪
+jawaban	answer	答え
+hancur	destroyed	壊れた
+hasil	result	結果
+hatiku	my heart	私の心
+menari	to dance	踊る
+hewan	animal	動物
+berhubungan	to be related / to have relations	関係する
+lu	you (very informal)	お前
+bangga	proud	誇りに思う
+mengingat	to remember	思い出す
+uangnya	the money	そのお金
+memberitahuku	to tell me	私に知らせる
+baju	clothes	服
+kedengarannya	it sounds like	～のように聞こえる
+langkah	step	歩み
+bertanggung	to be responsible	責任を持つ
+tamu	guest	客
+tenanglah	calm down (imperative)	落ち着け
+bermaksud	to intend	意図する
+lubang	hole	穴
+memberiku	to give me	私に与える
+dibunuh	to be killed	殺される
+pelacur	prostitute	売春婦
+membantuku	to help me	私を助ける
+menolak	to refuse	拒否する
+maksudnya	meaning / intention	意味
+milikmu	yours	あなたのもの
+ooh	oh (interjection)	おお
+memukul	to hit	打つ
+pangeran	prince	王子
+membawamu	to bring you	あなたを連れていく
+bagimu	for you	あなたのために
+dikatakan	to be said	言われる
+peluru	bullet	弾丸
+mengenal	to know (be acquainted)	知り合う
+berharga	valuable	価値がある
+binatang	animal (less formal)	動物
+menyimpan	to store	保存する
+kacau	chaotic	混乱した
+pedang	sword	剣
+anakmu	your child	あなたの子供
+bertarung	to fight	戦う
+satunya	the other one	もう一つ
+iblis	devil	悪魔
+aturan	rule	ルール
+tarik	pull	引く
+penjahat	criminal	犯罪者
+sobat	buddy (informal)	友達
+kepadaku	to me	私に
+habis	finished	終わった
+berbuat	to do (formal nuance)	行う
+bertindak	to act	行動する
+tujuh	seven	七
+menderita	to suffer	苦しむ
+keluarkan	take out (imperative)	出せ
+adil	fair	公平
+putus	to break / decide	切れる／決める
+negeri	country (poetic / formal)	国
+bercinta	to make love	愛し合う
+membicarakan	to discuss	話し合う
+mengejar	to chase	追う
+lemah	weak	弱い
+semalam	last night	昨夜
+merusak	to damage	壊す
+sepatu	shoes	靴
+suami	husband	夫
+pemimpin	leader	指導者
+haruskah	should?	～すべきか
+terimakasih	thank you	ありがとう
+palsu	fake	偽物
+bahan	material	材料
+tiap	each	各
+tindakan	action	行動
+masuklah	come in (imperative)	入れ
+macam	kind / type	種類
+langit	sky	空
+bersembunyi	to hide	隠れる
+angin	wind	風
+menikmati	to enjoy	楽しむ
+mencapai	to achieve	達成する
+titik	point	点
+terserah	up to you	任せる
+lokasi	location	場所
+mama	mom	ママ
+pegang	hold	持つ
+pihak	side / party	側
+harga	price	価格
+mengira	to think / guess	推測する
+untuknya	for him / her	彼／彼女のために
+berteriak	to shout	叫ぶ
+terjebak	trapped	閉じ込められた
+sungai	river	川
+ganti	replace / change	変える
+sepuluh	ten	十
+pulau	island	島
+menahan	to hold back	抑える
+pengadilan	court	裁判所
+ketiga	third	三番目
+termasuk	included	含まれる
+sederhana	simple	簡単
+kepadamu	to you	あなたに
+memegang	to hold	持つ
+usah	don’t (imperative, informal)	～するな
+hubungannya	the relationship	関係
+perubahan	change	変化
+hujan	rain	雨
+tidakkah	isn’t it?	～ではないか
+kucing	cat	猫
+mirip	similar	似ている
+memotong	to cut	切る
+memahami	to understand	理解する
+tanganku	my hand	私の手
+berjuang	to struggle	奮闘する
+berterima	to receive (formal)	受け取る
+terasa	to feel (passive nuance)	感じられる
+dalamnya	its depth / inside	内部
+situ	there (informal)	そこ
+truk	truck	トラック
+tingkat	level	レベル
+rumahku	my house	私の家
+dendam	revenge	復讐
+militer	military	軍
+menghadapi	to face	直面する
+pantai	beach	海岸
+kue	cake	ケーキ
+keluargaku	my family	私の家族
+kode	code	コード
+saudaraku	my sibling	私の兄弟
+komputer	computer	コンピューター
+kudengar	I heard	聞いた
+sedih	sad	悲しい
+tas	bag	バッグ
+seekor	classifier for animals	～匹
+jantung	heart (organ)	心臓
+dinding	wall	壁
+mengambilnya	to take it	それを取る
+kelihatan	visible / seems	見える
+mengurus	to take care of	世話する
+matamu	your eyes	あなたの目
+mobilnya	his / her car	彼／彼女の車
+menyedihkan	sad (causing sadness)	悲惨な
+petunjuk	clue	手がかり
+warna	color	色
+sihir	magic	魔法
+bar	bar	バー
+kelompok	group	グループ
+minggir	move aside (imperative)	どけ
+hidupnya	his / her life	彼／彼女の人生
+mulut	mouth	口
+desa	village	村
+kursi	chair	椅子
+menyakiti	to hurt (emotionally / physically)	傷つける
+kisah	story	物語
+menyentuh	to touch	触れる
+nggak	no / not (informal)	ない（口語）
+pertandingan	match / competition	試合
+warga	citizen	市民
+maukah	would you?	～しますか
+jendela	window	窓
+lampu	lamp	ランプ／明かり
+bertahun-tahun	for years (duration)	何年も
+terbesar	biggest / largest (superlative)	最大の
+bersenang-senang	to have fun	楽しむ
+mengeluarkan	to take out / to produce	取り出す／生み出す
+gunung	mountain	山
+alih	to transfer / switch	移す／切り替える
+asli	original / genuine	本物の
+bibi	aunt	おば
+menyebabkan	to cause	引き起こす
+ketemu	to meet (informal)	会う（カジュアル）
+pisau	knife	ナイフ
+bersih	clean	きれいな
+garis	line	線
+menjalankan	to run / operate	運営する／動かす
+menakjubkan	amazing	驚くべき
+ketua	leader / chairman	リーダー／議長
+biru	blue	青
+dibuat	made (passive)	作られた
+awas	watch out (imperative)	気をつけろ
+melupakan	to forget	忘れる
+kakek	grandfather	祖父
+menangani	to handle / deal with	対処する
+kotor	dirty	汚い
+kata-kata	words	言葉
+konyol	silly / ridiculous	ばかげた
+seminggu	a week	一週間
+berlari	to run	走る
+cepatlah	hurry up (imperative)	早くしろ
+ho	oh (interjection)	おお
+bayangkan	imagine (imperative)	想像して
+menjauh	to move away	離れる
+jumlah	amount / total	数量
+sisa	remainder / leftover	残り
+cobalah	try (imperative)	試してみて
+adikku	my younger sibling	私の弟／妹
+bukannya	instead / rather (contrast)	むしろ
+klub	club	クラブ
+begitulah	that’s how it is	そういうものだ
+terbakar	burned / on fire	燃えた
+temui	meet (imperative / formal)	会いなさい
+kotoran	dirt / filth	汚れ
+natal	Christmas	クリスマス
+darurat	emergency	緊急
+tampan	handsome (male)	ハンサムな
+sehat	healthy	健康な
+beli	to buy (informal / base)	買う
+anaknya	his / her child	彼／彼女の子供
+aah	ah (interjection)	ああ
+utk	for (abbrev. “untuk”)	～のために
+perhatikan	pay attention (imperative)	注意して
+jepang	Japan	日本
+lanjutkan	continue (imperative)	続けて
+radio	radio	ラジオ
+terkejut	surprised	驚いた
+putriku	my daughter	私の娘
+pasangan	pair / couple	カップル
+putra	son (formal)	息子
+memberinya	to give him / her	彼／彼女に与える
+membersihkan	to clean	掃除する
+letakkan	put / place (imperative)	置いて
+kencan	date (romantic)	デート
+timur	east	東
+adik	younger sibling	弟／妹
+ayam	chicken	鶏
+barat	west	西
+allah	God (Islamic context)	アッラー
+kirim	to send (informal)	送る
+terbunuh	killed (passive)	殺された
+pemain	player	選手
+umum	general / public	一般の
+listrik	electricity	電気
+bayar	to pay	支払う
+betul	correct / true	正しい
+wah	wow	わあ
+terkadang	sometimes	時々
+gereja	church	教会
+melepaskan	to release / let go	解放する
+mengatur	to arrange / manage	管理する
+penyakit	disease	病気
+menakutkan	scary	怖い
+memperbaiki	to fix / repair	修理する
+menciptakan	to create	創造する
+supaya	so that	～するために
+selamatkan	save (imperative)	助けて
+fokus	focus	集中
+memimpin	to lead	導く
+tukang	worker / craftsman	職人
+persis	exactly	まさに
+didalam	inside	内部で
+teh	tea	お茶
+kehormatan	honor	名誉
+nyawa	life (soul / life force)	命
+santai	relaxed	リラックスした
+kemampuan	ability	能力
+sersan	sergeant	軍曹
+duduklah	sit down (imperative)	座りなさい
+bir	beer	ビール
+rendah	low	低い
+kejutan	surprise	驚き
+memenangkan	to win	勝つ
+surga	heaven	天国
+ketahui	know (imperative / formal)	知りなさい
+kebanyakan	most / too much	ほとんど／多すぎ
+tes	test	テスト
+jerman	Germany	ドイツ
+memakan	to eat (formal / active)	食べる
+permintaan	request	要求
+gigi	tooth	歯
+kadang-kadang	sometimes	時々
+lepas	to release / come off	外れる
+bersikap	to behave	振る舞う
+ma	mom (informal)	ママ
+kondisi	condition	状態
+jin	spirit / genie	精霊
+rekaman	recording	録音
+menyembunyikan	to hide	隠す
+darimana	from where	どこから
+telpon	phone / call	電話
+mantan	ex- (former partner)	元～
+idiot	idiot	バカ
+setan	devil	悪魔
+kebetulan	coincidence	偶然
+malah	instead / unexpectedly	むしろ
+bentuk	form / shape	形
+saksi	witness	証人
+masyarakat	society	社会
+halaman	page / yard (context)	ページ／庭
+suruh	to tell / order	命じる
+gunanya	its use	役に立つこと
+pertempuran	battle	戦い
+lelaki	man	男
+kegelapan	darkness	暗闇
+target	target	目標
+melihatku	to see me	私を見る
+jenderal	general	将軍
+tulang	bone	骨
+buang	to throw away	捨てる
+membuktikan	to prove	証明する
+kepadanya	to him / her	彼／彼女に
+jelek	ugly / bad	醜い
+jalang	bitch / immoral woman (harsh)	ふしだらな女
+rusia	Russia	ロシア
+direktur	director	ディレクター
+india	India	インド
+bersamanya	with him / her	彼／彼女と
+jari	finger	指
+mengucapkan	to say / to express	言う
+diterima	accepted (passive)	受け入れられた
+delapan	eight	八
+anggap	to assume	仮定する
+letnan	lieutenant	中尉
+yesus	Jesus	イエス
+kasar	rough / rude	粗い／失礼な
+kena	to be hit / affected	当たる／影響を受ける
+babi	pig	豚
+istana	palace	宮殿
+tanggal	date (calendar)	日付
+bro	bro (informal)	兄弟（スラング）
+kesulitan	difficulty	困難
+stasiun	station	駅
+wilayah	region	地域
+selesaikan	finish (imperative)	終わらせて
+lelucon	joke	冗談
+ribu	thousand	千
+vampir	vampire	吸血鬼
+istrimu	your wife	あなたの妻
+yo	yo (interjection)	よ
+malaikat	angel	天使
+mengirimkan	to send (formal)	送る
+jalur	path / route	ルート
+menceritakan	to tell (a story)	語る
+mengetahuinya	to know it	それを知る
+parah	severe	深刻な
+naga	dragon	ドラゴン
+cerdas	smart	賢い
+rasakan	feel (imperative)	感じて
+sebut	to mention	言及する
+walaupun	although	～だけれども
+buah	fruit	果物
+keluargamu	your family	あなたの家族
+membuang	to throw away	捨てる
+berbagi	to share	共有する
+seksi	sexy	セクシー
+mencarinya	to look for it	それを探す
+kepalamu	your head	あなたの頭
+bagaimanapun	however / anyway	とにかく
+lapangan	field	フィールド
+tergantung	depends	～による
+ponsel	cellphone	携帯電話
+taman	park	公園
+celana	pants	ズボン
+salahku	my fault	私のせい
+energi	energy	エネルギー
+sore	afternoon	夕方
+kuno	ancient	古い
+melompat	to jump	跳ぶ
+seni	art	芸術
+jelaskan	explain (imperative)	説明して
+bakar	to burn	燃やす
+tersangka	suspect	容疑者
+tetaplah	stay (imperative)	留まれ
+dibawah	below	下に
+hormat	respect	尊敬
+duluan	first / ahead	先に
+berdoa	to pray	祈る
+menyebutnya	to call it	それを呼ぶ
+sejati	true / genuine	本物の
+narkoba	drugs (narcotics)	麻薬
+bersiap	to prepare	準備する
+pencuri	thief	泥棒
+menyerahkan	to hand over	引き渡す
+sumber	source	源
+akulah	it is I (emphatic)	私こそ
+pasien	patient	患者
+turunkan	lower (imperative)	下げて
+jarak	distance	距離
+data	data	データ
+baca	to read	読む
+menghentikannya	to stop it	それを止める
+lah	particle (emphasis)	強調語
+menghargai	to appreciate	感謝する
+darinya	from him / her	彼／彼女から
+unit	unit	単位
+program	program	プログラム
+bantuanmu	your help	あなたの助け
+pertunjukan	show / performance	公演
+berpura-pura	to pretend	ふりをする
+hakim	judge	裁判官
+papa	dad	パパ
+tempatnya	its place	その場所
+mulutmu	your mouth	あなたの口
+sentuh	to touch	触る
+kepalanya	his / her head	彼／彼女の頭
+biaya	cost	費用
+jalanan	street	通り
+cincin	ring	指輪
+setahun	a year	一年
+isi	content / fill	内容／満たす
+menelpon	to call (phone)	電話する
+kejam	cruel	残酷な
+pilih	to choose	選ぶ
+menangkapnya	to catch it / him / her	捕まえる
+mencium	to kiss / smell	キスする／嗅ぐ
+kang	bro (regional slang)	兄さん
+tekanan	pressure	圧力
+pelajaran	lesson	授業
+istrinya	his wife	彼の妻
+suci	holy	神聖な
+anggur	grapes / wine	ブドウ／ワイン
+keduanya	both of them	両方
+sepenuhnya	completely	完全に
+suamiku	my husband	私の夫
+dgn	with (abbrev. “dengan”)	～と
+sengaja	intentionally	わざと
+kenyataan	reality	現実
+mengawasi	to monitor	監視する
+diberikan	given (passive)	与えられた
+tikus	rat	ネズミ
+mustahil	impossible	不可能
+tahanan	prisoner	囚人
+tangannya	his / her hand	彼／彼女の手
+sudut	corner	角
+tangga	stairs / ladder	階段
+kembalikan	return (imperative)	返して
+badai	storm	嵐
+perahu	boat	ボート
+istimewa	special	特別な
+menyebalkan	annoying	うっとうしい
+semangat	spirit / enthusiasm	元気／やる気
+sinyal	signal	信号
+ledakan	explosion	爆発
+memilikinya	to have it / to possess it	それを持つ
+komandan	commander	指揮官
+hukuman	punishment	罰
+hamil	pregnant	妊娠している
+ditangkap	be arrested (passive)	逮捕される
+bersedia	willing / ready	用意がある／喜んで〜する
+memalukan	embarrassing / shameful	恥ずかしい
+terutama	especially / primarily	特に
+rumahnya	his / her house	彼／彼女の家
+menanyakan	to ask (formal / information)	尋ねる
+kecepatan	speed	速度
+tubuhnya	his / her body	体
+menteri	minister	大臣
+profesor	professor	教授
+tiket	ticket	チケット
+sebanyak	as many as	〜の数だけ
+seorangpun	not even one person	一人も〜ない
+meledak	to explode	爆発する
+mahal	expensive	高い
+menggunakannya	to use it	それを使う
+angkasa	outer space	宇宙
+kertas	paper	紙
+wajahmu	your face	あなたの顔
+bocah	kid (informal)	子供
+membakar	to burn / to set fire	燃やす
+virus	virus	ウイルス
+tertangkap	get caught (accidental / passive nuance)	捕まる
+penerbangan	flight (air travel)	フライト
+ancaman	threat	脅威
+pemilik	owner	所有者
+melanggar	to violate / break (rules)	違反する
+jejak	trace / footprint	足跡／痕跡
+lagipula	besides / moreover	その上
+daya	power / energy	力／エネルギー
+membawaku	to bring me	私を連れて行く
+memberikannya	to give it	それを与える
+hijau	green	緑
+menolong	to help (assist)	助ける
+dikenal	be known (passive)	知られている
+tolonglah	please help (imperative polite emphasis)	どうか助けて
+serigala	wolf	狼
+simpan	keep / store (imperative / base)	保存する
+mengagumkan	amazing	素晴らしい
+katamu	you said / your words	あなたが言った
+pengecut	coward	臆病者
+rumit	complicated	複雑
+ujian	exam / test	試験
+restoran	restaurant	レストラン
+mengumpulkan	to collect / gather	集める
+per	per / each	〜ごと
+sayangnya	unfortunately	残念ながら
+roti	bread	パン
+berlatih	to practice / train	練習する
+keinginan	desire	欲望／願い
+penasaran	curious	好奇心がある
+melanjutkan	to continue	続ける
+memanggilku	to call me	私を呼ぶ
+gerbang	gate	門
+resmi	official	公式
+mana-mana	everywhere	どこでも
+mataku	my eyes	私の目
+kuncinya	the key (it)	鍵
+pertarungan	fight / battle	戦い
+mencobanya	to try it	試す
+menganggap	to consider / assume	見なす
+ribuan	thousands	数千
+berlebihan	excessive	過度
+pula	also / as well	〜も
+salam	greeting	挨拶
+kendali	control	制御
+matikan	turn off (imperative)	消す
+batas	limit	限界
+kehabisan	run out of	使い果たす
+bangunan	building	建物
+berteman	to be friends	友達になる
+berencana	to plan	計画する
+wajahnya	his / her face	顔
+tersenyum	to smile	微笑む
+meski	although	〜にもかかわらず
+usia	age	年齢
+mematikan	deadly	致命的
+hangat	warm	暖かい
+merindukanmu	to miss you	あなたが恋しい
+nakal	naughty	いたずらな
+sama-sama	you're welcome / together	どういたしまして
+sukses	success	成功
+tuan-tuan	gentlemen	紳士たち
+memangnya	actually / indeed (tone particle)	そもそも
+orangnya	the person	その人
+berdarah	bleeding / to bleed	血を流す
+pekan	week	週
+kepalaku	my head	私の頭
+kekacauan	chaos	混乱
+tanyakan	ask (imperative)	尋ねて
+umur	age	年齢
+gaya	style	スタイル
+peringatan	warning	警告
+pengalaman	experience	経験
+merubah	to change (informal)	変える
+diatas	above	上に
+dipercaya	be trusted	信じられる
+perlindungan	protection	保護
+kemenangan	victory	勝利
+rumahmu	your house	あなたの家
+membayangkan	to imagine	想像する
+mencintainya	to love him / her	愛する
+mengemudi	to drive	運転する
+liar	wild	野生の
+balas	reply / retaliate	返事する／仕返し
+menaruh	to put / place	置く
+alami	natural	自然な
+bolehkah	may I (question)	〜してもいいですか
+bernyanyi	to sing	歌う
+lulus	to graduate / pass	合格する
+menawarkan	to offer	提供する
+bingung	confused	混乱している
+kebaikan	kindness	優しさ
+diambil	taken (passive)	取られる
+menyebut	to mention / name	言及する
+lolos	to pass / get through	通過する
+teknologi	technology	技術
+menyukaimu	to like you	あなたが好き
+sopan	polite	丁寧
+matanya	his / her eyes	目
+sabar	patient	忍耐強い
+nilai	value / score	値／点数
+kaulah	you (emphasis)	あなたこそ
+kuliah	university study	大学
+puluh	tens	十（数）
+mengenalnya	to know him / her	知っている
+taruh	put / place (imperative / base)	置く
+seumur	lifetime	一生
+kembalilah	come back (imperative)	戻って
+sekarat	dying	瀕死
+medis	medical	医療の
+masing-masing	each	それぞれ
+keberuntungan	luck	運
+gratis	free (no cost)	無料
+melacak	to track	追跡する
+mengendalikan	to control	制御する
+menemuimu	to meet you	会う
+serahkan	hand over (imperative)	渡せ
+diperlukan	needed (passive)	必要とされる
+kenangan	memory	思い出
+kakakku	my older sibling	私の兄／姉
+kuberitahu	I tell you (emphasis)	教えてやる
+keuntungan	profit / advantage	利益
+buta	blind	盲目
+sel	cell	細胞
+rakyat	people (citizens)	国民
+dahulu	before / formerly	以前
+izin	permission	許可
+tanggung	be responsible	責任を負う
+mengembalikan	to return something	返す
+roh	soul	魂
+diantara	among	間に
+gugup	nervous	緊張している
+terburuk	worst	最悪
+fakta	fact	事実
+memerlukan	to need	必要とする
+gerakan	movement	動き
+kadang	sometimes	時々
+dewan	council	評議会
+tambahan	additional	追加
+secepatnya	as soon as possible	できるだけ早く
+siapkan	prepare (imperative)	準備しろ
+adikmu	your younger sibling	弟／妹
+lambat	slow	遅い
+perjanjian	agreement	合意
+berdasarkan	based on	〜に基づく
+diamlah	be quiet (imperative)	静かにしろ
+teori	theory	理論
+memasuki	to enter	入る
+bermimpi	to dream	夢を見る
+hatimu	your heart	心
+memaksa	to force	強制する
+peta	map	地図
+patah	broken	折れた
+menghasilkan	to produce	生み出す
+takdir	fate	運命
+keluarganya	his / her family	家族
+departemen	department	部門
+tertentu	certain / specific	特定の
+telur	egg	卵
+apartemen	apartment	アパート
+semesta	universe	宇宙
+bertaruh	to bet	賭ける
+berusia	to be aged	年齢である
+kebakaran	fire (incident)	火災
+mempercayai	to believe / trust	信じる
+kontak	contact	接触
+dikirim	sent (passive)	送られる
+sebab	cause / reason	理由
+demikian	thus / like that	そのように
+menyuruh	to order / tell someone	命じる
+perasaanmu	your feelings	感情
+masukkan	put in (imperative)	入れろ
+kerjakan	do / work on (imperative)	やれ
+meter	meter	メートル
+terkena	affected / hit	影響を受ける
+ilmu	knowledge / science	知識
+sarapan	breakfast	朝食
+sembilan	nine	九
+lembut	soft	柔らかい
+pelayan	waiter / servant	店員
+badan	body	体
+menyakitkan	painful	痛い
+adanya	existence	存在
+dana	funds	資金
+merokok	to smoke	喫煙する
+besi	iron	鉄
+rupanya	apparently	どうやら
+area	area	エリア
+memainkan	to play (something)	演奏する／遊ぶ
+mengakui	to admit	認める
+proyek	project	プロジェクト
+jatuhkan	drop (imperative)	落とせ
+rekan	colleague	同僚
+berenang	to swim	泳ぐ
+mencintaiku	to love me	私を愛する
+kayu	wood	木
+perbedaan	difference	違い
+sehari	one day	一日
+meletakkan	to put / place	置く
+dibawa	brought (passive)	持って来られる
+gas	gas	ガス
+kedalam	into	中へ
+meyakinkan	to convince	納得させる
+pendeta	priest	司祭
+damai	peace	平和
+beruang	bear	熊
+awalnya	at first	最初は
+membenci	to hate	憎む
+bapa	father (formal)	父
+kebohongan	lie	嘘
+raksasa	giant	巨人
+malang	unlucky	不運
+kekerasan	violence	暴力
+menjalani	to undergo / live through	経験する
+mendekati	to approach	近づく
+bicaralah	speak (imperative)	話せ
+diketahui	known (passive)	知られている
+tenaga	energy / workforce	力
+sayangku	my dear	愛しい人
+spesial	special	特別
+mengenakan	to wear	着る
+pukulan	ضرب/hit	打撃
+dibutuhkan	needed	必要とされる
+tuhanku	my God	神様
+keajaiban	miracle	奇跡
+melayani	to serve	仕える
+menginginkannya	to want it	それを欲しがる
+panik	panic	パニック
+salju	snow	雪
+juara	champion	チャンピオン
+mengangkat	to lift	持ち上げる
+tenggelam	to sink	沈む
+mendekat	to get closer	近づく
+berkumpul	to gather	集まる
+mendarat	to land	着陸する
+melewatkan	to miss / skip	見逃す
+keberanian	courage	勇気
+bosan	bored	退屈
+ambilkan	fetch (imperative)	取ってきて
+pelatih	coach	コーチ
+berhentilah	stop (imperative)	やめろ
+robot	robot	ロボット
+peraturan	rules	規則
+sisanya	the rest	残り
+membosankan	boring	退屈な
+terang	bright	明るい
+bekas	former / trace	元／跡
+mencarimu	to look for you	探す
+jawabannya	the answer	答え
+memecahkan	to solve / break	解決する／壊す
+kasihan	pity	かわいそう
+tertidur	fall asleep	寝てしまう
+berlangsung	to take place	行われる
+tiada	none / there is not	ない
+mengunjungi	to visit	訪れる
+atap	roof	屋根
+nasional	national	国家の
+berantakan	messy	散らかっている
+mengisi	to fill	満たす
+intinya	the point is	要するに
+pelakunya	the perpetrator	犯人
+mata-mata	spy	スパイ
+segar	fresh	新鮮
+berumur	to be aged	年を取っている
+sebaliknya	on the contrary	逆に
+lingkungan	environment	環境
+liburan	vacation	休暇
+bertanya-tanya	to wonder	不思議に思う
+membiarkanmu	to let you	あなたを許す
+gudang	warehouse	倉庫
+beres	finished	完了
+taksi	taxi	タクシー
+peralatan	equipment	装備
+sesungguhnya	actually	実際は
+gadis-gadis	girls	女の子たち
+budak	slave	奴隷
+pasar	market	市場
+tebak	guess (imperative / base)	推測する
+pemburu	hunter	猟師
+membantunya	to help him / her	助ける
+jaringan	network	ネットワーク
+hadir	present / attend	出席する
+usaha	effort / business	努力
+merasakannya	to feel it	感じる
+lawan	opponent	相手
+pecundang	loser	負け犬
+terhormat	honorable	名誉ある
+boneka	doll	人形
+memikirkannya	to think about it	考える
+berlalu	to pass	過ぎる
+menerimanya	to receive it	受け取る
+caramu	your way	あなたの方法
+berburu	to hunt	狩る
+teroris	terrorist	テロリスト
+berkelahi	to fight	喧嘩する
+alamat	address	住所
+jembatan	bridge	橋
+satupun	not even one	一つも〜ない
+membalas	to reply / retaliate	返す
+lukisan	painting	絵画
+bersulang	to toast (drink)	乾杯する
+kubantu	I help (emphasis)	助けてやる
+mendengarku	to listen to me	聞く
+samping	side	側
+menghormati	to respect	尊敬する
+berpakaian	to be dressed	服を着ている
+secepat	as fast as	できるだけ速く
+kelaparan	hungry	空腹
+sembuh	to recover	回復する
+memenuhi	to fulfill	満たす
+pengetahuan	knowledge	知識
+meninggalkannya	to leave it	去る
+alasannya	the reason	理由
+berhak	to have the right	権利がある
+miskin	poor	貧しい
+susu	milk	牛乳
+jadilah	become (imperative)	なれ
+pembohong	liar	嘘つき
+potong	cut (imperative / base)	切る
+tali	rope	ロープ
+kakakmu	your older sibling	兄／姉
+pekerjaanmu	your job	あなたの仕事
+sambil	while	〜しながら
+kepercayaan	trust	信頼
+kerusakan	damage	損害
+toilet	toilet	トイレ
+katakanlah	say (imperative)	言ってみろ
+mengacaukan	to mess up	台無しにする
+kakimu	your leg	足
+melaporkan	to report	報告する
+belas	compassion	慈悲
+membiarkannya	to let it / him / her	放置する
+pantat	butt	お尻
+memasak	to cook	料理する
+siswa	student	学生
+berfungsi	to function	機能する
+tepatnya	exactly	正確に
+botol	bottle	ボトル
+tuanku	my lord	主人様
+kacang	peanut / bean	豆
+pasang	install / pair	取り付ける
+akses	access	アクセス
+mendorong	to push / encourage	押す／促す
+dapur	kitchen	台所
+mengajukan	to propose / submit	提出する
+cek	check	確認
+berurusan	to deal with	対処する
+percobaan	experiment	実験
+pastinya	certainly	確かに
+keadilan	justice	正義
+ujung	end / tip	端
+kesepian	loneliness	孤独
+memintaku	to ask me	私に頼む
+mengaku	to confess	告白する
+pekerja	worker	労働者
+tentangmu	about you	あなたについて
+sekedar	just / only	単に
+nasib	fate	運命
+pendek	short	短い
+tersesat	lost	道に迷う
+hasilnya	the result	結果
+mengerjakan	to do / work on	作業する
+pikiranmu	your thoughts	考え
+cewek	girl (informal)	女の子
+hancurkan	destroy (imperative)	壊せ
+pertahanan	defense	防御
+menara	tower	塔
+teruskan	continue (imperative)	続けろ
+berhati-hati	be careful	注意する
+mengharapkan	to expect / hope	期待する
+pendapat	opinion	意見
+menghindari	to avoid	避ける
+ciuman	kiss	キス
+proses	process	プロセス
+menyalahkan	to blame	責める
+lumayan	fairly / quite / decent (moderate degree, informal)	まあまあ／そこそこ
+bandara	airport	空港（くうこう）
+da	(colloquial particle, emphasis / softening, informal)	～だよ／～ね（口語）
+ular	snake	蛇（へび）
+ragu	doubtful / unsure	疑わしい／迷っている
+susah	difficult / troublesome (informal)	難しい／大変（たいへん）
+angkatan	batch / generation / cohort (depends on context)	世代／期（き）
+pacarmu	your boyfriend / girlfriend (informal possessive)	あなたの恋人
+menunggumu	to wait for you (verb with object suffix)	あなたを待つ
+kendaraan	vehicle	乗り物（のりもの）
+kalo	if (informal)	もし～なら
+penduduk	resident / population	住民（じゅうみん）／人口
+datanglah	come! (imperative with soft / poetic tone)	来なさい／来てください（やや柔らかい命令）
+kakiku	my foot / leg	私の足
+murid	student (school-level)	生徒（せいと）
+berbalik	to turn around	振り向く
+dipecat	to be fired / dismissed (passive)	解雇される
+terkunci	locked (state, not action)	鍵がかかっている
+berhutang	to be in debt	借金している
+mengejutkan	to shock / to surprise (active verb)	驚かせる
+baik2	take care / be well (informal repetition)	気をつけて／元気で
+kekuasaan	power / authority (political / social)	権力（けんりょく）
+kebebasan	freedom	自由（じゆう）
+ukuran	size / measurement	サイズ／寸法（すんぽう）
+angka	number / figure	数字（すうじ）
+jaksa	prosecutor	検察官（けんさつかん）
+harta	wealth / property	財産（ざいさん）
+suku	tribe / ethnic group	部族（ぶぞく）／民族
+mendukung	to support (actively)	支持する
+keluarlah	go out! / come out! (imperative)	出て行け／出なさい
+syukurlah	thank goodness / fortunately (expression)	よかった／ありがたいことに
+telanjang	naked	裸（はだか）
+lemari	cupboard / wardrobe	クローゼット／戸棚（とだな）
+minyak	oil (general, incl. fuel / cooking)	油（あぶら）
+racun	poison	毒（どく）
+klien	client	クライアント
+topi	hat	帽子（ぼうし）
+saudaramu	your sibling / relative	あなたの兄弟／親族
+sudahlah	enough / that's enough (softening expression)	もういい／やめて
+beristirahat	to rest	休む
+sapi	cow	牛（うし）
+mengakhiri	to end / to finish (something)	終わらせる
+menguasai	to master / to control	支配する／習得する
+ceritanya	the story / the story (topic-marked)	その話
+penyelidikan	investigation	調査（ちょうさ）
+sejujurnya	honestly / to be honest	正直に言うと
+gaun	dress (formal clothing)	ドレス
+memintamu	to ask you (to request)	あなたに頼む
+membutuhkanmu	to need you	あなたを必要とする
+ratusan	hundreds	何百もの
+membutuhkannya	to need it	それを必要とする
+ditutup	to be closed (passive)	閉じられる
+aduh	ouch / oh no (interjection)	痛い／ああ
+berbaring	to lie down	横になる
+krim	cream	クリーム
+campur	mix! / to mix (imperative / root ambiguity)	混ぜる／混ぜて
+dihukum	to be punished (passive)	罰せられる
+bernapas	to breathe	呼吸する
+kutahu	I know (ku- = I)	私は知っている
+dibayar	to be paid	支払われる
+suamimu	your husband	あなたの夫
+singkirkan	remove! / get rid of! (imperative)	取り除け／どけろ
+kriminal	criminal	犯罪者
+bangsat	bastard (insult, vulgar)	クソ野郎（俗語）
+pelanggan	customer	顧客（こきゃく）
+pabrik	factory	工場（こうじょう）
+abad	century	世紀（せいき）
+kolam	pool / pond	池（いけ）／プール
+berputar	to spin / rotate	回転する
+harganya	the price	その値段
+sumpah	oath / swear	誓い／誓う
+em	um / uh (hesitation)	ええと
+payah	weak / poor / lousy (informal)	弱い／下手
+pelan-pelan	slowly	ゆっくり
+kaca	glass	ガラス
+bertahanlah	hold on! / endure! (imperative)	耐えろ／頑張れ
+kak	older sibling (informal address)	お兄さん／お姉さん（呼びかけ）
+tongkat	stick / cane	杖（つえ）
+menyingkirkan	to remove / eliminate	取り除く
+rencananya	the plan	その計画
+pos	post / mail station	郵便局／郵便／ポスト
+menjatuhkan	to drop / to bring down / to overthrow	落とす／倒す／打倒する
+diberi	to be given	与えられる
+menyuruhku	to tell me (to do something)	私に～させる／命じる
+pingsan	to faint	気絶する
+kesal	annoyed / irritated	イライラする
+meninggalkanmu	to leave you	あなたを残す／去る
+se	one / a (prefix, formal / limited use, context-dependent)	一つの／ある（接頭辞）
+berlaku	to apply / to be valid (law / rule)	適用される／有効である
+mobilku	my car	私の車
+tulis	to write / write! (root / imperative ambiguity)	書く／書いて
+turut	to participate / also (formal nuance)	参加する／～も
+kontrak	contract	契約
+yahudi	Jewish (religion / ethnicity, context-sensitive)	ユダヤ人／ユダヤ教の
+menghapus	to erase / delete	消す
+band	band (music group, loanword adapted)	バンド
+internet	internet	インターネット
+setia	loyal / faithful	忠実な
+bertengkar	to argue / quarrel	口論する
+pembicaraan	conversation / discussion	会話／議論
+pernahkah	have (you) ever...? (question form)	～したことがありますか
+cemas	anxious / worried	不安な
+mahkota	crown	王冠
+menyaksikan	to witness	目撃する
+barang-barang	items / things (plural via reduplication)	物品
+basah	wet	濡れている
+sebulan	one month	一ヶ月
+memohon	to beg / to plead (formal / polite)	懇願する
+tertutup	closed (state) / covered	閉じている／覆われた
+menyiapkan	to prepare (something)	準備する
+hadapi	face! / to face (imperative / root)	直面する／向き合え
+serikat	union / association	組合
+murah	cheap / inexpensive	安い
+merencanakan	to plan	計画する
+kecewa	disappointed	失望する
+singkat	short / brief	短い
+waktumu	your time	あなたの時間
+seolah-olah	as if / as though	まるで～のように
+markas	headquarters	本部
+asal	origin / as long as (context-dependent)	起源／～さえすれば
+berikut	next / following	次の
+rindu	to miss (someone emotionally)	恋しく思う
+monyet	monkey	猿
+profesional	professional	プロの
+pacarku	my boyfriend / girlfriend	私の恋人
+beraninya	how dare (expression of indignation)	よくも～
+mengatasi	to overcome	克服する
+menjijikkan	disgusting (causative form)	気持ち悪い
+sia-sia	useless / in vain	無駄
+permen	candy	キャンディ
+baginya	for him / her	彼／彼女にとって
+penelitian	research	研究
+melindungimu	to protect you	あなたを守る
+gangguan	disturbance / interference	妨害／障害
+kontrol	control	コントロール
+seolah	as if (shorter form of seolah-olah)	まるで
+terbiasa	accustomed / used to	慣れている
+tipe	type	タイプ
+memesan	to order (food / service)	注文する
+kepolisian	police institution (formal)	警察
+arti	meaning	意味
+putrimu	your daughter	あなたの娘
+mi	noodles (loanword, adapted spelling)	麺
+disitu	there (location, informal spelling of “di situ”)	そこに
+menemuinya	to meet him / her	彼／彼女に会う
+ditembak	to be shot	撃たれる
+menikahi	to marry (someone, active)	～と結婚する
+jalan-jalan	to stroll / go out casually	散歩する
+model	model	モデル
+kutukan	curse	呪い
+politik	politics	政治
+tolol	stupid (insult, informal)	馬鹿
+diserang	to be attacked	攻撃される
+trik	trick	トリック
+bakat	talent	才能
+universitas	university	大学
+beliau	he / she (respectful)	あの方（敬語）
+bersiaplah	get ready! (imperative)	準備しろ／準備してください
+mengancam	to threaten	脅す
+muka	face (informal)	顔
+menyakitimu	to hurt you	あなたを傷つける
+mempelajari	to study / to learn (formal)	学ぶ
+lokal	local	地元の
+mengenalmu	to know you (personally)	あなたを知る
+jenius	genius	天才
+jutaan	millions	数百万
+menggali	to dig	掘る
+perbatasan	border	国境
+lurus	straight	まっすぐ
+tertembak	accidentally shot / shot (state nuance)	撃たれてしまった
+kebahagiaan	happiness	幸福
+saran	suggestion / advice	助言
+lab	lab (abbreviation)	研究室
+blok	block	ブロック
+napas	breath	呼吸
+serta	and / as well as (formal)	～および
+penulis	writer	作家
+lanjut	continue! / to continue	続ける／続けて
+rapat	meeting	会議
+bersenjata	armed	武装した
+pencarian	search	捜索
+ketat	strict / tight	厳しい
+atasnya	on it / above it	その上に
+memperbaikinya	to fix it	それを修理する
+tubuhmu	your body	あなたの体
+pandai	clever / skilled	賢い／上手
+menyatakan	to state / declare	述べる／宣言する
+tertulis	written	書かれた
+temannya	his / her friend	彼／彼女の友達
+cuaca	weather	天気
+kakinya	his / her leg	彼／彼女の足
+mengadakan	to hold (event)	開催する
+pengantin	bride / groom (wedding context)	新郎／新婦
+saluran	channel / channel / pathway	チャンネル／経路
+menipu	to deceive	騙す
+menyayangimu	to love you (affectionate, caring)	あなたを愛する／大切に思う
+menyelidiki	to investigate	調査する
+bawakan	bring (for someone)! (imperative / causative nuance)	持ってきてあげて
+walikota	mayor	市長
+menghubungimu	to contact you	あなたに連絡する
+membahas	to discuss	議論する
+menghitung	to count	数える
+ilmuwan	scientist	科学者
+menemukanmu	to find you	あなたを見つける
+merindukan	to miss (someone)	恋しく思う
+mantra	mantra / spell	呪文
+bapak	father / sir (polite)	父／～さん
+legenda	legend	伝説
+pasir	sand	砂
+bersemangat	enthusiastic / spirited	熱心な
+menyebar	to spread	広がる
+bangsa	nation	国家
+kesehatan	health	健康
+sepertiku	like me	私のように
+danau	lake	湖
+orang2	people (informal plural)	人々
+eropa	Europe	ヨーロッパ
+pikiranku	my mind / my thoughts	私の考え
+motor	motorcycle	バイク
+manajer	manager	マネージャー
+adakah	is there...? (formal / interrogative)	～がありますか
+pengkhianat	traitor	裏切り者
+putraku	my son	私の息子
+benarkan	to justify / to confirm	正当化する／確認する
+memperhatikan	to pay attention	注意する
+identitas	identity	身元
+sungguhan	really / truly	本当に
+gimana	how (informal)	どう
+dimengerti	to be understood	理解される
+terpisah	separated	分離された
+urus	handle! / to handle (imperative / root)	処理する／対処しろ
+dokumen	document	書類
+senjatamu	your weapon	あなたの武器
+koran	newspaper	新聞
+sinar	light / ray	光
+mainan	toy	おもちゃ
+mengatasinya	to overcome it	それを克服する
+membicarakannya	to talk about it	それについて話す
+bersihkan	clean! (imperative)	掃除しろ
+remaja	teenager	ティーンエイジャー
+terowongan	tunnel	トンネル
+kupikirkan	I think about (it)	私はそれを考える
+kesenangan	pleasure	楽しみ
+mampir	to stop by (informal)	立ち寄る
+barusan	just now	たった今
+dilihat	to be seen	見られる
+masalahmu	your problem	あなたの問題
+kekasih	lover (romantic, slightly formal)	恋人
+nikmati	enjoy! (imperative)	楽しめ
+pemeriksaan	inspection / examination	検査
+sembunyi	hide! / to hide	隠れる／隠れろ
+dirumah	at home (informal spacing)	家で
+berkencan	to date (romantic)	デートする
+parkir	parking	駐車
+fisik	physical	物理的な
+helikopter	helicopter	ヘリコプター
+kenyataannya	in reality	実際には
+perut	stomach	お腹
+ajaib	magical / amazing	魔法の／不思議な
+lindungi	protect! (imperative)	守れ
+terburu-buru	in a hurry	急いで
+kemana-mana	everywhere	どこへでも
+ingatan	memory	記憶
+terlebih	especially / moreover	特に
+tangani	handle! (imperative)	対処しろ
+bayangan	shadow	影
+tetangga	neighbor	隣人
+berbagai	various	様々な
+publik	public	公共
+cemburu	jealous	嫉妬している
+mayor	major (rank)	少佐
+senapan	rifle	ライフル
+berperang	to be at war	戦う
+pemakaman	funeral	葬式
+pulanglah	go home! (imperative)	家に帰れ
+berutang	to be in debt	借金している
+menyelamatkannya	to save him / her / it	彼／彼女／それを救う
+tekan	press! / to press	押す
+menatap	to stare	見つめる
+akhir-akhir	recently	最近
+pemuda	young man	若者
+ditahan	to be detained	拘束される
+komunikasi	communication	コミュニケーション
+cintai	love! (imperative)	愛せ
+menutupi	to cover	覆う
+wawancara	interview	インタビュー
+lengan	arm	腕
+terhubung	connected	接続された
+bencana	disaster	災害
+nuklir	nuclear	核の
+lebah	bee	蜂
+mengajar	to teach	教える
+paus	pope / whale (context-dependent)	教皇／クジラ
+saham	stock (finance)	株
+makasih	thanks (informal)	ありがとう
+apaan	what? (rough informal)	何だよ
+tombol	button	ボタン
+mendengarmu	to hear you	あなたの声を聞く
+ngomong-ngomong	by the way	ところで
+ucapkan	say! / to express	言う／述べる
+file	file	ファイル
+menyelamatkanmu	to save you	あなたを救う
+pernyataan	statement	声明
+senator	senator	上院議員
+merayakan	to celebrate	祝う
+berkembang	to develop	発展する
+lengkap	complete	完全な
+membelinya	to buy it	それを買う
+wakil	representative	代表
+menyewa	to rent	借りる（賃貸する）
+mengganti	to replace	交換する
+mengenali	to recognize	認識する
+ulangi	repeat! (imperative)	繰り返せ
+sepeda	bicycle	自転車
+berniat	to intend	意図する
+suaminya	her / his husband	彼／彼女の夫
+yaitu	namely / that is	すなわち
+mengundang	to invite	招待する
+tubuhku	my body	私の体
+menyebutkan	to mention	言及する
+dosa	sin	罪
+puas	satisfied	満足している
+bertugas	on duty	任務中
+beban	burden	負担
+memakainya	to use / wear it	それを使う／着る
+papan	board	板
+bersinar	to shine	輝く
+rokok	cigarette	タバコ
+panggung	stage	舞台
+sepakat	to agree	同意する
+bayinya	the baby	その赤ちゃん
+sempat	to have time (to)	～する時間があった
+peri	fairy	妖精
+percakapan	conversation	会話
+main-main	to play around / not serious	ふざける
+tuaku	my parents (collective nuance)	私の両親
+penggemar	fan	ファン
+dasarnya	basically	基本的に
+sanggup	capable	できる
+perawat	nurse	看護師
+membacanya	to read it	それを読む
+bakal	will / going to (informal future)	～するつもり
+berkat	thanks to	～のおかげで
+kering	dry	乾いた
+impian	dream (aspiration)	夢
+serang	attack! (imperative)	攻撃しろ
+memasukkan	to insert / put in	入れる
+pandangan	view / opinion	見解
+menyimpannya	to keep / store it	それを保管する
+potongan	piece / cut	断片
+sayap	wing	翼
+resiko	risk (variant spelling of risiko)	リスク
+min	informal particle (casual emphasis)	（口語の強調語）
+kok	particle (surprise / contrast)	どうして／意外だが
+pekerjaanku	my job / work	私の仕事
+aja	just / only (informal)	だけ（口語）
+ni	this (colloquial)	これ（口語）
+tersembunyi	hidden / concealed	隠された
+salahmu	your fault	あなたのせい
+kuberikan	I give / will give (to someone)	私が与える
+teleponnya	the phone / his / her phone	その電話／彼・彼女の電話
+antar	to deliver / to escort	送る／付き添う
+lo	you (very informal)	お前（非常に口語）
+hee	interjection (surprise / teasing)	へえ／えー
+ditambah	added / in addition	追加される
+spanyol	Spain / Spanish	スペイン
+harapkan	to expect / to hope (for something)	期待する
+memanggilnya	to call him / her	彼・彼女を呼ぶ
+emosi	emotion	感情
+heran	surprised / puzzled	不思議に思う
+jarang	rare / seldom	めったに～ない
+lezat	delicious	美味しい
+menyelesaikannya	to finish it / complete it	それを終える
+mengingatkan	to remind	思い出させる
+menyala	lit / on (light / fire)	点いている
+tidaklah	indeed not / emphatic negation	決して～ない
+pelatihan	training	訓練
+walau	although / even though	～だけれども
+dibandingkan	compared (to / with)	比べられて
+apanya	what part?/what exactly?	どの点？
+memindahkan	to move (object)	移動させる
+olahraga	sport / exercise	スポーツ／運動
+derajat	degree (temperature / status)	度／程度
+kampus	campus	キャンパス
+kutemukan	I found	私が見つけた
+romantis	romantic	ロマンチック
+geng	gang / group	グループ／ギャング
+bayaran	payment / paid	支払い／有料
+kuberi	I give (short form)	私が与える
+sasaran	target	目標／標的
+tanaman	plant	植物
+asa	hope	希望
+menentukan	to determine / decide	決定する
+gemuk	fat / overweight	太っている
+membebaskan	to free / release	解放する
+melangkah	to step / walk forward	歩む
+senyum	smile	微笑み
+kaisar	emperor	皇帝
+taruhan	bet / gamble	賭け
+perawatan	care / treatment	手入れ／治療
+habiskan	spend / use up (imperative)	使い切れ
+penderitaan	suffering	苦しみ
+kuil	temple	寺院
+menghilangkan	to remove / eliminate	取り除く
+nafas	breath	呼吸
+meningkatkan	to increase	増やす
+jadwal	schedule	スケジュール
+mempertahankan	to defend / maintain	守る／維持する
+bukit	hill	丘
+menembaknya	to shoot him / her	彼・彼女を撃つ
+gua	cave / “I” (slang Jakarta)	洞窟／俺（俗語）
+bangkit	to rise / get up	立ち上がる
+layanan	service	サービス
+perlahan	slowly	ゆっくり
+wajahku	my face	私の顔
+memasang	to install / put up	設置する
+dulunya	formerly / used to	以前は
+pensiun	retirement	退職
+mobilmu	your car	あなたの車
+memanggilmu	to call you	あなたを呼ぶ
+senior	senior / older	年上／上級
+lautan	ocean / sea	海
+nyalakan	turn on (imperative)	点けろ
+diam-diam	secretly	こっそり
+gelombang	wave	波
+berduka	to mourn	嘆く
+dianggap	considered	見なされる
+bernafas	to breathe	呼吸する
+dialah	he / she is (emphasis)	彼・彼女こそ
+hatinya	his / her heart	彼・彼女の心
+contoh	example	例
+efek	effect	効果
+melukai	to hurt / injure	傷つける
+menendang	to kick	蹴る
+luas	wide / broad	広い
+tugasku	my duty	私の任務
+madu	honey	蜂蜜
+kebun	garden	庭／畑
+coklat	chocolate	チョコレート
+cermin	mirror	鏡
+mengarah	to head toward	向かう
+padahal	whereas / actually	実は／なのに
+tawaran	offer	提案
+sebesar	as big as	～と同じ大きさ
+perangkat	device / equipment	装置
+suasana	atmosphere	雰囲気
+urusanmu	your business (matter)	あなたの用事
+dansa	dance (noun)	ダンス
+terkesan	impressed	感銘を受けた
+akankah	will...? (question)	～だろうか
+bertingkah	to behave (often oddly)	振る舞う
+puncak	peak / top	頂上
+berpisah	to separate	別れる
+membayarnya	to pay it / him / her	支払う
+kuatir	worried (variant of khawatir)	心配している
+sifat	trait / character	性格
+kabel	cable	ケーブル
+menahannya	to hold it back	抑える
+putar	to spin / turn	回す
+berdansa	to dance	踊る
+asap	smoke	煙
+afrika	Africa	アフリカ
+penumpang	passenger	乗客
+engkau	you (poetic / formal)	あなた（文語）
+selagi	while / as long as	～している間
+belakangan	lately / recently	最近
+mempersiapkan	to prepare	準備する
+pemenang	winner	勝者
+mengesankan	impressive	印象的
+alkohol	alcohol	アルコール
+keselamatan	safety	安全
+lancar	smooth / fluently	順調
+buatan	made / artificial	作られた
+dipenjara	imprisoned	投獄される
+sekelompok	a group of	一団の
+singa	lion	ライオン
+darahnya	his / her blood	彼・彼女の血
+berlutut	to kneel	ひざまずく
+putrinya	his / her daughter	娘
+awasi	watch / monitor (imperative)	見張れ
+pilot	pilot	パイロット
+aksi	action	行動
+ambillah	take it (imperative polite / emphatic)	取りなさい
+poin	point / score	ポイント
+meninggalkanku	to leave me	私を置いていく
+baunya	its smell	その匂い
+kuning	yellow	黄色
+muak	disgusted	うんざり
+perasaanku	my feelings	私の感情
+menculik	to kidnap	誘拐する
+karya	work / art	作品
+seragam	uniform	制服
+penyebab	cause	原因
+sembunyikan	hide (imperative)	隠せ
+peristiwa	event	出来事
+tunai	cash	現金
+tentunya	of course	もちろん
+sidik	trace / fingerprint (context)	指紋
+murni	pure	純粋
+meledakkan	to blow up / explode	爆発させる
+ringan	light (weight)	軽い
+kimia	chemistry	化学
+baiknya	better (suggestion nuance)	～した方がいい
+sahabat	close friend	親友
+pengawal	guard / bodyguard	護衛
+rumput	grass	草
+meksiko	Mexico	メキシコ
+pil	pill	錠剤
+merampok	to rob	強盗する
+jual	to sell	売る
+ilegal	illegal	違法
+balapan	race	レース
+roda	wheel	車輪
+aktif	active	活発
+agung	great / noble	偉大
+kelinci	rabbit	ウサギ
+kuinginkan	I want	私が欲しい
+perbuatan	deed / action	行為
+stabil	stable	安定
+menyanyi	to sing	歌う
+telinga	ear	耳
+melempar	to throw	投げる
+terbangun	to wake up	目覚める
+sosial	social	社会的
+tugasmu	your task	あなたの任務
+berhati-hatilah	be careful (imperative)	気をつけて
+makin	increasingly	ますます
+berkeliaran	to wander around	うろつく
+bangunlah	wake up (imperative)	起きろ
+terbaru	newest / latest	最新
+pemikiran	thought	思考
+diberitahu	told / informed	知らされる
+peluang	opportunity	機会
+menekan	to press	押す
+italia	Italy	イタリア
+rencanamu	your plan	あなたの計画
+generasi	generation	世代
+satelit	satellite	衛星
+perdamaian	peace	平和
+misteri	mystery	謎
+permukaan	surface	表面
+jaminan	guarantee	保証
+membahayakan	to endanger	危険にさらす
+cintaku	my love	私の愛
+hidup-hidup	alive	生きたまま
+memeriksanya	to check it	調べる
+melemparkan	to throw (something)	投げる
+menghalangi	to block	妨げる
+pajak	tax	税金
+suaranya	his / her voice	声
+merawat	to take care of	世話する
+sup	soup	スープ
+paket	package	荷物
+tertinggi	highest	最も高い
+merekam	to record	記録する
+perampokan	robbery	強盗
+mainkan	play (imperative)	演じろ／再生しろ
+terjatuh	fell down	落ちる
+banget	very (informal emphasis)	とても（口語）
+kematiannya	his / her death	死
+kompetisi	competition	競争
+persen	percent	パーセント
+berlian	diamond	ダイヤモンド
+jalankan	run (imperative)	実行しろ
+mempertimbangkan	to consider	検討する
+penembak	shooter	射手
+mahasiswa	university student	大学生
+manapun	whichever / any	どれでも
+mengurusnya	to take care of it	世話する
+cadangan	reserve	予備
+sikap	attitude	態度
+gelas	glass	コップ
+tambang	mine	鉱山
+membela	to defend	守る
+uangku	my money	私のお金
+asisten	assistant	アシスタント
+memancing	to fish	釣る
+tiarap	lie prone	うつ伏せ
+mengajak	to invite	誘う
+lingkaran	circle	円
+abadi	eternal	永遠
+pertanyaannya	the question	質問
+mengabaikan	to ignore	無視する
+kristus	Christ	キリスト
+pizza	pizza	ピザ
+gula	sugar	砂糖
+keturunan	descendant	子孫
+menjualnya	to sell it	売る
+bercerita	to tell a story	話す
+mengkhianati	to betray	裏切る
+kebiasaan	habit	習慣
+mengajarkan	to teach	教える
+memperlakukan	to treat (someone)	扱う
+menyuruhmu	to order you	あなたに命じる
+grup	group	グループ
+putuskan	decide (imperative)	決めろ
+gembira	happy	嬉しい
+penghargaan	award	賞
+medan	field	場／戦場
+pacarnya	his / her partner	恋人
+sekalian	altogether / also	一緒に
+debu	dust	ほこり
+muntah	vomit	吐く
+berkas	file / document	書類
+sampaikan	convey (imperative)	伝えろ
+siapa-siapa	anyone (negative context)	誰も
+tadinya	originally	元々
+dukungan	support	支援
+penjelasan	explanation	説明
+untungnya	fortunately	幸い
+alarm	alarm	アラーム
+leher	neck	首
+jalannya	the road / way	道
+mengalir	to flow	流れる
+sipil	civil	民間
+kebenarannya	the truth	真実
+mengorbankan	to sacrifice	犠牲にする
+kru	crew	乗組員
+tangguh	tough	強い
+menyelinap	to sneak	忍び込む
+izinkan	allow (imperative)	許可しろ
+terikat	bound / tied	縛られた
+pokoknya	basically / anyway	とにかく
+pemberontak	rebel	反乱者
+kanker	cancer	がん
+teman-temanku	my friends	友達
+menduga	to suspect	推測する
+pelaku	perpetrator	犯人
+asuransi	insurance	保険
+merebut	to seize	奪う
+mempercayainya	to believe him / her	信じる
+peran	role	役割
+apalagi	moreover / let alone	なおさら
+memberitahunya	to tell him / her	伝える
+mayatnya	the corpse	死体
+kaulakukan	you did	あなたがした
+memungkinkan	to enable	可能にする
+mencegah	to prevent	防ぐ
+dorong	push (imperative)	押せ
+dada	chest	胸
+dipanggil	called	呼ばれる
+makanlah	eat (imperative polite)	食べなさい
+telat	late	遅れた
+abu	ash	灰
+tanda-tanda	signs	兆候
+rumor	rumor	噂
+udah	already (informal)	もう（口語）
+senjatanya	his / her weapon	武器
+penonton	audience	観客
+situs	site	サイト
+dicuri	stolen	盗まれた
+bikin	make / do (informal)	作る（口語）
+punyaku	mine	私のもの
+dilahirkan	born	生まれる
+mengunci	to lock	鍵をかける
+keyakinan	belief	信念
+menjauhlah	stay away (imperative)	離れろ
+kencing	urinate	排尿する
+risiko	risk	リスク
+menyadarinya	to realize it	気づく
+kejar	chase (imperative / root)	追え
+mematahkan	to break (object)	折る
+karakter	character	性格
+memaafkan	to forgive	許す
+tembok	wall	壁
+nonton	watch (informal)	観る（口語）
+drama	drama	ドラマ
+tambah	add / increase	増やす
+menyingkir	to move aside	どく
+membentuk	to form	形成する
+kutunjukkan	I show	私が見せる
+mengingatnya	to remember it	思い出す
+memintanya	to ask him / her	頼む
+pas	exactly / right time	ちょうど
+melupakannya	to forget it	忘れる
+menandatangani	to sign	署名する
+perak	silver	銀
+penipu	fraudster	詐欺師
+dimakan	eaten	食べられる
+menyalakan	to turn on	点ける
+kirimkan	send (imperative)	送れ
+adegan	scene	シーン
+seharian	all day	一日中
+memberikanmu	to give you	あなたに与える
+melahirkan	to give birth	出産する
+kantong	bag / pocket	袋
+tuduhan	accusation	告発
+uangmu	your money	あなたのお金
+membatalkan	to cancel	取り消す
+peti	chest / box	箱
+benteng	fortress	要塞
+jauhkan	keep away (imperative)	遠ざけろ
+sekalipun	even if	たとえ～でも
+pelindung	protector	保護者
+lompat	jump	跳ぶ
+cowok	guy / boy (informal)	男（口語）
+kredit	credit	クレジット
+kucoba	I try	試す
+bedanya	the difference	違い
+memulainya	to start it	始める
+berisi	contain	含む
+bidang	field (area)	分野
+sepotong	a piece	一切れ
+hitungan	calculation	計算
+akibat	consequence	結果
+mengganggumu	to disturb you	邪魔する
+waspada	alert	警戒
+bermasalah	problematic	問題がある
+melepas	to release	放す
+fasilitas	facility	施設
+maya	virtual	仮想
+suaramu	your voice	あなたの声
+kawan-kawan	friends (plural)	仲間たち
+keberadaan	existence	存在
+pindahkan	move (imperative)	移動させろ
+dibangun	built	建てられる
+lakukanlah	do it (imperative emphatic)	やりなさい
+putaran	rotation	回転
+pura-pura	pretend	ふりをする
+menuntut	to demand	要求する
+mempercayaimu	to trust you	信じる
+kamarku	my room	私の部屋
+inspektur	inspector	検査官
+dilarang	forbidden	禁止されている
+persahabatan	friendship	友情
+hidung	nose	鼻
+busuk	rotten	腐った
+diculik	kidnapped	誘拐された
+tempatmu	your place	あなたの場所
+menyentuhnya	to touch it	触れる
+penampilan	appearance	外見
+wartawan	journalist	記者
+tuamu	your parents	両親
+bang	older brother (informal)	兄（口語）
+menyelamatkanku	to save me	私を救う
+kecilku	my small / self (contextual)	私の小さい頃
+keju	cheese	チーズ
+ganja	marijuana	大麻
+hallo	hello	こんにちは
+lift	elevator	エレベーター
+partai	party (political)	政党
+terpenting	most important	最も重要
+puisi	poem	詩
+perlukan	need (imperative / context)	必要とする
+kubunuh	I kill	殺す
+jumat	Friday	金曜日
+karyawan	employee	従業員
+zona	zone	ゾーン
+sandera	hostage	人質
+memperkenalkan	to introduce	紹介する
+menyukaiku	to like me	私を好き
+penari	dancer	ダンサー
+gubernur	governor	知事
+pelan	slow	遅い
+bertempur	to fight	戦う
+melibatkan	to involve	関与させる
+awan	cloud	雲
+pekerjaannya	his / her job	仕事
+terpaksa	forced	強制的
+pipa	pipe	パイプ
+organisasi	organization	組織
+pelajari	study (imperative)	学べ
+simbol	symbol	シンボル
+kostum	costume	衣装
+meningkat	increase (intransitive)	増える
+mengeluh	to complain	文句を言う
+menolongmu	to help you	助ける
+misterius	mysterious	神秘的
+ajak	invite (imperative / root)	誘う
+kentang	potato	ジャガイモ
+bertiga	three people together	3人で
+favorit	favorite	お気に入り
+kamp	camp	キャンプ
+terbatas	limited	限られた
+patung	statue	像
+giliranmu	your turn	あなたの番
+tajam	sharp	鋭い
+kedatangan	arrival	到着
+belok	turn	曲がる
+mengantar	to escort / deliver	送る
+pelanggaran	violation	違反
+perdana	first / prime	初めて
+dok	doc (informal doctor)	医者（口語）
+menatapku	to stare at me	見つめる
+rekening	bank account	口座
+membukanya	to open it	開ける
+melindunginya	to protect him / her	守る
+apel	apple	りんご
+berlayar	to sail	航海する
+semacamnya	and the like	～など
+inti	core	核
+bertambah	to increase	増える
+sekretaris	secretary	秘書
+itukah	is that...?	それですか
+pengaruh	influence	影響
+tantangan	challenge	挑戦
+memanfaatkan	to utilize	活用する
+jebakan	trap	罠
+tempatku	my place	私の場所
+panah	arrow	矢
+domba	sheep	羊
+seratus	one hundred	百
+ksatria	knight	騎士
+cium	kiss	キス
+menyampaikan	to convey	伝える
+ramah	friendly	親切
+layar	screen	画面
+ganggu	disturb (imperative / root)	邪魔する
+buatlah	make (imperative)	作れ
+baru-baru	recently	最近
+momen	moment	瞬間
+sewa	rent (noun / verb)	賃貸
+tulisan	writing	文章
+pertamaku	my first	初めて
+amat	very (formal)	とても
+menyembuhkan	to heal	癒す
+berbakat	talented	才能がある
+umat	people / community	民
+berkuasa	in power	権力を持つ
+menggigit	to bite	噛む
+indonesia	Indonesia	インドネシア
+berfikir	to think (alt. spelling berpikir)	考える
+pemandangan	view / scenery	景色
+kemarahan	anger	怒り
+mengungkapkan	to express / reveal	表現する
+kaum	group / class (social group)	階級／集団
+sepasang	a pair (of things that come in twos)	一組／一対
+bulu	hair / fur / feather (body covering)	毛／羽
+menanganinya	to handle it (verb, with object “it”)	それに対処する
+dikeluarkan	to be issued / removed (passive)	発行される／取り出される
+ketinggalan	to be left behind / miss (something)	乗り遅れる／取り残される
+bersatu	to unite / be united	団結する
+caraku	my way / method	私のやり方
+sabuk	belt (clothing / object)	ベルト
+bijaksana	wise (adjective)	賢い／賢明な
+mewah	luxurious	豪華な
+kekurangan	lack / shortage / deficiency	不足／欠点
+masak	to cook / cooked (depends on context)	料理する／調理された
+mempengaruhi	to influence	影響を与える
+kemajuan	progress / advancement	進歩
+hiu	shark	サメ
+puteri	princess (formal / literary)	王女
+rambutmu	your hair	あなたの髪
+negatif	negative	否定的な／負の
+kerjanya	his / her work / the way they work	彼／彼女の仕事
+syarat	condition / requirement	条件
+hadirin	audience (formal, present people)	出席者／聴衆
+cerah	bright / clear (weather / mood)	明るい／晴れた
+kira-kira	approximately / to अनुमान (guess)	約／だいたい
+beraksi	to act / take action	行動する
+pegunungan	mountains / mountain range	山脈
+terbuat	to be made (of / from)	作られている
+dijual	to be sold	売られる
+jaket	jacket	ジャケット
+ingatlah	remember! (imperative)	覚えなさい
+pengiriman	delivery / shipment	配送
+memutar	to spin / turn / play (media)	回す／再生する
+kembar	twin (noun / adjective)	双子
+baguslah	that’s good then / good! (emphasis particle)	それは良かった
+egois	selfish	自己中心的な
+gurun	desert	砂漠
+kandang	cage / pen (animals)	檻／囲い
+kuburan	grave / graveyard	墓
+menjemput	to pick up (a person)	迎えに行く
+set	set (group / collection; loan but adapted usage)	セット
+majalah	magazine	雑誌
+keuangan	finance / financial matters	財政／金融
+sepupu	cousin	いとこ
+iklan	advertisement	広告
+topeng	mask	仮面
+menjaganya	to take care of it / him / her	世話をする／守る
+terkutuk	cursed	呪われた
+pola	pattern	パターン
+mengecewakan	to disappoint	失望させる
+senin	Monday	月曜日
+menyarankan	to suggest	提案する
+keadaannya	the condition / situation (of it / him / her)	状態
+dibelakang	at the back / behind	後ろに
+melebihi	to exceed	超える
+perbaiki	fix!/repair! (imperative)	修理しろ／直せ
+perayaan	celebration	祝賀
+berwarna	colored / to have color	色がある
+memakannya	to eat it	それを食べる
+seandainya	if only / if (hypothetical)	もし〜なら
+raya	big / grand / main (road)	大きい／主要な
+menabrak	to crash into / hit (accident)	衝突する
+pengorbanan	sacrifice	犠牲
+ganda	double / twin / dual	二重／二倍
+baris	row / line	列
+teknik	technique	技術
+tradisi	tradition	伝統
+dibanding	compared (passive form)	比較される
+miliknya	his / hers (possessive)	彼／彼女のもの
+mengurangi	to reduce	減らす
+omong-omong	by the way (informal)	ところで
+tanpamu	without you	あなたなしで
+menangkapmu	to catch you	あなたを捕まえる
+lorong	corridor / alley	廊下／路地
+tumpangan	ride / lift (transport help)	乗せてもらうこと
+petani	farmer	農民
+mesir	Egypy	エジプト
+memburu	to hunt / chase (animals or targets)	狩る／追う
+tampil	to appear / perform (on stage / public)	出演する／現れる
+maumu	what you want / your desire	あなたの望み
+obatnya	the medicine / remedy	薬
+baja	steel	鋼
+ngomong	to talk / speak (informal)	話す（口語）
+menyamar	to disguise oneself	変装する
+tunggal	single / only	単一の
+perbuat	do! (imperative, literary)	行え
+agama	religion	宗教
+siapakah	who is...? (formal)	誰ですか
+total	total / complete	合計／完全な
+pembunuhnya	the killer	殺人者
+tahap	stage / phase	段階
+piring	plate / dish	皿
+perduli	to care (variant spelling; standard: peduli)	気にする
+melatih	to train (someone)	訓練する
+sarang	nest	巣
+menjadikan	to make / turn into (cause something to become)	～にする
+industri	industry	産業
+solusi	solution	解決策
+juri	jury	陪審
+buktikan	prove it! (imperative)	証明しろ
+kebutuhan	need / necessity	必要
+terpilih	chosen / selected	選ばれた
+pendapatmu	your opinion	あなたの意見
+bensin	gasoline	ガソリン
+larut	to dissolve / late at night (context)	溶ける／夜遅く
+semi	semi-/partial / spring (loan usage context)	半〜／春
+tagihan	bill / invoice	請求書
+mengantarmu	to escort / take you (somewhere)	あなたを送る
+divisi	division (organization)	部門
+tarian	dance (noun)	ダンス
+perangkap	trap	罠
+sekaligus	at once / simultaneously	同時に
+menemuiku	to meet me	私に会う
+internasional	international	国際的な
+pertama-tama	first of all	まず第一に
+suhu	temperature	温度
+berkeliling	to go around / travel around	回る
+menjelaskannya	to explain it	それを説明する
+menurunkan	to lower / reduce	下げる
+seribu	one thousand	千
+kemanapun	wherever (direction)	どこへでも
+renang	swimming	水泳
+mengetuk	to knock (on door)	ノックする
+mesti	must / have to (informal nuance)	～しなければならない
+insiden	incident	事件
+laboratorium	laboratory	研究所
+penjualan	sales	販売
+penutup	cover / closing	カバー／締め
+perpustakaan	library	図書館
+membawakan	to bring (for someone)	持ってきてあげる
+memerintahkan	to order / command	命令する
+langka	rare	珍しい
+jendral	general (military rank; variant of jenderal)	将軍
+penerjemah	translator / interpreter	翻訳者
+ekor	tail	尾
+yunani	Greek (country / culture)	ギリシャ
+seberang	across / opposite side	向こう側
+ditinggalkan	to be left / abandoned	残される
+aktor	actor	俳優
+upacara	ceremony	儀式
+prancis	France / French	フランス
+ritual	ritual	儀式
+hamba	servant (humble / self-reference)	しもべ
+makanya	that’s why / therefore (informal)	だから
+rute	route	ルート
+tidak.	no / not (sentence-ending emphasis)	いいえ／〜ない
+kedamaian	peace	平和
+karna	because (informal spelling of karena)	なぜなら
+pengobatan	treatment / medical care	治療
+lintas	cross / across	横断
+lipat	fold / multiply	折る／倍にする
+terinfeksi	infected	感染した
+bermain-main	to fool around / play casually	ふざける
+sidang	trial / session	裁判／会議
+pembuat	maker / creator	作成者
+calon	candidate / prospective	候補
+memperoleh	to obtain	得る
+mencurinya	to steal it	それを盗む
+produk	product	製品
+gaji	salary	給料
+bergantung	to depend	依存する
+pemerintahan	government	政府
+tidurlah	sleep! (imperative)	寝なさい
+kalimat	sentence	文
+sombong	arrogant	傲慢な
+haus	thirsty	喉が渇いた
+giliran	turn (in sequence)	順番
+dipenuhi	to be filled / fulfilled	満たされる
+berjanjilah	promise! (imperative)	約束しなさい
+minumlah	drink! (imperative)	飲みなさい
+penyelamat	savior / rescuer	救助者
+tato	tattoo	タトゥー
+tersinggung	offended	気を悪くした
+meneleponmu	to call you (phone)	あなたに電話する
+positif	positive	肯定的な
+bepergian	to travel	旅行する
+online	online	オンライン
+keadaanmu	your condition	あなたの状態
+seksual	sexual	性的な
+mengenalku	to know me	私を知っている
+hutang	debt	借金
+nampak	to appear / seem (variant of tampak)	見える
+unik	unique	独特な
+berisik	noisy	うるさい
+menyetir	to drive (vehicle)	運転する
+matematika	mathematics	数学
+berdebat	to debate	議論する
+andai	if only (wishful)	もし〜なら
+huruf	letter (alphabet)	文字
+bajak	to pirate / hijack / plow (context-dependent)	盗用する／耕す
+dibuka	to be opened	開かれる
+serangga	insect	昆虫
+buatmu	for you	あなたのために
+ditulis	to be written	書かれる
+kepentingan	interest / importance	利益／重要性
+gelar	title / degree	称号／学位
+menginap	to stay overnight	泊まる
+kapanpun	whenever	いつでも
+ikutlah	join! (imperative)	参加しなさい
+mengendarai	to ride / drive	乗る／運転する
+umpan	bait	餌
+kamarmu	your room	あなたの部屋
+belakangmu	behind you	あなたの後ろ
+pegangan	handle / support / grip	取っ手／支え
+berjumpa	to meet (formal)	会う
+sarankan	suggest! (imperative)	提案しろ
+mengubahnya	to change it	それを変える
+perguruan	institution / school (formal)	学校／機関
+menentang	to oppose	反対する
+pecah	to break / explode	壊れる／破裂する
+menghancurkannya	to destroy it	それを破壊する
+menyangka	to suspect / assume	思う／推測する
+terdapat	to be found / exist	存在する
+mengontrol	to control	制御する
+suster	nurse / sister (religious)	看護師／修道女
+perilaku	behavior	行動
+mengikutiku	to follow me	私についてくる
+sukai	like! (imperative)	好きになれ
+ditakdirkan	destined / fated	運命づけられた
+memperingatkan	to warn	警告する
+pejuang	fighter / warrior	戦士
+ucapan	speech / utterance	発言
+kamarnya	his / her room	彼／彼女の部屋
+ikatan	bond / tie	絆
+ijin	permission (variant of izin)	許可
+perkelahian	fight (noun)	喧嘩
+sensitif	sensitive	敏感な
+bercerai	to divorce	離婚する
+kesedihan	sadness	悲しみ
+teknis	technical	技術的な
+menjerit	to scream	悲鳴を上げる
+klasik	classic	古典的な
+pusing	dizzy / confused	めまい／混乱
+diselamatkan	to be saved	救われる
+pejabat	official	役人
+zaman	era / age	時代
+kubiarkan	I let it / him / her (intentional action)	放っておく
+kegagalan	failure	失敗
+ya.	yes (emphatic)	はい
+bersyukur	to be grateful	感謝する
+kaget	surprised / shocked	驚いた
+pidato	speech	スピーチ
+gitu	like that (informal)	そんな感じ
+bersamaan	simultaneously	同時に
+mewakili	to represent	代表する
+gelisah	anxious / restless	不安な
+mungkinkah	is it possible...?	可能だろうか
+kedinginan	to feel cold	寒がる
+hajar	beat! / hit (informal / imperative nuance)	殴れ
+payudara	breast (body part)	胸
+ban	tire	タイヤ
+halus	smooth / refined	滑らか／丁寧な
+kuduga	I guess / I suspected	私は思う
+pecandu	addict	依存者
+ketahuan	to be found out / exposed	バレる
+penguasa	ruler / authority	支配者
+artikel	article	記事
+dibesarkan	to be raised (child)	育てられる
+sinilah	here! (emphasis / location)	ここだ
+akrab	close / familiar (relationship)	親しい
+menilai	to assess / judge	評価する
+perlihatkan	show! (imperative)	見せろ
+sejenak	for a moment	少しの間
+modern	modern	現代的な
+keempat	fourth	4番目
+menembus	to penetrate / break through	突き抜ける
+wabah	epidemic	流行病
+ataupun	or / either (formal)	または
+mengkhawatirkan	to worry / concern (cause worry)	心配させる
+cacat	defect / disability	欠陥／障害
+liat	tough / sticky (informal of liat / lihat ambiguity)	粘り強い
+misalnya	for example	例えば
+status	status	状態
+waktuku	my time	私の時間
+petualangan	adventure	冒険
+kekuatannya	its / his / her strength	力
+menyanyikan	to sing (a song)	歌う
+cokelat	chocolate	チョコレート
+pengakuan	confession / admission	告白
+kelemahan	weakness	弱点
+darat	land (not sea / air)	陸
+mengikutinya	to follow it / him / her	従う
+curang	cheating / unfair	不正な
+petarung	fighter (combat)	戦闘員
+kalung	necklace	ネックレス
+sampel	sample	サンプル
+sok	pretending / acting (negative nuance)	気取る
+memisahkan	to separate	分ける
+dihancurkan	to be destroyed	破壊される
+sungguh-sungguh	seriously	本当に
+semalaman	all night	一晩中
+perdagangan	trade	貿易
+harinya	the day	その日
+pengawasan	supervision	監督
+reaksi	reaction	反応
+mengajari	to teach (someone)	教える
+nyenyak	soundly (sleep well)	ぐっすり
+anak2	children (informal writing)	子供たち
+membencimu	to hate you	あなたを憎む
+meminjam	to borrow	借りる
+kubawa	I brought (it)	持ってきた
+terganggu	disturbed / interrupted	邪魔された
+aliran	flow / stream	流れ
+menebak	to guess	推測する
+menemukanku	to find me	私を見つける
+sesaat	a moment	一瞬
+diinginkan	to be desired / wanted	望まれる
+logam	metal	金属
+sejam	one hour	1時間
+mengajariku	to teach me	私に教える
+pagar	fence	フェンス
+karir	career	キャリア
+pirang	blonde	金髪
+mengingatkanku	to remind me	思い出させる
+mencurigakan	suspicious	疑わしい
+terkait	related / connected	関連した
+dipakai	to be used / worn	使われる／着られる
+berkomunikasi	to communicate	コミュニケーションする
+akui	admit! (imperative)	認めろ
+penyerangan	attack (noun)	攻撃
+nada	tone (voice / music)	音調
+kegiatan	activity	活動
+km	kilometer	キロメートル
+kristen	Christian	キリスト教の
+adiknya	his / her younger sibling	弟／妹
+terhebat	the greatest / best	最高の
+medali	medal	メダル
+staf	staff	スタッフ
+melapor	to report	報告する
+iri	jealous	嫉妬している
+gendut	fat (informal)	太った
+terdekat	nearest	最も近い
+ajar	teach! (root / imperative nuance)	教えろ
+depanmu	in front of you	あなたの前
+mengusir	to drive away / expel	追い出す
+bangsawan	noble / aristocrat	貴族
+kehancuran	destruction	崩壊
+kambing	goat	ヤギ
+narator	narrator	語り手
+pemberani	brave person	勇敢な人
+menunduk	to bow / lower head	うつむく
+menggambar	to draw	描く
+kunjungan	visit	訪問
+lempar	throw! (imperative / root)	投げろ
+peternakan	farm (livestock)	畜産場
+segelas	a glass (of drink)	一杯
+memori	memory	記憶
+penemuan	discovery	発見
+pikirannya	his / her thoughts	思考
+salahnya	the mistake / fault	過ち
+kacamata	glasses	眼鏡
+babak	round / stage (game / story)	段階
+tong	barrel / drum	樽
+mengirimnya	to send it	それを送る
+buatku	for me	私のために
+membiarkanku	to let me	私に〜させる
+obat-obatan	drugs / medicines	薬物
+ranjang	bed	ベッド
+kumpulkan	gather! (imperative)	集めろ
+pimpinan	leader	指導者
+berdosa	sinful	罪深い
+libur	holiday / off day	休日
+peperangan	warfare	戦争
+stres	stress	ストレス
+keseluruhan	whole / entirety	全体
+tur	tour	ツアー
+koin	coin	コイン
+buru-buru	hurry (adverb)	急いで
+cuci	wash!	洗え
+hendak	about to / intend to	～しようとする
+undangan	invitation	招待
+padang	field / plain	野原
+kecilmu	your small (thing / child nuance)	あなたの小さい〜
+siaran	broadcast	放送
+teman-temanmu	your friends	あなたの友達
+urusanku	my business / affair	私の用事
+didepan	in front	前に
+spesies	species	種
+berhadapan	to face each other	向き合う
+berpesta	to party	パーティーする
+separuh	half	半分
+khawatirkan	worry about! (imperative nuance)	心配しろ
+mencuci	to wash	洗う
+dilakukannya	done by him / her	彼／彼女によって行われた
+ditempat	in place / on site	その場で
+penyimpanan	storage / keeping (noun, place or act of storing)	保管／貯蔵
+kayak	like / similar to / such as (informal)	～のような／～みたいな
+sejumlah	a number of / some / several	いくつかの／ある程度の
+kuambil	I take / I pick up (first-person singular, verb)	私が取る／受け取る
+pengawas	supervisor / overseer / inspector	監督者／管理者

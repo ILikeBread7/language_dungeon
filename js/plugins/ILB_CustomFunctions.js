@@ -61,7 +61,7 @@ var $f = $f || {};
     }
 
     let sentences = null;
-    fetch('js/plugins/data/id_sentences.json')
+    fetch('js/plugins/data/id/sentences.json')
         .then(response => response.json())
         .then(data => sentences = data);
 
@@ -666,7 +666,7 @@ var $f = $f || {};
 
     let quizData = null;
     let quizAnswersMap = null;
-    fetch('js/plugins/data/id_quiz.json')
+    fetch('js/plugins/data/id/quiz.json')
         .then(response => response.json())
         .then(data => quizData = data)
         .then(() => quizAnswersMap = new Map(quizData.map(quiz => [ quiz.question, quiz.answer ])));
