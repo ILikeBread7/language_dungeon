@@ -341,8 +341,8 @@
     },
     {
         "question": "kembali",
-        "english": "to return",
-        "answer": "戻る"
+        "english": "to return / again",
+        "answer": "戻る／再び"
     },
     {
         "question": "atau",
@@ -376,8 +376,8 @@
     },
     {
         "question": "kasih",
-        "english": "to give (informal)",
-        "answer": "与える（カジュアル）"
+        "english": "to give (informal) / love",
+        "answer": "与える（カジュアル）／愛"
     },
     {
         "question": "menjadi",
@@ -9050,11 +9050,6 @@
         "answer": "驚かせる"
     },
     {
-        "question": "baik2",
-        "english": "take care / be well (informal repetition)",
-        "answer": "気をつけて／元気で"
-    },
-    {
         "question": "kekuasaan",
         "english": "power / authority (political / social)",
         "answer": "権力（けんりょく）"
@@ -9323,11 +9318,6 @@
         "question": "kaca",
         "english": "glass",
         "answer": "ガラス"
-    },
-    {
-        "question": "se",
-        "english": "one / a (prefix, formal / limited use, context-dependent)",
-        "answer": "一つの／ある（接頭辞）"
     },
     {
         "question": "berlaku",
@@ -10063,11 +10053,6 @@
         "question": "danau",
         "english": "lake",
         "answer": "湖"
-    },
-    {
-        "question": "orang2",
-        "english": "people (informal plural)",
-        "answer": "人々"
     },
     {
         "question": "eropa",
@@ -14538,11 +14523,6 @@
         "question": "nyenyak",
         "english": "soundly (sleep well)",
         "answer": "ぐっすり"
-    },
-    {
-        "question": "anak2",
-        "english": "children (informal writing)",
-        "answer": "子供たち"
     },
     {
         "question": "membencimu",
