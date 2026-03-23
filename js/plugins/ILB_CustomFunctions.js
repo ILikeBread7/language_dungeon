@@ -315,6 +315,7 @@ var $f = $f || {};
         const quiz = event.quiz;
 
         $nv.question = quiz.question;
+        $nv.correctAnswer = quiz.answers[quiz.correct];
 
         quiz.answers.forEach((answer, index) => {
             $gameVariables.setValue(index + 12, DEFAULT_COLOR);
