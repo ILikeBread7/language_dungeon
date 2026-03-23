@@ -245,6 +245,9 @@ var $f = $f || {};
     $f.setEnemyTexts = () => {
         alreadyAsked = [];
         $gameMap.events().forEach($f.setEnemyText);
+        const portalEnemy = $gameMap.events()
+            .find(event => event.event() && event.event().meta && event.event().meta.enemy);
+        portalEnemy.portalEnemy = true;
     }
 
     let alreadyAsked = [];
@@ -447,7 +450,7 @@ var $f = $f || {};
 
         if (enemyEvent.hit) {
             $eventText.clear(enemyEvent.eventId());
-            if (enemyEvent.event().meta.portalEnemy) {
+            if (enemyEvent.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.1) {
                 $f.placeEvent(enemyEvent.x, enemyEvent.y, 'potion');

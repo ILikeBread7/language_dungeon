@@ -259,7 +259,7 @@ Game_MapGenerator.prototype.setup = function() {
     this.refreshWallAndRoof();
     this.makeData();
     this.setStart();
-    this.setGoal();
+    // this.setGoal();
     this.setRateEvents();
     SceneManager._scene.createDisplayObjects();
     this._isReady = true;
@@ -456,6 +456,35 @@ Game_MapGenerator.prototype.setRateEvents = function() {
             }
         }, this);
     }, this);
+
+    $dataMap.events
+        .filter(event => !!event && !!event.meta.maxPerMap)
+        .forEach(mapDataEvent => {
+            const maxPerMap = Number(mapDataEvent.meta.maxPerMap);
+            const minPerMap = Number(mapDataEvent.meta.minPerMap || 0);
+            const maxPerRoom = Number(mapDataEvent.meta.maxPerRoom);
+            const maxInStartRoom = Number(mapDataEvent.meta.maxInStartRoom || maxPerRoom);
+
+            const { x: startX, y: startY } = this._startXY;
+            const startRoom = this.roomByXY(startX, startY);
+            const eventsPerRoom = this._rooms.map(room => ({ room, eventsNumber: 0, isStartRoom: room === startRoom }));
+            const numOnMap = Math.random() * (maxPerMap - minPerMap) + minPerMap;
+            for (let i = 0; i < numOnMap; i++) {
+                if (eventsPerRoom.length === 0) {
+                    console.warn('Rooms filled with events!');
+                    break;
+                }
+
+                const randomRoomIndex = Math.floor(Math.random() * eventsPerRoom.length);
+                const randomRoomData = eventsPerRoom[randomRoomIndex];
+                const event = new Game_Event($gameMap.mapId(), mapDataEvent.id);
+                this.setEvent(event, 'room', randomRoomData.room);
+                randomRoomData.eventsNumber++;
+                if (randomRoomData.eventsNumber >= (randomRoomData.isStartRoom ? maxInStartRoom : maxPerRoom)) {
+                    eventsPerRoom.splice(randomRoomIndex, 1);
+                }
+            }
+        });
 };
 
 //ランダムブール
