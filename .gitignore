@@ -14,6 +14,7 @@ js/plugins/*.js
 !js/plugins/SAN_MapGenerator.js
 !js/plugins/VE_DiagonalMovement.js
 !js/plugins/SimpleDungeonMinimap.js
+!js/plugins/PMD_HUD.js
 dev/parsers/example_texts
 dev/parsers/wordlists
 dev/parsers/wiktionary
