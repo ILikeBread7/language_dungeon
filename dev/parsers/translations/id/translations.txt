@@ -1804,7 +1804,6 @@ dipecat	to be fired / dismissed (passive)	解雇される
 terkunci	locked (state, not action)	鍵がかかっている
 berhutang	to be in debt	借金している
 mengejutkan	to shock / to surprise (active verb)	驚かせる
-baik2	take care / be well (informal repetition)	気をつけて／元気で
 kekuasaan	power / authority (political / social)	権力（けんりょく）
 kebebasan	freedom	自由（じゆう）
 ukuran	size / measurement	サイズ／寸法（すんぽう）
@@ -1871,7 +1870,6 @@ menyuruhku	to tell me (to do something)	私に～させる／命じる
 pingsan	to faint	気絶する
 kesal	annoyed / irritated	イライラする
 meninggalkanmu	to leave you	あなたを残す／去る
-se	one / a (prefix, formal / limited use, context-dependent)	一つの／ある（接頭辞）
 berlaku	to apply / to be valid (law / rule)	適用される／有効である
 mobilku	my car	私の車
 tulis	to write / write! (root / imperative ambiguity)	書く／書いて
@@ -1999,7 +1997,6 @@ bangsa	nation	国家
 kesehatan	health	健康
 sepertiku	like me	私のように
 danau	lake	湖
-orang2	people (informal plural)	人々
 eropa	Europe	ヨーロッパ
 pikiranku	my mind / my thoughts	私の考え
 motor	motorcycle	バイク
@@ -2905,7 +2902,6 @@ pengawasan	supervision	監督
 reaksi	reaction	反応
 mengajari	to teach (someone)	教える
 nyenyak	soundly (sleep well)	ぐっすり
-anak2	children (informal writing)	子供たち
 membencimu	to hate you	あなたを憎む
 meminjam	to borrow	借りる
 kubawa	I brought (it)	持ってきた
