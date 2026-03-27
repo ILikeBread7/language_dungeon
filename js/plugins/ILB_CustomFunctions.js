@@ -372,6 +372,8 @@ var $f = $f || {};
     }
 
     function addWordTranslations(sentence, quiz) {
+        const translationScoreThreshold = 1;
+
         const SPACE_CODE = '_@_';
         const LEFT_PAREN_CODE = '_@@_';
         const RIGHT_PAREN_CODE = '_@@@_';
@@ -381,7 +383,7 @@ var $f = $f || {};
 
         [...uniqueWordsSet]
             .map(word => word.toLowerCase())
-            .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= 0 && quizAnswersMap.has(word))
+            .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= translationScoreThreshold && quizAnswersMap.has(word))
             .forEach(word => sentence = sentence.replace(
                     new RegExp(`\\b(${word})\\b`, 'ig'),
                     `$1${SPACE_CODE}${LEFT_PAREN_CODE}${quizAnswersMap.get(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}`
