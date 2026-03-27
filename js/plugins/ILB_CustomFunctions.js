@@ -386,7 +386,7 @@ var $f = $f || {};
             .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= translationScoreThreshold && quizAnswersMap.has(word))
             .forEach(word => sentence = sentence.replace(
                     new RegExp(`\\b(${word})\\b`, 'ig'),
-                    `$1${SPACE_CODE}${LEFT_PAREN_CODE}${quizAnswersMap.get(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}`
+                    `$1${SPACE_CODE}\\c[2]${LEFT_PAREN_CODE}${quizAnswersMap.get(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}\\c[0]`
                 )
             );
 
