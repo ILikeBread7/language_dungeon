@@ -12,9 +12,9 @@
  * Example: $nv.testVariable instead of $gameVariables.value(1)
  */
 
-var $nv = {};
-var $ns = {};
-var $nce = {};
+const $nv = {};
+const $ns = {};
+const $nce = {};
 
 (() => {
 
@@ -125,6 +125,18 @@ var $nce = {};
         }
         return !!value;
     };
+
+    const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
+    Window_Base.prototype.convertEscapeCharacters = function(text) {
+        text = _Window_Base_convertEscapeCharacters.call(this, text);
+        return text.replace(
+            /\x1bNV\[([a-z\d_.]+)\]/gi,
+            (_, capture) => capture.split('.').reduce((obj, prop) => obj[prop], $nv)
+        ).replace(
+            /\x1bEV\[(.+?)\]/gi,
+            (_, capture) => eval(capture)
+        );
+    }
 
     function splitOnce(string, splitChar) {
         const index = string.indexOf(splitChar);
