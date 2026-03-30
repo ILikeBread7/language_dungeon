@@ -7,30 +7,30 @@ const TYPE = Object.freeze({
     I_ADJECTIVE: 2,
     NA_ADJECTIVE: 3,
     NOUN: 4,
-    GODAN_VERB: 5
+    GODAN_VERB: 5,
+    SURU_VERB: 6,
+    KURU_VERB: 7
 });
 
 const dict = JSON.parse(fs.readFileSync('dicts/JMdict_e.json', 'utf8'));
 const dictMap = new Map(
     dict.JMdict.entry.flatMap(word => {
-        let element = word['k_ele'];
-        if (!element) {
-            element = word['r_ele'];
-            if (!element) {
-                return;
-            }
-        }
-
-        const elements = elementToArray(element);
-        const types = elementToArray(word['sense']).flatMap(senses => elementToArray(senses).flatMap(sense => elementToArray(sense.pos).map(descriptionToType)));
-        return elements.map(element => [ element['keb'] || element['reb'], [...new Set(types)].filter(Boolean) ]);
+        const kanjiAndReadings = [ word['k_ele'], word['r_ele'] ].filter(Boolean);
+        return kanjiAndReadings.flatMap(element => {
+            const elements = elementToArray(element);
+            const types = elementToArray(word['sense']).flatMap(senses => elementToArray(senses).flatMap(sense => elementToArray(sense.pos).map(descriptionToType)));
+            return elements.map(element => [ element['keb'] || element['reb'], [...new Set(types)].filter(Boolean) ]);
+        });
     })
     .filter(Boolean)
 );
+dictMap.set('する', [ TYPE.SURU_VERB ]);
+dictMap.set('くる', [ TYPE.KURU_VERB ]);
+dictMap.set('来る', [ TYPE.KURU_VERB ]);
 
-['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ'].forEach(word => {
+['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => {
     console.log(word);
-    const types = dictMap.get(word);
+    const types = dictMap.get(word) || [];
     types.forEach(type => {
         console.log(type);
         if ([TYPE.I_ADJECTIVE, TYPE.NA_ADJECTIVE].includes(type)) {
@@ -39,7 +39,7 @@ const dictMap = new Map(
             );
         }
 
-        if ([TYPE.GODAN_VERB, TYPE.ICHIDAN_VERB].includes(type)) {
+        if ([TYPE.GODAN_VERB, TYPE.ICHIDAN_VERB, TYPE.SURU_VERB, TYPE.KURU_VERB].includes(type)) {
             console.log(
                 codec.conjugations.map(conjugation => codec.conjugate(word, conjugation, type === TYPE.ICHIDAN_VERB))
             );
@@ -71,6 +71,14 @@ function descriptionToType(description) {
 
     if (description.includes('adjectival nouns or quasi-adjectives (keiyodoshi)')) {
         return TYPE.NA_ADJECTIVE;
+    }
+
+    if (description.includes('suru verb')) {
+        return TYPE.SURU_VERB;
+    }
+
+    if (description.includes('kuru verb')) {
+        return TYPE.KURU_VERB;
     }
 
     if (description.includes('ichidan verb')) {
