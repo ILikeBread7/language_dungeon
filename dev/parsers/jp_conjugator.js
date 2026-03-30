@@ -28,23 +28,33 @@ dictMap.set('する', [ TYPE.SURU_VERB ]);
 dictMap.set('くる', [ TYPE.KURU_VERB ]);
 dictMap.set('来る', [ TYPE.KURU_VERB ]);
 
+const auxiliariesArrays = [ [], ...codec.auxiliaries.map(auxiliary => [ auxiliary ]) ];
 ['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => {
-    console.log(word);
     const types = dictMap.get(word) || [];
-    types.forEach(type => {
-        console.log(type);
+    const conjugations = types.map(type => {
         if ([TYPE.I_ADJECTIVE, TYPE.NA_ADJECTIVE].includes(type)) {
-            console.log(
-                codec.adjConjugations.map(conjugation => codec.adjConjugate(word, conjugation, type === TYPE.I_ADJECTIVE))
-            );
+            return codec.adjConjugations.map(conjugation => codec.adjConjugate(word, conjugation, type === TYPE.I_ADJECTIVE))
         }
 
         if ([TYPE.GODAN_VERB, TYPE.ICHIDAN_VERB, TYPE.SURU_VERB, TYPE.KURU_VERB].includes(type)) {
-            console.log(
-                codec.conjugations.map(conjugation => codec.conjugate(word, conjugation, type === TYPE.ICHIDAN_VERB))
+            return auxiliariesArrays
+                .flatMap(auxiliaryArray => codec.conjugations
+                    .flatMap(conjugation => {
+                        try {
+                            return codec.conjugateAuxiliaries(word, auxiliaryArray, conjugation, type === TYPE.ICHIDAN_VERB);
+                        } catch (error) {
+                            // console.warn(error);
+                            return '';
+                        }
+                    }
+                ).filter(Boolean)
             );
         }
-    });
+
+        return [];
+    }).flat(Number.MAX_SAFE_INTEGER);
+    const result = [ ...new Set([ word, ...conjugations ]) ];
+    console.log(result.join(','));
 })
 
 
