@@ -27,9 +27,19 @@ const dictMap = new Map(
 dictMap.set('する', [ TYPE.SURU_VERB ]);
 dictMap.set('くる', [ TYPE.KURU_VERB ]);
 dictMap.set('来る', [ TYPE.KURU_VERB ]);
-
 const auxiliariesArrays = [ [], ...codec.auxiliaries.map(auxiliary => [ auxiliary ]) ];
-['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => {
+
+const jlpt = JSON.parse(fs.readFileSync('dicts/jlpt.json', 'utf8'));
+[ ...new Set(
+    jlpt
+        .flatMap(({ kanji, kana }) => [ kanji, kana ])
+        .filter(Boolean)
+    )
+].forEach(word => console.log(conjugateWord(word).join(',')));
+
+// ['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => console.log(conjugateWord(word).join(',')));
+
+function conjugateWord(word) {
     const types = dictMap.get(word) || [];
     const conjugations = types.map(type => {
         if ([TYPE.I_ADJECTIVE, TYPE.NA_ADJECTIVE].includes(type)) {
@@ -53,9 +63,8 @@ const auxiliariesArrays = [ [], ...codec.auxiliaries.map(auxiliary => [ auxiliar
 
         return [];
     }).flat(Number.MAX_SAFE_INTEGER);
-    const result = [ ...new Set([ word, ...conjugations ]) ];
-    console.log(result.join(','));
-})
+    return [ ...new Set([ word, ...conjugations ]) ];
+}
 
 
 // console.log(
