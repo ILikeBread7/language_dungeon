@@ -2,7 +2,7 @@ import * as codec from 'kamiya-codec';
 import fs from 'node:fs';
 
 const TYPE = Object.freeze({
-    UNKNOWN: 0,
+    UNKNOWN: -1,
     ICHIDAN_VERB: 1,
     I_ADJECTIVE: 2,
     NA_ADJECTIVE: 3,
@@ -13,20 +13,20 @@ const TYPE = Object.freeze({
 });
 
 const dict = JSON.parse(fs.readFileSync('dicts/JMdict_e.json', 'utf8'));
-const dictMap = new Map(
-    dict.JMdict.entry.flatMap(word => {
-        const kanjiAndReadings = [ word['k_ele'], word['r_ele'] ].filter(Boolean);
-        return kanjiAndReadings.flatMap(element => {
-            const elements = elementToArray(element);
-            const types = elementToArray(word['sense']).flatMap(senses => elementToArray(senses).flatMap(sense => elementToArray(sense.pos).map(descriptionToType)));
-            return elements.map(element => [ element['keb'] || element['reb'], [...new Set(types)].filter(Boolean) ]);
+const dictMap = new Map();
+dict.JMdict.entry.forEach(entry => {
+    const kanjiAndReadings = [ entry['k_ele'], entry['r_ele'] ].filter(Boolean);
+    kanjiAndReadings.forEach(element => {
+        const elements = elementToArray(element);
+        const types = elementToArray(entry['sense']).flatMap(senses => elementToArray(senses).flatMap(sense => elementToArray(sense.pos).map(descriptionToType)));
+        elements.forEach(element => {
+            const word = element['keb'] || element['reb'];
+            const mapEntry = dictMap.get(word) || [];
+            dictMap.set(word,  [...new Set([ ...mapEntry, ...types ]) ]);
         });
     })
-    .filter(Boolean)
-);
-dictMap.set('する', [ TYPE.SURU_VERB ]);
-dictMap.set('くる', [ TYPE.KURU_VERB ]);
-dictMap.set('来る', [ TYPE.KURU_VERB ]);
+});
+
 const auxiliariesArrays = [ [], ...codec.auxiliaries.map(auxiliary => [ auxiliary ]) ];
 
 const jlpt = JSON.parse(fs.readFileSync('dicts/jlpt.json', 'utf8'));
@@ -40,21 +40,48 @@ const jlpt = JSON.parse(fs.readFileSync('dicts/jlpt.json', 'utf8'));
 // ['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => console.log(conjugateWord(word).join(',')));
 
 function conjugateWord(word) {
-    const types = dictMap.get(word) || [];
+    let types = dictMap.get(word);
+    if (!types) {
+        if (word.endsWith('する')) {
+            types = [ TYPE.SURU_VERB ];
+        } else if (word.endsWith('くる') || word.endsWith('来る')) {
+            types = [ TYPE.KURU_VERB ];
+        } else {
+            types = [];
+        }
+    }
     const conjugations = types.map(type => {
-        if ([TYPE.I_ADJECTIVE, TYPE.NA_ADJECTIVE].includes(type)) {
+        if ([ TYPE.I_ADJECTIVE, TYPE.NA_ADJECTIVE ].includes(type)) {
             return codec.adjConjugations.map(conjugation => codec.adjConjugate(word, conjugation, type === TYPE.I_ADJECTIVE))
         }
 
-        if ([TYPE.GODAN_VERB, TYPE.ICHIDAN_VERB, TYPE.SURU_VERB, TYPE.KURU_VERB].includes(type)) {
+        if ([ TYPE.GODAN_VERB, TYPE.ICHIDAN_VERB ].includes(type)) {
             return auxiliariesArrays
                 .flatMap(auxiliaryArray => codec.conjugations
                     .flatMap(conjugation => {
                         try {
                             return codec.conjugateAuxiliaries(word, auxiliaryArray, conjugation, type === TYPE.ICHIDAN_VERB);
                         } catch (error) {
-                            // console.warn(error);
-                            return '';
+                            return;
+                        }
+                    }
+                ).filter(Boolean)
+            );
+        }
+
+        if ([ TYPE.SURU_VERB, TYPE.KURU_VERB ].includes(type)) {
+            const suffixLength = 2;
+            const baseWord = word.substring(0, word.length - suffixLength);
+            const suffix = word.substring(word.length - suffixLength, word.length);
+            return auxiliariesArrays
+                .flatMap(auxiliaryArray => codec.conjugations
+                    .flatMap(conjugation => {
+                        try {
+                            return codec
+                                .conjugateAuxiliaries(suffix, auxiliaryArray, conjugation)
+                                .map(conjugatedSuffix => baseWord + conjugatedSuffix);
+                        } catch (error) {
+                            return;
                         }
                     }
                 ).filter(Boolean)
