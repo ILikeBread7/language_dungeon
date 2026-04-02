@@ -6,6 +6,7 @@ const LANGUAGE_ARGS = [ '--lang', '-l' ];
 const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
+const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
 
 const XML_ENTITY_MAP = {
     nbsp: ' ',
@@ -24,6 +25,7 @@ const params = {
     parseOnly: false,
     json: false,
     prod: false,
+    wordsSplitChar: ',',
     unknownArgument: false
 };
 
@@ -53,6 +55,9 @@ for (let i = 0; i < args.length; i++) {
             params.json = true;
             params.prod = true;
             continue;
+        } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
+            i++;
+            params.wordsSplitChar = args[i];
         } else {
             params.unknownArgument = true;
             console.warn(`Unknown argument: ${arg}`);
@@ -65,8 +70,14 @@ if (params.unknownArgument) {
     process.exit(0);
 }
 
-const words = fs.readFileSync(params.languageFile, 'utf8').split('\n');
-const wordsFrequencyMap = new Map(words.map((word, index) => [ word, index + 1 ]));
+const wordLines = fs.readFileSync(params.languageFile, 'utf8')
+    .split('\n')
+    .map(word => word.split(params.wordsSplitChar));
+const wordsFrequencyMap = new Map(
+    wordLines
+        .flatMap((words, lineIndex) => words.map(word => [ word, lineIndex + 1 ]))
+);
+const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(acc, curr.length), 0);
 let text = '';
 files.forEach(filename => {
     const fileText = fs.readFileSync(filename, 'utf8');
@@ -82,7 +93,8 @@ const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
 
 const jsonResult = {};
 const read = readline.createInterface({ input: stdin, output: stdout });
-read.on('line', word => {
+read.on('line', line => {
+    const word = line.split(params.wordsSplitChar)[0];
     let sentences = wordsToSentencesMap.get(word);
     if (!sentences) {
         if (!params.json) {
@@ -131,7 +143,7 @@ function processSentences(sentences, wordsFrequencyMap) {
                 return [ 0, sentence ];
             }
             processedSentences.add(uniqueSentence);
-            return [ processSentence(sentence, wordsFrequencyMap, sentenceLowerCase), sentence ];
+            return [ processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase), sentence ];
         })
         .filter(([ processedSentence ]) => processedSentence && (processedSentence.score > 0 && processedSentence.score < UNKNOWN_WORD_PENALTY))
         .forEach(([ processedSentence, sentence ]) => processedSentence.words.forEach(word => addToMap(sentencesForWords, word, { sentence, score: processedSentence.score })));
@@ -152,10 +164,11 @@ function addToMap(map, key, value) {
  * 
  * @param {string} sentence 
  * @param {Map<string, number>} wordsFrequencyMap 
+ * @param {number} maxWordLength 
  * @param {string} [sentenceLowerCase=sentence.toLowerCase()] 
  * @returns {{ words: string[], score: number} | null} null if not applicable
  */
-function processSentence(sentence, wordsFrequencyMap, sentenceLowerCase = sentence.toLowerCase()) {
+function processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase = sentence.toLowerCase()) {
     const isAlphabet = sentence.match(ALPHABET_REGEX);
 
     // If sentence is not capitalized skip
@@ -163,7 +176,7 @@ function processSentence(sentence, wordsFrequencyMap, sentenceLowerCase = senten
         return null;
     }
 
-    const split = splitSentence(sentenceLowerCase, isAlphabet);
+    const split = splitSentence(sentenceLowerCase, wordsFrequencyMap, maxWordLength, isAlphabet);
     const uniqueWords = [...new Set(split)];
 
     return {
@@ -175,14 +188,50 @@ function processSentence(sentence, wordsFrequencyMap, sentenceLowerCase = senten
     };
 }
 
-function splitSentence(sentence, isAlphabet) {
+function splitSentence(sentence, wordsMap, maxWordLength, isAlphabet) {
+    const sentenceSplit = sentence
+        .split(/[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/)
+        .filter(Boolean);
+
     if (isAlphabet) {
-        return sentence
-            .split(/[\s,、"—'.!?。！？(「『‚„“)」』‘“”]/)
-            .filter(Boolean);
+        return sentenceSplit;
     }
 
-    return []; // TODO later for non alphabet based languages
+    return sentenceSplit.flatMap(sentencePart => splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength));
+}
+
+function splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength) {
+    const result = [];
+    const unknownParts = [];
+    let unknownPartLength = 0;
+
+    outer: for (let start = 0; start < sentencePart.length; start++) {
+        for (let end = Math.min(sentencePart.length, start + maxWordLength); end > start; end--) {
+            const part = sentencePart.substring(start, end);
+            if (wordsMap.has(part)) {
+                result.push(part);
+                if (unknownPartLength > 0) {
+                    const unknownPart = sentencePart.substring(start - unknownPartLength, start);
+                    unknownParts.push(unknownPart);
+                    result.push(unknownPart);
+                    unknownPartLength = 0;
+                }
+                start += part.length - 1;
+                continue outer;
+            }
+        }
+        unknownPartLength++;
+    }
+
+    if (unknownPartLength > 0) {
+        const unknownPart = sentencePart.substring(sentencePart.length - unknownPartLength, sentencePart.length);
+        unknownParts.push(unknownPart);
+        result.push(unknownPart);
+    }
+    if (unknownParts.length > 0) {
+        console.warn(`Sentence part: ${sentencePart} contains ${unknownParts.length} unknown parts: ${unknownParts.join(', ')}`);
+    }
+    return result;
 }
 
 function preprocessXml(text) {
@@ -236,8 +285,8 @@ function preprocessTxt(text) {
 
 function splitParser(text) {
     const PERIOD_CHARS = '.!?。！？';
-    const OPEN_PAREN_CHARS = '(「『‚„“';
-    const END_QUOTE_CHARS = '」』‘“”';
+    const OPEN_PAREN_CHARS = '(「『‚„“（[';
+    const END_QUOTE_CHARS = '」』‘“”）]';
     const CLOSE_PAREN_CHARS = ')' + END_QUOTE_CHARS;
     const QUOTE_CHAR = '"';
     const NEWLINE_CHAR = '\n';
