@@ -18,9 +18,13 @@ const splitData = jlptData.map(({ kanji, kana, english }) => {
     return kanjiSplit.map(kanjiPart => kanaSplit.map(kanaPart => {
         if (kanaPart !== suruSuffix && kanaPart.endsWith(suruSuffix) && !kanjiPart.endsWith(suruSuffix) && english.match(englishVerbRegex)) {
             const englishNouned = english.replaceAll(englishVerbRegex, '$1');
+            let kanaNoSuffix = kanaPart.substring(0, kanaPart.length - suruLength);
+            if (kanaNoSuffix.endsWith('・')) {
+                kanaNoSuffix = kanaNoSuffix.substring(0, kanaNoSuffix.length - 1);
+            }
             return [
-                { kanji: `${kanjiPart}${suruSuffix}`, kana: kanaPart, english },
-                { kanji: kanjiPart, kana: kanaPart.substring(0, kanaPart.length - suruLength), english : `(noun) ${englishNouned}` }
+                { kanji: kanjiPart && (kanjiPart + suruSuffix), kana: kanaPart, english },
+                { kanji: kanjiPart, kana: kanaNoSuffix, english : `(noun) ${englishNouned}` }
             ];
         }
         return { kanji: kanjiPart, kana: kanaPart, english };
