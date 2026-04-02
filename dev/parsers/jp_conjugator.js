@@ -37,8 +37,6 @@ const jlpt = JSON.parse(fs.readFileSync('dicts/jlpt.json', 'utf8'));
     )
 ].forEach(word => console.log(conjugateWord(word).join(',')));
 
-// ['悲しい', '綺麗', '変える', '帰る', '選択', 'ああ', 'する', 'くる', '来る'].forEach(word => console.log(conjugateWord(word).join(',')));
-
 function conjugateWord(word) {
     let types = dictMap.get(word);
     if (!types) {
@@ -92,17 +90,6 @@ function conjugateWord(word) {
     }).flat(Number.MAX_SAFE_INTEGER);
     return [ ...new Set([ word, ...conjugations ]) ];
 }
-
-
-// console.log(
-//     [...new Set(codec.conjugations.flatMap(conjugation => codec.conjugate('書く', conjugation)))].sort((a, b) => b.length - a.length).join('\n')
-// );
-// console.log(
-//     [...new Set(codec.adjConjugations.flatMap(conjugation => codec.adjConjugate('新しい', conjugation, true)))].sort((a, b) => b.length - a.length).join('\n')
-// );
-// console.log(
-//     [...new Set(codec.adjConjugations.flatMap(conjugation => codec.adjConjugate('綺麗', conjugation, false)))].sort((a, b) => b.length - a.length).join('\n')
-// );
 
 function descriptionToType(description) {
     description = description.toLowerCase();
