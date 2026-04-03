@@ -1,12 +1,14 @@
 import fs from 'node:fs'
 import * as readline from 'node:readline';
 import { stdin, stdout } from 'node:process';
+import { TokenizerBuilder } from 'lindera-wasm-unidic-nodejs';
 
 const LANGUAGE_ARGS = [ '--lang', '-l' ];
 const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
+const UNIDIC_ARGS = [ '--unidic', '-u' ];
 
 const XML_ENTITY_MAP = {
     nbsp: ' ',
@@ -25,6 +27,7 @@ const params = {
     parseOnly: false,
     json: false,
     prod: false,
+    unidic: false,
     wordsSplitChar: ',',
     unknownArgument: false
 };
@@ -55,9 +58,13 @@ for (let i = 0; i < args.length; i++) {
             params.json = true;
             params.prod = true;
             continue;
+        } else if (UNIDIC_ARGS.includes(arg)) {
+            params.unidic = true;
+            continue;
         } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
             i++;
             params.wordsSplitChar = args[i];
+            continue;
         } else {
             params.unknownArgument = true;
             console.warn(`Unknown argument: ${arg}`);
@@ -69,6 +76,10 @@ for (let i = 0; i < args.length; i++) {
 if (params.unknownArgument) {
     process.exit(0);
 }
+
+const tokenizerBuilder = new TokenizerBuilder();
+tokenizerBuilder.setDictionary('embedded://unidic');
+const tokenizer = tokenizerBuilder.build();
 
 const wordLines = fs.readFileSync(params.languageFile, 'utf8')
     .split('\n')
@@ -192,6 +203,12 @@ function splitSentence(sentence, wordsMap, maxWordLength, isAlphabet) {
     const sentenceSplit = sentence
         .split(/[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/)
         .filter(Boolean);
+
+    if (params.unidic) {
+        return sentenceSplit
+            .flatMap(sentencePart => tokenizer.tokenize(sentencePart).map(token => token.getDetail(10)))
+            .filter(Boolean);
+    }
 
     if (isAlphabet) {
         return sentenceSplit;
