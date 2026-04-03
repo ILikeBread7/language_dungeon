@@ -209,13 +209,13 @@ function splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength) {
         for (let end = Math.min(sentencePart.length, start + maxWordLength); end > start; end--) {
             const part = sentencePart.substring(start, end);
             if (wordsMap.has(part)) {
-                result.push(part);
                 if (unknownPartLength > 0) {
                     const unknownPart = sentencePart.substring(start - unknownPartLength, start);
                     unknownParts.push(unknownPart);
                     result.push(unknownPart);
                     unknownPartLength = 0;
                 }
+                result.push(part);
                 start += part.length - 1;
                 continue outer;
             }
