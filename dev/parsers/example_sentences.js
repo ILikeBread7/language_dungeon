@@ -9,6 +9,7 @@ const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
+const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
 
 const XML_ENTITY_MAP = {
     nbsp: ' ',
@@ -21,6 +22,7 @@ const XML_ENTITY_MAP = {
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
 const ALPHABET_REGEX = /[a-z\s]+/ig;
 const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、—]/g;
+const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
 
 const params = {
     languageFile: '',
@@ -28,6 +30,7 @@ const params = {
     json: false,
     prod: false,
     unidic: false,
+    testUnidic: false,
     wordsSplitChar: ',',
     unknownArgument: false
 };
@@ -61,6 +64,9 @@ for (let i = 0; i < args.length; i++) {
         } else if (UNIDIC_ARGS.includes(arg)) {
             params.unidic = true;
             continue;
+        } else if (TEST_UNIDIC_ARGS.includes(arg)) {
+            params.testUnidic = true;
+            continue;
         } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
             i++;
             params.wordsSplitChar = args[i];
@@ -80,6 +86,13 @@ if (params.unknownArgument) {
 const tokenizerBuilder = new TokenizerBuilder();
 tokenizerBuilder.setDictionary('embedded://unidic');
 const tokenizer = tokenizerBuilder.build();
+
+if (params.testUnidic) {
+    const sentence = '新しくできた水族館にはまだ行ったことがありません。';
+    const split = splitUnidic(sentence);
+    console.log(split.join(', '));
+    process.exit(0);
+}
 
 const wordLines = fs.readFileSync(params.languageFile, 'utf8')
     .split('\n')
@@ -353,5 +366,23 @@ function splitParser(text) {
         }
     }
 
+    return split;
+}
+
+function splitUnidic(sentence) {
+    const tokens = tokenizer.tokenize(sentence);
+    const split = tokens.reduce((acc, curr) => {
+        const wordType = curr.getDetail(0);
+        if (UNIDIC_JOIN_SUFFIXES.includes(wordType)) {
+            if (acc.length === 0) {
+                console.warn(`${wordType} at the start of a sentence: ${sentence}`);
+                return acc;
+            }
+            acc[acc.length - 1] += curr.surface;
+        } else {
+            acc.push(curr.surface);
+        }
+        return acc;
+    }, []);
     return split;
 }
