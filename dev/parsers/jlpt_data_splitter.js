@@ -1,10 +1,34 @@
 import fs from 'node:fs';
 
 const args = process.argv.slice(2);
-const file = args[0];
-const fileData = fs.readFileSync(file, 'utf8');
 
-const jlptData = file.endsWith('.json')
+const WORDLIST_ONLY_ARGS = [ '--wordlist-only', '-w' ];
+
+const params = {
+    file: '',
+    wordlistOnly: false,
+    unknownArgument: false
+};
+
+for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('-')) {
+        if (WORDLIST_ONLY_ARGS.includes(arg)) {
+            params.wordlistOnly = true;
+        } else {
+            params.unknownArgument = true;
+            console.warn(`Unknown argument: ${arg}`);
+        }
+        continue;
+    }
+    params.file = arg;
+}
+if (params.unknownArgument) {
+    process.exit(0);
+}
+
+const fileData = fs.readFileSync(params.file, 'utf8');
+const jlptData = params.file.endsWith('.json')
     ? JSON.parse(fileData)
     : formatTxtData(fileData);
 
@@ -30,7 +54,15 @@ const splitData = jlptData.map(({ kanji, kana, english }) => {
         return { kanji: kanjiPart, kana: kanaPart, english };
     }));
 }).flat(Number.MAX_SAFE_INTEGER);
-console.log(JSON.stringify(splitData, null, 2));
+if (params.wordlistOnly) {
+    console.log(
+        splitData
+            .map(({ kanji, kana }) => kanji || kana)
+            .join('\n')
+    );
+} else {
+    console.log(JSON.stringify(splitData, null, 2));
+}
 
 function formatTxtData(data) {
     const lines = data.split('\n');
