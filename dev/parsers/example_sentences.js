@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import * as readline from 'node:readline';
 import { stdin, stdout } from 'node:process';
 import { TokenizerBuilder } from 'lindera-wasm-unidic-nodejs';
+import * as sax from 'sax';
 
 const LANGUAGE_ARGS = [ '--lang', '-l' ];
 const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
@@ -109,57 +110,67 @@ const wordsFrequencyMap = new Map(
 );
 const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(acc, curr.length), 0);
 const sentences = [];
-files.forEach(filename => {
-    console.debug(`Reading file: ${filename}`);
-    const fileText = fs.readFileSync(filename, 'utf8');
-    const preprocessFunction = filename.endsWith('.xml') ? preprocessXml : preprocessTxt;
-    const text = preprocessFunction(fileText);
+
+(async function() {
+    for (const filename of files) {
+        console.debug(`Reading file: ${filename}`);
+        let texts;
+        if (filename.endsWith('.xml')) {
+            const xmlData = await streamXml(filename);
+            texts = handleXmlData(xmlData);
+        } else {
+            const fileText = fs.readFileSync(filename, 'utf8');
+            texts = [ preprocessTxt(fileText) ];
+        }
+        if (params.parseOnly) {
+            console.log(texts.join('\n'));
+        } else {
+            for (const text of texts) {
+                for (const sentence of text.split('\n')) {
+                    sentences.push(sentence);
+                }
+            }
+        }
+    };
     if (params.parseOnly) {
-        console.log(text);
-    } else {
-        for (const sentence of text.split('\n')) {
-            sentences.push(sentence);
-        }
+        process.exit(0);
     }
-});
-if (params.parseOnly) {
-    process.exit(0);
-}
-const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
-
-const jsonResult = {};
-const read = readline.createInterface({ input: stdin, output: stdout });
-read.on('line', line => {
-    const word = line.split(params.wordsSplitChar)[0];
-    let sentences = wordsToSentencesMap.get(word);
-    if (!sentences) {
-        if (!params.json) {
-            console.log(` --- No sentences found for word: ${word}`);
-        }
-        return;
-    }
+    const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
     
-    const singleWordScore = wordsFrequencyMap.get(word);
-    sentences = sentences
-        .filter(({ score }) => score > singleWordScore)
-        .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
-        .slice(0, 5)
-        .map(({ sentence }) => sentence);
-
-    if (params.json) {
-        jsonResult[word] = sentences;
-    } else {
-        console.log(` --- ${word}:`);
-        sentences.forEach(sentence => console.log(sentence));
-    }
-});
-
-if (params.json) {
-    const jsonConfig = params.prod ? JSON_PROD_CONFIG : JSON_DEV_CONFIG;
-    read.on('close', () => {
-        console.log(JSON.stringify(jsonResult, null, jsonConfig.spaces));
+    const jsonResult = {};
+    const read = readline.createInterface({ input: stdin, output: stdout });
+    read.on('line', line => {
+        const word = line.split(params.wordsSplitChar)[0];
+        let sentences = wordsToSentencesMap.get(word);
+        if (!sentences) {
+            if (!params.json) {
+                console.log(` --- No sentences found for word: ${word}`);
+            }
+            return;
+        }
+        
+        const singleWordScore = wordsFrequencyMap.get(word);
+        sentences = sentences
+            .filter(({ score }) => score > singleWordScore)
+            .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
+            .slice(0, 5)
+            .map(({ sentence }) => sentence);
+    
+        if (params.json) {
+            jsonResult[word] = sentences;
+        } else {
+            console.log(` --- ${word}:`);
+            sentences.forEach(sentence => console.log(sentence));
+        }
     });
-}
+    
+    if (params.json) {
+        const jsonConfig = params.prod ? JSON_PROD_CONFIG : JSON_DEV_CONFIG;
+        read.on('close', () => {
+            console.log(JSON.stringify(jsonResult, null, jsonConfig.spaces));
+        });
+    }
+})();
 
 /**
  * 
@@ -293,11 +304,11 @@ function splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength) {
 }
 
 function preprocessXml(text) {
-    text = [...text.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)]
-        .map(m => m[1])
-        .join('\n');
+    // text = [...text.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)]
+    //     .map(m => m[1])
+    //     .join('\n');
 
-    text = decodeEntities(text);
+    // text = decodeEntities(text);
     text = text
         .replaceAll(/'{2,3}/g, '"')
         .replaceAll(/^[\*#]{1,2}\s*/gm, '')
@@ -310,6 +321,41 @@ function preprocessXml(text) {
         .replaceAll(/^\n/gm, '');
 
     return text;
+}
+
+async function streamXml(filename) {
+    return new Promise((resolve, reject) => {
+        const parser = sax.default.parser();
+        const stream = fs.createReadStream(filename);
+    
+        let currentTag;
+        const texts = [];
+        parser.onopentag = ({name}) => {
+            currentTag = name;
+        };
+        parser.onclosetag = () => {
+            currentTag = undefined;
+        };
+        parser.ontext = data => {
+            if (currentTag === 'TEXT') {
+                texts.push(data);
+            }
+        };
+
+        stream.on('data', data => parser.write(data));
+        stream.on('close', () => resolve(texts));
+    });
+}
+
+function handleXmlData(data) {
+    const partitionedData = data.reduce((acc, curr, index) => {
+        if (index % 100000 === 0) {
+            acc.push([]);
+        }
+        acc[acc.length - 1].push(curr);
+        return acc;
+    }, []);
+    return partitionedData.map(chunk => preprocessXml(chunk.join('\n')));
 }
 
 function decodeEntities(str) {

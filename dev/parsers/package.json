@@ -11,6 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "kamiya-codec": "^4.16.1",
-    "lindera-wasm-unidic-nodejs": "^2.3.4"
+    "lindera-wasm-unidic-nodejs": "^2.3.4",
+    "node-xml-stream-parser": "^1.0.12",
+    "sax": "^1.6.0"
   }
 }
