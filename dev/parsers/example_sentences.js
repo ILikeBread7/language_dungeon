@@ -8,6 +8,7 @@ const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
+const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allo-unknown-words', '-a' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
 const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
 
@@ -22,6 +23,7 @@ const XML_ENTITY_MAP = {
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
 const ALPHABET_REGEX = /[a-z\s]+/ig;
 const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、—]/g;
+const PUNCTUATION_SPLIT_REGEX = /[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/;
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
 
 const params = {
@@ -31,6 +33,7 @@ const params = {
     prod: false,
     unidic: false,
     testUnidic: false,
+    allowUnknownWords: false,
     wordsSplitChar: ',',
     unknownArgument: false
 };
@@ -60,6 +63,9 @@ for (let i = 0; i < args.length; i++) {
         } else if (JSON_PROD_ARGS.includes(arg)) {
             params.json = true;
             params.prod = true;
+            continue;
+        } else if (ALLOW_UNKNOWN_WORDS_ARGS.includes(arg)) {
+            params.allowUnknownWords = true;
             continue;
         } else if (UNIDIC_ARGS.includes(arg)) {
             params.unidic = true;
@@ -102,17 +108,23 @@ const wordsFrequencyMap = new Map(
         .flatMap((words, lineIndex) => words.map(word => [ word, lineIndex + 1 ]))
 );
 const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(acc, curr.length), 0);
-let text = '';
+const sentences = [];
 files.forEach(filename => {
+    console.debug(`Reading file: ${filename}`);
     const fileText = fs.readFileSync(filename, 'utf8');
     const preprocessFunction = filename.endsWith('.xml') ? preprocessXml : preprocessTxt;
-    text += preprocessFunction(fileText) + '\n';
+    const text = preprocessFunction(fileText);
+    if (params.parseOnly) {
+        console.log(text);
+    } else {
+        for (const sentence of text.split('\n')) {
+            sentences.push(sentence);
+        }
+    }
 });
 if (params.parseOnly) {
-    console.log(text);
     process.exit(0);
 }
-const sentences = text.split('\n');
 const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
 
 const jsonResult = {};
@@ -157,20 +169,38 @@ if (params.json) {
 function processSentences(sentences, wordsFrequencyMap) {
     const sentencesForWords = new Map();
     const processedSentences = new Set();
-    sentences
-        .map(sentence => {
-            const sentenceLowerCase = sentence.toLowerCase();
-            const uniqueSentence = sentenceLowerCase
-                .replaceAll(PUNCTUATION_REGEX, '')
-                .trim();
-            if (processedSentences.has(uniqueSentence)) {
-                return [ 0, sentence ];
+
+    for (let i = 0; i < sentences.length; i++) {
+        if (i % 10000 === 0) {
+            console.debug(`${i} / ${sentences.length} (${(i * 100 / sentences.length).toFixed(2)}%)`);
+        }
+        // map
+        const sentence = sentences[i];
+        const sentenceLowerCase = sentence.toLowerCase();
+        const uniqueSentence = sentenceLowerCase
+            .replaceAll(PUNCTUATION_REGEX, '')
+            .trim();
+        if (processedSentences.has(uniqueSentence)) {
+            continue;
+        }
+        processedSentences.add(uniqueSentence);
+        
+        // filter
+        const processedSentence = processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase);
+        if (!processedSentence || processedSentence.score === 0 || (!params.allowUnknownWords && processedSentence.score >= UNKNOWN_WORD_PENALTY)) {
+            continue;
+        }
+
+        // foreach
+        for (const word of processedSentence.words) {
+            if (params.allowUnknownWords && !wordsFrequencyMap.has(word)) {
+                continue;
             }
-            processedSentences.add(uniqueSentence);
-            return [ processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase), sentence ];
-        })
-        .filter(([ processedSentence ]) => processedSentence && (processedSentence.score > 0 && processedSentence.score < UNKNOWN_WORD_PENALTY))
-        .forEach(([ processedSentence, sentence ]) => processedSentence.words.forEach(word => addToMap(sentencesForWords, word, { sentence, score: processedSentence.score })));
+
+            addToMap(sentencesForWords, word, { sentence, score: processedSentence.score });
+        }
+        delete sentences[i];
+    }
 
     return sentencesForWords;
 }
@@ -193,7 +223,7 @@ function addToMap(map, key, value) {
  * @returns {{ words: string[], score: number} | null} null if not applicable
  */
 function processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase = sentence.toLowerCase()) {
-    const isAlphabet = sentence.match(ALPHABET_REGEX);
+    const isAlphabet = !params.unidic && !!sentence.match(ALPHABET_REGEX);
 
     // If sentence is not capitalized skip
     if (isAlphabet && !sentence.match(/^["„“]?[A-Z]/)) {
@@ -214,13 +244,11 @@ function processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLow
 
 function splitSentence(sentence, wordsMap, maxWordLength, isAlphabet) {
     const sentenceSplit = sentence
-        .split(/[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/)
+        .split(PUNCTUATION_SPLIT_REGEX)
         .filter(Boolean);
 
     if (params.unidic) {
-        return sentenceSplit
-            .flatMap(sentencePart => tokenizer.tokenize(sentencePart).map(token => token.getDetail(10)))
-            .filter(Boolean);
+        return sentenceSplit.flatMap(splitUnidicToBaseForms);
     }
 
     if (isAlphabet) {
@@ -384,5 +412,22 @@ function splitUnidic(sentence) {
         }
         return acc;
     }, []);
+    return split;
+}
+
+function splitUnidicToBaseForms(sentence) {
+    const tokens = tokenizer.tokenize(sentence);
+    const split = [];
+    
+    for (const token of tokens) {
+        const wordType = token.getDetail(0);
+        if (UNIDIC_JOIN_SUFFIXES.includes(wordType)) {
+            continue;
+        }
+        
+        const baseForm = token.getDetail(10);
+        split.push(baseForm);
+    }
+
     return split;
 }
