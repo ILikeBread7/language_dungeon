@@ -12,7 +12,6 @@ const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
 const MAX_SENTENCES_FOR_WORDS_ARGS = [ '--max-sentences', '-mse' ];
 const MAX_SPLIT_SIZE_ARGS = [ '--max-split', '-msp' ];
 const MAX_CHUNK_SIZE_ARGS = [ '--chunk-size', '-cs' ];
-const MAX_TEXT_NODE_SIZE_ARGS = [ '--text-size', '-ts' ];
 const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allow-unknown-words', '-a' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
 const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
@@ -48,8 +47,7 @@ const params = {
     testUnidic: false,
     allowUnknownWords: false,
     wordsSplitChar: ',',
-    maxChunkSize: 1000,
-    maxTextNodeSize: 1000000,
+    maxChunkSize: 10000000,
     maxSplitSize: 10000000,
     maxSentencesForWord: 5,
     unknownArgument: false
@@ -76,9 +74,6 @@ for (let i = 0; i < args.length; i++) {
         } else if (MAX_CHUNK_SIZE_ARGS.includes(arg)) {
             i++;
             params.maxChunkSize = Number(args[i]);
-        } else if (MAX_TEXT_NODE_SIZE_ARGS.includes(arg)) {
-            i++;
-            params.maxTextNodeSize = Number(args[i]);
         } else if (MAX_SPLIT_SIZE_ARGS.includes(arg)) {
             i++;
             params.maxSplitSize = Number(args[i]);
@@ -109,7 +104,7 @@ for (let i = 0; i < args.length; i++) {
 if (params.unknownArgument) {
     process.exit(0);
 }
-params.textNodeIndividualChunkSize = Math.floor(params.maxTextNodeSize / 2);
+params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
 
 const tokenizerBuilder = new TokenizerBuilder();
 tokenizerBuilder.setDictionary('embedded://unidic');
@@ -332,10 +327,11 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
         const parser = sax.default.parser();
         const stream = fs.createReadStream(filename);
         
+        let currentChunkSize = 0;
         let currentChunk = [];
         parser.ontext = data => {
             if (parser.tagName === 'TEXT') {
-                if (params.maxTextNodeSize && (data.length > params.maxTextNodeSize)) {
+                if (params.maxTextNodeSize && (data.length > params.maxChunkSize)) {
                     console.warn(`XML skipping text chunk parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}, text length: ${data.length}`);
                     return;
                 }
@@ -346,10 +342,12 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
                     return;
                 }
 
+                currentChunkSize += data.length;
                 currentChunk.push(data);
-                if (currentChunk.length >= params.maxChunkSize) {
+                if (currentChunkSize >= params.maxChunkSize) {
                     console.debug(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}`);
                     handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
+                    currentChunkSize = 0;
                     currentChunk = [];
                 }
             }
