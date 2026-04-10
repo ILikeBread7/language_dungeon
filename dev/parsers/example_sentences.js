@@ -9,13 +9,16 @@ const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
-const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allo-unknown-words', '-a' ];
+const MAX_SENTENCES_FOR_WORDS_ARGS = [ '--max-sentences', '-ms' ];
+const MAX_CHUNK_SIZE_ARGS = [ '--chunk-size', '-c' ];
+const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allow-unknown-words', '-a' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
 const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
 
+const DEBUG_NUMBER_FORMAT = new Intl.NumberFormat();
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
 const ALPHABET_REGEX = /[a-z\s]+/ig;
-const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、—]/g;
+const QUOTES_REGEX = /„““”"/ig;
 const PUNCTUATION_SPLIT_REGEX = /[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/;
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
 const ABBREVIATIONS = new Set([
@@ -43,6 +46,8 @@ const params = {
     testUnidic: false,
     allowUnknownWords: false,
     wordsSplitChar: ',',
+    maxChunkSize: 1000,
+    maxSentencesForWord: 5,
     unknownArgument: false
 };
 
@@ -61,37 +66,35 @@ for (let i = 0; i < args.length; i++) {
         if (LANGUAGE_ARGS.includes(arg)) {
             i++;
             params.languageFile = args[i];
-            continue;
+        } else if (MAX_SENTENCES_FOR_WORDS_ARGS.includes(arg)) {
+            i++;
+            params.maxSentencesForWord = Number(args[i]);
+        } else if (MAX_CHUNK_SIZE_ARGS.includes(arg)) {
+            i++;
+            params.maxChunkSize = Number(args[i]);
         } else if (PARSE_ONLY_ARGS.includes(arg)) {
             params.parseOnly = true;
-            continue;
         } else if (JSON_ARGS.includes(arg)) {
             params.json = true;
-            continue;
         } else if (JSON_PROD_ARGS.includes(arg)) {
             params.json = true;
             params.prod = true;
-            continue;
         } else if (ALLOW_UNKNOWN_WORDS_ARGS.includes(arg)) {
             params.allowUnknownWords = true;
-            continue;
         } else if (UNIDIC_ARGS.includes(arg)) {
             params.unidic = true;
-            continue;
         } else if (TEST_UNIDIC_ARGS.includes(arg)) {
             params.testUnidic = true;
-            continue;
         } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
             i++;
             params.wordsSplitChar = args[i];
-            continue;
         } else {
             params.unknownArgument = true;
             console.warn(`Unknown argument: ${arg}`);
-            continue;
         }
+    } else {
+        files.push(arg);
     }
-    files.push(arg);
 }
 if (params.unknownArgument) {
     process.exit(0);
@@ -119,36 +122,26 @@ const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(ac
 const sentences = [];
 
 (async function() {
+    const sentencesForWords = new Map();
     for (const filename of files) {
         console.debug(`Reading file: ${filename}`);
-        let texts;
         if (filename.endsWith('.xml')) {
-            const xmlData = await streamXml(filename);
-            texts = handleXmlData(xmlData);
+            await streamXml(filename, wordsFrequencyMap, sentencesForWords);
         } else {
             const fileText = fs.readFileSync(filename, 'utf8');
-            texts = [ preprocessTxt(fileText) ];
-        }
-        if (params.parseOnly) {
-            console.log(texts.join('\n'));
-        } else {
-            for (const text of texts) {
-                for (const sentence of text.split('\n')) {
-                    sentences.push(sentence);
-                }
-            }
+            const sentences = preprocessTxt(fileText).split('\n');
+            processSentences(sentences, wordsFrequencyMap, sentencesForWords);
         }
     };
     if (params.parseOnly) {
         process.exit(0);
     }
-    const wordsToSentencesMap = processSentences(sentences, wordsFrequencyMap);
     
     const jsonResult = {};
     const read = readline.createInterface({ input: stdin, output: stdout });
     read.on('line', line => {
         const word = line.split(params.wordsSplitChar)[0];
-        let sentences = wordsToSentencesMap.get(word);
+        let sentences = sentencesForWords.get(word);
         if (!sentences) {
             if (!params.json) {
                 console.log(` --- No sentences found for word: ${word}`);
@@ -160,7 +153,7 @@ const sentences = [];
         sentences = sentences
             .filter(({ score }) => score > singleWordScore)
             .sort(({ score: score1 }, { score: score2 }) => score1 - score2)
-            .slice(0, 5)
+            .slice(0, params.maxSentencesForWord)
             .map(({ sentence }) => sentence);
     
         if (params.json) {
@@ -183,11 +176,9 @@ const sentences = [];
  * 
  * @param {string[]} sentences 
  * @param {Map<string, number>} wordsFrequencyMap 
+ * @param {Map<string, number>} sentencesForWords 
  */
-function processSentences(sentences, wordsFrequencyMap) {
-    const sentencesForWords = new Map();
-    const processedSentences = new Set();
-
+function processSentences(sentences, wordsFrequencyMap, sentencesForWords) {
     for (let i = 0; i < sentences.length; i++) {
         if (i % 10000 === 0) {
             console.debug(`${i} / ${sentences.length} (${(i * 100 / sentences.length).toFixed(2)}%)`);
@@ -195,13 +186,6 @@ function processSentences(sentences, wordsFrequencyMap) {
         // map
         const sentence = sentences[i];
         const sentenceLowerCase = sentence.toLowerCase();
-        const uniqueSentence = sentenceLowerCase
-            .replaceAll(PUNCTUATION_REGEX, '')
-            .trim();
-        if (processedSentences.has(uniqueSentence)) {
-            continue;
-        }
-        processedSentences.add(uniqueSentence);
         
         // filter
         const processedSentence = processSentence(sentence, wordsFrequencyMap, maxWordLength, sentenceLowerCase);
@@ -215,20 +199,27 @@ function processSentences(sentences, wordsFrequencyMap) {
                 continue;
             }
 
-            addToMap(sentencesForWords, word, { sentence, score: processedSentence.score });
+            addToMap(sentencesForWords, word, { sentence, uniqueSentence: sentenceLowerCase.replaceAll(QUOTES_REGEX, ''), score: processedSentence.score });
         }
         delete sentences[i];
     }
-
-    return sentencesForWords;
 }
 
 function addToMap(map, key, value) {
     const entry = map.get(key);
     if (!entry) {
         map.set(key, [ value ]);
-    } else {
-        entry.push(value);
+        return;
+    }
+    
+    if (entry.some(({ uniqueSentence }) => uniqueSentence === value.uniqueSentence)) {
+        return;
+    }
+
+    entry.push(value);
+    if (entry.length > params.maxSentencesForWord) {
+        entry.sort(({ score: score1 }, { score: score2 }) => score1 - score2);
+        entry.pop();
     }
 }
 
@@ -325,39 +316,43 @@ function preprocessXml(text) {
     return text;
 }
 
-async function streamXml(filename) {
+async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
     return new Promise((resolve, reject) => {
         const parser = sax.default.parser();
         const stream = fs.createReadStream(filename);
-    
-        let currentTag;
-        const texts = [];
-        parser.onopentag = ({name}) => {
-            currentTag = name;
-        };
-        parser.onclosetag = () => {
-            currentTag = undefined;
-        };
+        
+        let currentChunk = [];
         parser.ontext = data => {
-            if (currentTag === 'TEXT') {
-                texts.push(data);
+            if (parser.tagName === 'TEXT') {
+                currentChunk.push(data);
+                if (currentChunk.length >= params.maxChunkSize) {
+                    console.debug(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}`);
+                    handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
+                    currentChunk = [];
+                }
             }
         };
 
+        stream.on('close', () => {
+            console.debug('XML stream ended');
+            if (currentChunk.length > 0) {
+                handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
+            }
+            resolve();
+        });
+
         stream.on('data', data => parser.write(data));
-        stream.on('close', () => resolve(texts));
     });
 }
 
-function handleXmlData(data) {
-    const partitionedData = data.reduce((acc, curr, index) => {
-        if (index % 100000 === 0) {
-            acc.push([]);
-        }
-        acc[acc.length - 1].push(curr);
-        return acc;
-    }, []);
-    return partitionedData.map(chunk => preprocessXml(chunk.join('\n')));
+function handleXmlDataChunk(chunk, wordsFrequencyMap, sentencesForWords) {
+    if (params.parseOnly) {
+        console.log(preprocessXml(chunk.join('\n')));
+        return;
+    }
+
+    const sentences = preprocessXml(chunk.join('\n')).split('\n');
+    processSentences(sentences, wordsFrequencyMap, sentencesForWords);
 }
 
 function preprocessTxt(text) {
@@ -377,7 +372,6 @@ function splitParser(text) {
     const split = [];
     let parens = 0;
     let insideQuotes = false;
-    let isAlphabet = false;
     for (let i = 0, sentenceStart = 0; i < text.length; i++) {
         const char = text[i];
         if (QUOTE_CHAR === char) {
@@ -406,7 +400,7 @@ function splitParser(text) {
                     sentence
                     // Sentence is from a language that doesn't need punctuation to end sentences
                     && (
-                        !(isAlphabet ||= sentence.match(ALPHABET_REGEX)) || (
+                        !sentence.match(ALPHABET_REGEX) || (
                             // Sentence ends with a quote closed American-style, punctuation inside the quote - "Example."
                             END_QUOTE_CHARS.includes(sentence[sentence.length - 1])
                             && PERIOD_CHARS.includes(sentence[sentence.length - 2])
