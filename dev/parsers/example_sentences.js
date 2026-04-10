@@ -13,19 +13,26 @@ const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allo-unknown-words', '-a' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
 const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
 
-const XML_ENTITY_MAP = {
-    nbsp: ' ',
-    lt: '<',
-    gt: '>',
-    amp: '&',
-    quot: '"',
-    apos: "'"
-};
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
 const ALPHABET_REGEX = /[a-z\s]+/ig;
 const PUNCTUATION_REGEX = /[.!?。！？(「『‚„“)」』‘“”"',、—]/g;
 const PUNCTUATION_SPLIT_REGEX = /[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/;
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
+const ABBREVIATIONS = new Set([
+        'Mr',
+        'Mrs',
+        'Ms',
+        'Dr',
+        'Prof',
+        'Sr',
+        'Jr',
+        'St',
+        'vs',
+        'etc',
+        'e.g',
+        'i.e'
+    ].flatMap(abbreviation => [ abbreviation, abbreviation.toLowerCase(), abbreviation.toUpperCase(), capitalize(abbreviation) ])
+);
 
 const params = {
     languageFile: '',
@@ -304,11 +311,6 @@ function splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength) {
 }
 
 function preprocessXml(text) {
-    // text = [...text.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)]
-    //     .map(m => m[1])
-    //     .join('\n');
-
-    // text = decodeEntities(text);
     text = text
         .replaceAll(/'{2,3}/g, '"')
         .replaceAll(/^[\*#]{1,2}\s*/gm, '')
@@ -358,32 +360,9 @@ function handleXmlData(data) {
     return partitionedData.map(chunk => preprocessXml(chunk.join('\n')));
 }
 
-function decodeEntities(str) {
-    return str.replaceAll(/&(#\d+|#x[0-9a-fA-F]+|\w+);/g, (_, entity) => {
-        if (entity.startsWith('#x')) {
-            return String.fromCharCode(parseInt(entity.slice(2), 16));
-        }
-        if (entity.startsWith('#')) {
-            return String.fromCharCode(parseInt(entity.slice(1), 10));
-        }
-        return XML_ENTITY_MAP[entity] ?? `&${entity};`;
-    });
-}
-
 function preprocessTxt(text) {
-    text = text
-        .replaceAll(/\[(\d|[a-z])+\]/g, '')
-        .replaceAll(/\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|e\.g|i\.e)\./ig, '$1__@__')
-        .replaceAll(/\b([A-Z])\./g, '$1__@__')
-        .replaceAll(/ [.]{3} /g, ' __@@@__ ');
-
+    text = text.replaceAll(/\[(\d|[a-z])+\]/g, '');
     text = splitParser(text).join('\n');
-
-    text = text
-        .replaceAll(/^\s+/gm, '')
-        .replaceAll(/ __@@@__ /g, ' ... ')
-        .replaceAll(/__@__/g, '.');
-
     return text;
 }
 
@@ -398,6 +377,7 @@ function splitParser(text) {
     const split = [];
     let parens = 0;
     let insideQuotes = false;
+    let isAlphabet = false;
     for (let i = 0, sentenceStart = 0; i < text.length; i++) {
         const char = text[i];
         if (QUOTE_CHAR === char) {
@@ -413,17 +393,20 @@ function splitParser(text) {
             while (PERIOD_CHARS.includes(text[i + 1])) {
                 i++;
             }
+            if (isNotSentenceEndingDot(text, i)) {
+                continue;
+            }
             const lastPeriodIndex = i + 1;
-            split.push(text.substring(sentenceStart, lastPeriodIndex));
+            split.push(text.substring(sentenceStart, lastPeriodIndex).trim());
             sentenceStart = lastPeriodIndex;
         } else if (NEWLINE_CHAR === char) {
             if (parens === 0 && !insideQuotes) {
-                const sentence = text.substring(sentenceStart, i);
+                const sentence = text.substring(sentenceStart, i).trim();
                 if (
                     sentence
                     // Sentence is from a language that doesn't need punctuation to end sentences
                     && (
-                        !sentence.match(ALPHABET_REGEX) || (
+                        !(isAlphabet ||= sentence.match(ALPHABET_REGEX)) || (
                             // Sentence ends with a quote closed American-style, punctuation inside the quote - "Example."
                             END_QUOTE_CHARS.includes(sentence[sentence.length - 1])
                             && PERIOD_CHARS.includes(sentence[sentence.length - 2])
@@ -441,6 +424,41 @@ function splitParser(text) {
     }
 
     return split;
+}
+
+/**
+ * 
+ * @param {string} text 
+ * @param {number} index 
+ * @description Called only when text[index] is a dot "."
+ * @returns 
+ */
+function isNotSentenceEndingDot(text, index) {
+    return (
+        text[index - 1] == '.'      // " ... " ellipsis
+        && text[index - 2] == '.'
+        && isWhitespace(text[index + 1])
+        && isWhitespace(text[index - 3])
+    ) || (
+        isWhitespace(text[index - 2])    // single letter in initials "Firstname M. Lastname"
+    ) || (
+        !isWhitespace(text[index + 1])    // dot not followed by space or newline "e.g." etc.
+    ) || isAbbreviation(text, index);
+}
+
+/**
+ * 
+ * @param {string} text 
+ * @param {number} index 
+ */
+function isAbbreviation(text, index) {
+    const lastSpaceIndex = text.lastIndexOf(' ', index - 1);
+    const potentialAbbreviation = text.substring(lastSpaceIndex + 1, index);
+    return ABBREVIATIONS.has(potentialAbbreviation);
+}
+
+function isWhitespace(char) {
+    return !char || char === ' ' || char === '\n';
 }
 
 function splitUnidic(sentence) {
@@ -476,4 +494,15 @@ function splitUnidicToBaseForms(sentence) {
     }
 
     return split;
+}
+
+/**
+ * 
+ * @param {string} string 
+ */
+function capitalize(string) {
+    if (!string || string.length === 0) {
+        return string;
+    }
+    return string.charAt(0).toUpperCase() + string.substring(1, string.length).toLowerCase();
 }
