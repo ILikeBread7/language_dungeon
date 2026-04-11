@@ -48,6 +48,7 @@ const params = {
     wordsSplitChar: ',',
     maxChunkSize: 10000000,
     maxSentencesForWord: 5,
+    maxChunkSizeSet: false,
     unknownArgument: false
 };
 
@@ -72,6 +73,7 @@ for (let i = 0; i < args.length; i++) {
         } else if (MAX_CHUNK_SIZE_ARGS.includes(arg)) {
             i++;
             params.maxChunkSize = Number(args[i]);
+            params.maxChunkSizeSet = true;
         } else if (PARSE_ONLY_ARGS.includes(arg)) {
             params.parseOnly = true;
         } else if (JSON_ARGS.includes(arg)) {
@@ -83,6 +85,9 @@ for (let i = 0; i < args.length; i++) {
             params.allowUnknownWords = true;
         } else if (UNIDIC_ARGS.includes(arg)) {
             params.unidic = true;
+            if (!params.maxChunkSizeSet) {
+                params.maxChunkSize = Math.floor(params.maxChunkSize / 3);
+            }
         } else if (TEST_UNIDIC_ARGS.includes(arg)) {
             params.testUnidic = true;
         } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
@@ -100,6 +105,10 @@ if (params.unknownArgument) {
     process.exit(0);
 }
 params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
+
+if (params.unidic && !global.gc) {
+    console.warn('Global gc (recommended with unidic) not enabled, run node with "node --expose-gc" flag to enable global gc');
+}
 
 const tokenizerBuilder = new TokenizerBuilder();
 tokenizerBuilder.setDictionary('embedded://unidic');
@@ -205,6 +214,7 @@ function processSentences(sentences, wordsFrequencyMap, sentencesForWords) {
         }
         delete sentences[i];
     }
+    gc();
 }
 
 function addToMap(map, key, value) {
@@ -536,4 +546,10 @@ function capitalize(string) {
         return string;
     }
     return string.charAt(0).toUpperCase() + string.substring(1, string.length).toLowerCase();
+}
+
+function gc() {
+    if (global.gc) {
+        global.gc();
+    }
 }
