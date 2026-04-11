@@ -9,8 +9,7 @@ const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
 const JSON_ARGS = [ '--json', '-j' ];
 const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
 const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
-const MAX_SENTENCES_FOR_WORDS_ARGS = [ '--max-sentences', '-mse' ];
-const MAX_SPLIT_SIZE_ARGS = [ '--max-split', '-msp' ];
+const MAX_SENTENCES_FOR_WORDS_ARGS = [ '--max-sentences', '-ms' ];
 const MAX_CHUNK_SIZE_ARGS = [ '--chunk-size', '-cs' ];
 const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allow-unknown-words', '-a' ];
 const UNIDIC_ARGS = [ '--unidic', '-u' ];
@@ -48,7 +47,6 @@ const params = {
     allowUnknownWords: false,
     wordsSplitChar: ',',
     maxChunkSize: 10000000,
-    maxSplitSize: 10000000,
     maxSentencesForWord: 5,
     unknownArgument: false
 };
@@ -74,10 +72,7 @@ for (let i = 0; i < args.length; i++) {
         } else if (MAX_CHUNK_SIZE_ARGS.includes(arg)) {
             i++;
             params.maxChunkSize = Number(args[i]);
-        } else if (MAX_SPLIT_SIZE_ARGS.includes(arg)) {
-            i++;
-            params.maxSplitSize = Number(args[i]);
-        }  else if (PARSE_ONLY_ARGS.includes(arg)) {
+        } else if (PARSE_ONLY_ARGS.includes(arg)) {
             params.parseOnly = true;
         } else if (JSON_ARGS.includes(arg)) {
             params.json = true;
@@ -390,7 +385,6 @@ function splitParser(text) {
     const NEWLINE_CHAR = '\n';
 
     const split = [];
-    let currentSplitSize = 0;
     let parens = 0;
     let insideQuotes = false;
     for (let i = 0, sentenceStart = 0; i < text.length; i++) {
@@ -412,13 +406,7 @@ function splitParser(text) {
                 continue;
             }
             const lastPeriodIndex = i + 1;
-            const part = text.substring(sentenceStart, lastPeriodIndex).trim();
-            currentSplitSize += part.length;
-            if (params.maxSplitSize && (currentSplitSize > params.maxSplitSize)) {
-                console.warn('Skipping split');
-                return [];
-            }
-            split.push(part);
+            split.push(text.substring(sentenceStart, lastPeriodIndex).trim());
             sentenceStart = lastPeriodIndex;
         } else if (NEWLINE_CHAR === char) {
             if (parens === 0 && !insideQuotes) {
@@ -434,11 +422,6 @@ function splitParser(text) {
                         )
                     )
                 ) {
-                    currentSplitSize += sentence.length;
-                    if (params.maxSplitSize && (currentSplitSize > params.maxSplitSize)) {
-                        console.warn('Skipping split');
-                        return [];
-                    }
                     split.push(sentence);
                 }
             }
