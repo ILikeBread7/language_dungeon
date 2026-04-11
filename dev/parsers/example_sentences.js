@@ -124,8 +124,9 @@ const sentences = [];
 
 (async function() {
     const sentencesForWords = new Map();
-    for (const filename of files) {
-        console.debug(`Reading file: ${filename}`);
+    for (let i = 0; i < files.length; i++) {
+        const filename = files[i];
+        console.debug(`Reading file (${i + 1} / ${files.length}): ${filename}`);
         if (filename.endsWith('.xml')) {
             await streamXml(filename, wordsFrequencyMap, sentencesForWords);
         } else {
@@ -321,18 +322,20 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
     return new Promise((resolve, reject) => {
         const parser = sax.default.parser();
         const stream = fs.createReadStream(filename);
+        const size = fs.statSync(filename).size;
+        const sizeFormatted = DEBUG_NUMBER_FORMAT.format(size);
         
         let currentChunkSize = 0;
         let currentChunk = [];
         parser.ontext = data => {
             if (parser.tagName === 'TEXT') {
                 if (params.maxTextNodeSize && (data.length > params.maxChunkSize)) {
-                    console.warn(`XML skipping text chunk parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}, text length: ${data.length}`);
+                    console.warn(`XML skipping text chunk parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${positionPercentage(parser.position, size, sizeFormatted)}, text length: ${data.length}`);
                     return;
                 }
 
                 if (params.textNodeIndividualChunkSize && (data.length > params.textNodeIndividualChunkSize)) {
-                    console.warn(`XML individual text chunk parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}, text length: ${data.length}`);
+                    console.warn(`XML individual text chunk parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${positionPercentage(parser.position, size, sizeFormatted)}, text length: ${data.length}`);
                     handleXmlDataChunk([ data ], wordsFrequencyMap, sentencesForWords);
                     return;
                 }
@@ -340,7 +343,7 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
                 currentChunkSize += data.length;
                 currentChunk.push(data);
                 if (currentChunkSize >= params.maxChunkSize) {
-                    console.debug(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${DEBUG_NUMBER_FORMAT.format(parser.position)}`);
+                    console.debug(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${positionPercentage(parser.position, size, sizeFormatted)}`);
                     handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
                     currentChunkSize = 0;
                     currentChunk = [];
@@ -358,6 +361,10 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
 
         stream.on('data', data => parser.write(data));
     });
+}
+
+function positionPercentage(position, size, sizeFormatted = DEBUG_NUMBER_FORMAT.format(size)) {
+    return `${DEBUG_NUMBER_FORMAT.format(position)} / ${sizeFormatted} (${(position * 100 / size).toFixed(2)}%)`;
 }
 
 function handleXmlDataChunk(chunk, wordsFrequencyMap, sentencesForWords) {
@@ -439,20 +446,35 @@ function splitParser(text) {
  * 
  * @param {string} text 
  * @param {number} index 
- * @description Called only when text[index] is a dot "."
  * @returns 
  */
 function isNotSentenceEndingDot(text, index) {
-    return (
-        text[index - 1] == '.'      // " ... " ellipsis
-        && text[index - 2] == '.'
+    if (text[index] !== '.') {
+        return false;
+    }
+
+    if (    // " ... " ellipsis
+        text[index - 1] === '.'
+        && text[index - 2] === '.'
         && isWhitespace(text[index + 1])
         && isWhitespace(text[index - 3])
-    ) || (
-        isWhitespace(text[index - 2])    // single letter in initials "Firstname M. Lastname"
-    ) || (
-        !isWhitespace(text[index + 1])    // dot not followed by space or newline "e.g." etc.
-    ) || isAbbreviation(text, index);
+    ) {
+        return true;
+    }
+
+    if (isWhitespace(text[index - 2])) {    // single letter in initials "Firstname M. Lastname"
+        return true;
+    }
+
+    if (!isWhitespace(text[index + 1])) {   // dot not followed by space or newline "e.g." etc.
+        return true;
+    }
+    
+    if (isAbbreviation(text, index)) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
