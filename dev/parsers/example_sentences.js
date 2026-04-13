@@ -110,6 +110,10 @@ if (params.unidic && !global.gc) {
     console.warn('Global gc (recommended with unidic) not enabled, run node with "node --expose-gc" flag to enable global gc');
 }
 
+const [ debugLog, sentenceWarning ] = params.json
+    ? [ console.warn, () => {} ]
+    : [ console.debug, console.warn ];
+
 const tokenizerBuilder = new TokenizerBuilder();
 tokenizerBuilder.setDictionary('embedded://unidic');
 const tokenizer = tokenizerBuilder.build();
@@ -135,7 +139,7 @@ const sentences = [];
     const sentencesForWords = new Map();
     for (let i = 0; i < files.length; i++) {
         const filename = files[i];
-        console.debug(`Reading file (${i + 1} / ${files.length}): ${filename}`);
+        debugLog(`Reading file (${i + 1} / ${files.length}): ${filename}`);
         if (filename.endsWith('.xml')) {
             await streamXml(filename, wordsFrequencyMap, sentencesForWords);
         } else {
@@ -192,7 +196,7 @@ const sentences = [];
 function processSentences(sentences, wordsFrequencyMap, sentencesForWords) {
     for (let i = 0; i < sentences.length; i++) {
         if (i % 10000 === 0) {
-            console.debug(`${i} / ${sentences.length} (${(i * 100 / sentences.length).toFixed(2)}%)`);
+            debugLog(`${i} / ${sentences.length} (${(i * 100 / sentences.length).toFixed(2)}%)`);
         }
         // map
         const sentence = sentences[i];
@@ -308,7 +312,7 @@ function splitSentencePartNonAlphabet(sentencePart, wordsMap, maxWordLength) {
         result.push(unknownPart);
     }
     if (unknownParts.length > 0) {
-        console.warn(`Sentence part: ${sentencePart} contains ${unknownParts.length} unknown parts: ${unknownParts.join(', ')}`);
+        sentenceWarning(`Sentence part: ${sentencePart} contains ${unknownParts.length} unknown parts: ${unknownParts.join(', ')}`);
     }
     return result;
 }
@@ -353,7 +357,7 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
                 currentChunkSize += data.length;
                 currentChunk.push(data);
                 if (currentChunkSize >= params.maxChunkSize) {
-                    console.debug(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${positionPercentage(parser.position, size, sizeFormatted)}`);
+                    debugLog(`XML parser line: ${DEBUG_NUMBER_FORMAT.format(parser.line)}, position: ${positionPercentage(parser.position, size, sizeFormatted)}`);
                     handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
                     currentChunkSize = 0;
                     currentChunk = [];
@@ -362,7 +366,7 @@ async function streamXml(filename, wordsFrequencyMap, sentencesForWords) {
         };
 
         stream.on('close', () => {
-            console.debug('XML stream ended');
+            debugLog('XML stream ended');
             if (currentChunk.length > 0) {
                 handleXmlDataChunk(currentChunk, wordsFrequencyMap, sentencesForWords);
             }
