@@ -39,6 +39,8 @@ if (params.unknownArgument) {
 
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
 const UNIDIC_IGNORE_FORM_SUFFIXES = [ '一般', '撥音便' ];
+const UNIDIC_BLANK_FORM = '*';
+const UNIDIC_PUNCTUATION_TYPE = '補助記号';
 const JSON_DEV_CONFIG = {
     spaces: 2
 };
@@ -72,26 +74,32 @@ function splitIntoWordsWithAuxiliaries(tokens) {
         const type = token.getDetail(0);
         const form = token.getDetail(5);
         const base = token.getDetail(10);
+        const isUnknown = token.is_unknown;
         if (UNIDIC_JOIN_SUFFIXES.includes(type)) {
             const modifiedWord = words[words.length - 1];
-            modifiedWord.parts.push(mapBaseWordWithFormToText(base, form));
-            modifiedWord.word += word;
-        } else {
-            words.push({ word, type, parts: [ base ] });
+            if (modifiedWord) {
+                const auxiliaryForm = form === UNIDIC_BLANK_FORM
+                    ? findMostDetailedPos(token)
+                    : form;
+                modifiedWord.parts.push(mapBaseWordWithFormToText(base, auxiliaryForm));
+                modifiedWord.word += word;
+                continue;
+            }
         }
+        words.push({ word, type, base, isUnknown, parts: [ ] });
     };
 
     return words;
 }
 
 function mapWordDataToText(wordData) {
-    if (wordData.type === '補助記号') {
+    if (wordData.isUnknown || wordData.type === UNIDIC_PUNCTUATION_TYPE) {
         return wordData.word;
     }
-    if (wordData.parts.length === 1 && wordData.word === wordData.parts[0]) {
+    if (wordData.parts.length === 0 && wordData.word === wordData.base) {
         return `[${wordData.word}]`;
     }
-    return `[${[ wordData.word, ...wordData.parts ].join('|')}]`;
+    return `[${[ wordData.word, wordData.base, ...wordData.parts ].join('|')}]`;
 }
 
 function mapBaseWordWithFormToText(base, form) {
@@ -103,4 +111,15 @@ function mapBaseWordWithFormToText(base, form) {
 
 function isIgnoredStandardForm(form) {
     return UNIDIC_IGNORE_FORM_SUFFIXES.some(suffix => form.endsWith(suffix));
+}
+
+function findMostDetailedPos(token) {
+    for (let i = 4; i >= 0; i--) {
+        const pos = token.getDetail(i);
+        if (pos !== UNIDIC_BLANK_FORM) {
+            return pos;
+        }
+    }
+
+    return UNIDIC_BLANK_FORM;
 }

@@ -197,6 +197,9 @@ function processSentences(sentences, wordsFrequencyMap, sentencesForWords) {
     for (let i = 0; i < sentences.length; i++) {
         if (i % 10000 === 0) {
             debugLog(`${i} / ${sentences.length} (${(i * 100 / sentences.length).toFixed(2)}%)`);
+            if (i > 0 && (i % 40000 === 0)) {
+                gc();
+            }
         }
         // map
         const sentence = sentences[i];
@@ -554,6 +557,7 @@ function capitalize(string) {
 
 function gc() {
     if (global.gc) {
+        debugLog('Running gc...');
         global.gc();
     }
 }
