@@ -5,16 +5,36 @@ import { TokenizerBuilder } from 'lindera-wasm-unidic-nodejs';
 import * as sax from 'sax';
 import { parseArgv } from './utils.js';
 
-const LANGUAGE_ARGS = [ '--lang', '-l' ];
-const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
-const JSON_ARGS = [ '--json', '-j' ];
-const JSON_PROD_ARGS = [ '--json-prod', '-jp' ];
-const WORDS_SPLIT_CHAR_ARGS = [ '--words-split', '-s' ];
-const MAX_SENTENCES_FOR_WORDS_ARGS = [ '--max-sentences', '-ms' ];
-const MAX_CHUNK_SIZE_ARGS = [ '--chunk-size', '-cs' ];
-const ALLOW_UNKNOWN_WORDS_ARGS = [ '--allow-unknown-words', '-a' ];
-const UNIDIC_ARGS = [ '--unidic', '-u' ];
-const TEST_UNIDIC_ARGS = [ '--test-unidic', '-t' ];
+const FORMATS = Object.freeze({
+    TEST: 'test',
+    JSON: 'json',
+    TXT: 'txt'
+});
+const paramsData = {
+    languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
+    parseOnly: { longName: 'parse-only', shortName: 'o' },
+    format: { longName: 'format', shortName: 'f', defaultValue: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
+    json: { longName: 'json', shortName: 'j' },
+    txt: { longName: 'txt', shortName: 't' },
+    prod: { longName: 'prod', shortName: 'p' },
+    unidic: { longName: 'unidic', shortName: 'u' },
+    testUnidic: { longName: 'test-unidic', shortName: 'e' },
+    allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
+    wordsSplitChar: { longName: 'split-char', shortName: 'c', defaultValue: ',', mapper: String },
+    maxChunkSize: { longName: 'chunk-size', shortName: 's', defaultValue: 10000000, mapper: Number },
+    maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', defaultValue: 5, mapper: Number },
+};
+const params = parseArgv(process.argv, paramsData);
+params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
+if (params.unidic && !paramsData.maxChunkSize.isSet) {
+    params.maxChunkSize = Math.floor(params.maxChunkSize / 3);
+}
+if (params.json) {
+    params.format = FORMATS.JSON;
+}
+if (params.txt) {
+    params.format = FORMATS.TXT;
+}
 
 const DEBUG_NUMBER_FORMAT = new Intl.NumberFormat();
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
@@ -38,29 +58,6 @@ const ABBREVIATIONS = new Set([
     ].flatMap(abbreviation => [ abbreviation, abbreviation.toLowerCase(), abbreviation.toUpperCase(), capitalize(abbreviation) ])
 );
 
-const FORMATS = Object.freeze({
-    TEST: 'test',
-    JSON: 'json',
-    TXT: 'txt'
-});
-const paramsData = {
-    languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
-    parseOnly: { longName: 'parse-only', shortName: 'o' },
-    format: { longName: 'format', shortName: 'f', default: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
-    prod: { longName: 'prod', shortName: 'p' },
-    unidic: { longName: 'unidic', shortName: 'u' },
-    testUnidic: { longName: 'test-unidic', shortName: 't' },
-    allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
-    wordsSplitChar: { longName: 'split-char', shortName: 'c', defaultValue: ',', mapper: String },
-    maxChunkSize: { longName: 'chunk-size', shortName: 's', defaultValue: 10000000, mapper: Number },
-    maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', defaultValue: 5, mapper: Number },
-};
-const params = parseArgv(process.argv, paramsData);
-params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
-if (params.unidic && !paramsData.maxChunkSize.isSet) {
-    params.maxChunkSize = Math.floor(params.maxChunkSize / 3);
-}
-
 const JSON_DEV_CONFIG = {
     spaces: 2
 };
@@ -72,7 +69,7 @@ if (params.unidic && !global.gc) {
     console.warn('Global gc (recommended with unidic) not enabled, run node with "node --expose-gc" flag to enable global gc');
 }
 
-const [ debugLog, sentenceWarning ] = params.json
+const [ debugLog, sentenceWarning ] = (params.format === FORMATS.JSON || params.format === FORMATS.TXT)
     ? [ console.warn, () => {} ]
     : [ console.debug, console.warn ];
 
@@ -95,7 +92,6 @@ const wordsFrequencyMap = new Map(
         .flatMap((words, lineIndex) => words.map(word => [ word, lineIndex + 1 ]))
 );
 const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(acc, curr.length), 0);
-const sentences = [];
 
 (async function() {
     const sentencesForWords = new Map();
@@ -120,7 +116,7 @@ const sentences = [];
         const word = line.split(params.wordsSplitChar)[0];
         let sentences = sentencesForWords.get(word);
         if (!sentences) {
-            if (!params.json) {
+            if (params.format === FORMATS.TEST) {
                 console.log(` --- No sentences found for word: ${word}`);
             }
             return;
@@ -133,15 +129,17 @@ const sentences = [];
             .slice(0, params.maxSentencesForWord)
             .map(({ sentence }) => sentence);
     
-        if (params.json) {
+        if (params.format === FORMATS.JSON) {
             jsonResult[word] = sentences;
         } else {
-            console.log(` --- ${word}:`);
+            if (params.format === FORMATS.TEST) {
+                console.log(` --- ${word}:`);
+            }
             sentences.forEach(sentence => console.log(sentence));
         }
     });
     
-    if (params.json) {
+    if (params.format === FORMATS.JSON) {
         const jsonConfig = params.prod ? JSON_PROD_CONFIG : JSON_DEV_CONFIG;
         read.on('close', () => {
             console.log(JSON.stringify(jsonResult, null, jsonConfig.spaces));
