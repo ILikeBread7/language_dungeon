@@ -101,8 +101,14 @@ const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(ac
         if (filename.endsWith('.xml')) {
             await streamXml(filename, wordsFrequencyMap, sentencesForWords);
         } else {
-            const fileText = fs.readFileSync(filename, 'utf8');
-            const sentences = preprocessTxt(fileText).split('\n');
+            let fileText = fs.readFileSync(filename, 'utf8');
+            const isPreprocessed = filename.endsWith('.processed.txt');
+            if (isPreprocessed) {
+                debugLog(`Preprocessed file: "${filename}"`);
+            } else {
+                fileText = preprocessTxt(fileText);
+            }
+            const sentences = fileText.split('\n');
             processSentences(sentences, wordsFrequencyMap, sentencesForWords);
         }
     };
