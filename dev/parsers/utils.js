@@ -1,5 +1,5 @@
 /**
- * @typedef {{ longName: string, shortName: string, defaultValue: any, mapper: function(...string):void }} ParameterData
+ * @typedef {{ longName: string, shortName: string, defaultValue: any, required: boolean, mapper: function(...string):void }} ParameterData
  * @typedef {Object.<string,ParameterData>} ParametersInput
  */
 
@@ -13,12 +13,13 @@ export function parseArgv(argv, parameters) {
     let unknownArgument = false;
     const result = mapParamsToDefaultValues(parameters);
     const args = argv.slice(2);
+    const paramEntries = Object.entries(parameters);
 
     for (let i = 0; i < args.length; i++) {
         const arg = args[i];
         if (arg.startsWith('--')) {
             const paramName = arg.substring(2);
-            const param = Object.entries(parameters).find(([,paramData]) => paramData.longName === paramName);
+            const param = paramEntries.find(([,paramData]) => paramData.longName === paramName);
             if (param) {
                 i += callParamMapper(args, i, param, result);
             } else {
@@ -31,7 +32,7 @@ export function parseArgv(argv, parameters) {
         if (arg.startsWith('-')) {
             const paramNames = arg.substring(1).split('');
             for (const paramName of paramNames) {
-                const param = Object.entries(parameters).find(([,paramData]) => paramData.shortName === paramName);
+                const param = paramEntries.find(([,paramData]) => paramData.shortName === paramName);
                 if (param) {
                     i += callParamMapper(args, i, param, result);
                 } else {
@@ -49,6 +50,15 @@ export function parseArgv(argv, parameters) {
         process.exit(0);
     }
 
+    const requiredParamsWithNoValue = paramEntries
+        .filter(([ paramName, paramData ]) => paramData.required && !Object.hasOwn(result, paramName));
+    if (requiredParamsWithNoValue.length > 0) {
+        for (const [ paramName ] of requiredParamsWithNoValue) {
+            console.warn(`Required parameter "${paramName}" has no value.`)
+        }
+        process.exit(0);
+    }
+
     return result;
 }
 
@@ -60,7 +70,9 @@ export function parseArgv(argv, parameters) {
 function mapParamsToDefaultValues(parameters) {
     const result = { files: [] };
     for (const [ key, value ] of Object.entries(parameters)) {
-        result[key] = value.defaultValue ?? false;
+        if (!value.required) {
+            result[key] = value.defaultValue ?? false;
+        }
     }
     return result;
 }
