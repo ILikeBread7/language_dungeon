@@ -20,8 +20,8 @@ const paramsData = {
     unidic: { longName: 'unidic', shortName: 'u' },
     testUnidic: { longName: 'test-unidic', shortName: 'e' },
     allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
-    wordsSplitChar: { longName: 'split-char', shortName: 'c', defaultValue: ',', mapper: String },
-    maxChunkSize: { longName: 'chunk-size', shortName: 's', defaultValue: 10000000, mapper: Number },
+    wordsSplitChar: { longName: 'split-char', shortName: 's', defaultValue: ',', mapper: String },
+    maxChunkSize: { longName: 'chunk-size', shortName: 'c', defaultValue: 10000000, mapper: Number },
     maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', defaultValue: 5, mapper: Number },
 };
 const params = parseArgv(process.argv, paramsData);
