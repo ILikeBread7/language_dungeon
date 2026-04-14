@@ -3,6 +3,7 @@ import * as readline from 'node:readline';
 import { stdin, stdout } from 'node:process';
 import { TokenizerBuilder } from 'lindera-wasm-unidic-nodejs';
 import * as sax from 'sax';
+import { parseArgv } from './utils.js';
 
 const LANGUAGE_ARGS = [ '--lang', '-l' ];
 const PARSE_ONLY_ARGS = [ '--parse-only', '-p' ];
@@ -37,20 +38,23 @@ const ABBREVIATIONS = new Set([
     ].flatMap(abbreviation => [ abbreviation, abbreviation.toLowerCase(), abbreviation.toUpperCase(), capitalize(abbreviation) ])
 );
 
-const params = {
-    languageFile: '',
-    parseOnly: false,
-    json: false,
-    prod: false,
-    unidic: false,
-    testUnidic: false,
-    allowUnknownWords: false,
-    wordsSplitChar: ',',
-    maxChunkSize: 10000000,
-    maxSentencesForWord: 5,
-    maxChunkSizeSet: false,
-    unknownArgument: false
+const paramsData = {
+    languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
+    parseOnly: { longName: 'parse-only', shortName: 'o' },
+    json: { longName: 'json', shortName: 'j' },
+    prod: { longName: 'prod', shortName: 'p' },
+    unidic: { longName: 'unidic', shortName: 'u' },
+    testUnidic: { longName: 'test-unidic', shortName: 't' },
+    allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
+    wordsSplitChar: { longName: 'split-char', shortName: 'c', defaultValue: ',', mapper: String },
+    maxChunkSize: { longName: 'chunk-size', shortName: 's', defaultValue: 10000000, mapper: Number },
+    maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', defaultValue: 5, mapper: Number },
 };
+const params = parseArgv(process.argv, paramsData);
+params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
+if (params.unidic && !paramsData.maxChunkSize.isSet) {
+    params.maxChunkSize = Math.floor(params.maxChunkSize / 3);
+}
 
 const JSON_DEV_CONFIG = {
     spaces: 2
@@ -58,53 +62,6 @@ const JSON_DEV_CONFIG = {
 const JSON_PROD_CONFIG = {
     spaces: 0
 }
-
-const args = process.argv.slice(2);
-const files = [];
-for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg.startsWith('-')) {
-        if (LANGUAGE_ARGS.includes(arg)) {
-            i++;
-            params.languageFile = args[i];
-        } else if (MAX_SENTENCES_FOR_WORDS_ARGS.includes(arg)) {
-            i++;
-            params.maxSentencesForWord = Number(args[i]);
-        } else if (MAX_CHUNK_SIZE_ARGS.includes(arg)) {
-            i++;
-            params.maxChunkSize = Number(args[i]);
-            params.maxChunkSizeSet = true;
-        } else if (PARSE_ONLY_ARGS.includes(arg)) {
-            params.parseOnly = true;
-        } else if (JSON_ARGS.includes(arg)) {
-            params.json = true;
-        } else if (JSON_PROD_ARGS.includes(arg)) {
-            params.json = true;
-            params.prod = true;
-        } else if (ALLOW_UNKNOWN_WORDS_ARGS.includes(arg)) {
-            params.allowUnknownWords = true;
-        } else if (UNIDIC_ARGS.includes(arg)) {
-            params.unidic = true;
-            if (!params.maxChunkSizeSet) {
-                params.maxChunkSize = Math.floor(params.maxChunkSize / 3);
-            }
-        } else if (TEST_UNIDIC_ARGS.includes(arg)) {
-            params.testUnidic = true;
-        } else if (WORDS_SPLIT_CHAR_ARGS.includes(arg)) {
-            i++;
-            params.wordsSplitChar = args[i];
-        } else {
-            params.unknownArgument = true;
-            console.warn(`Unknown argument: ${arg}`);
-        }
-    } else {
-        files.push(arg);
-    }
-}
-if (params.unknownArgument) {
-    process.exit(0);
-}
-params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);
 
 if (params.unidic && !global.gc) {
     console.warn('Global gc (recommended with unidic) not enabled, run node with "node --expose-gc" flag to enable global gc');
@@ -137,9 +94,9 @@ const sentences = [];
 
 (async function() {
     const sentencesForWords = new Map();
-    for (let i = 0; i < files.length; i++) {
-        const filename = files[i];
-        debugLog(`Reading file (${i + 1} / ${files.length}): ${filename}`);
+    for (let i = 0; i < params.files.length; i++) {
+        const filename = params.files[i];
+        debugLog(`Reading file (${i + 1} / ${params.files.length}): ${filename}`);
         if (filename.endsWith('.xml')) {
             await streamXml(filename, wordsFrequencyMap, sentencesForWords);
         } else {

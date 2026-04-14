@@ -69,9 +69,10 @@ export function parseArgv(argv, parameters) {
  */
 function mapParamsToDefaultValues(parameters) {
     const result = { files: [] };
-    for (const [ key, value ] of Object.entries(parameters)) {
-        if (!value.required) {
-            result[key] = value.defaultValue ?? false;
+    for (const [ paramName, paramData ] of Object.entries(parameters)) {
+        paramData.isSet = false;
+        if (!paramData.required) {
+            result[paramName] = paramData.defaultValue ?? false;
         }
     }
     return result;
@@ -90,5 +91,6 @@ function callParamMapper(args, paramIndex, param, result) {
     const mapperArgsLength = mapper.length;
     const paramArgsIndex = paramIndex + 1;
     result[paramName] = mapper(...args.slice(paramArgsIndex, paramArgsIndex + mapperArgsLength));
+    paramData.isSet = true;
     return mapperArgsLength;
 }
