@@ -38,10 +38,15 @@ const ABBREVIATIONS = new Set([
     ].flatMap(abbreviation => [ abbreviation, abbreviation.toLowerCase(), abbreviation.toUpperCase(), capitalize(abbreviation) ])
 );
 
+const FORMATS = Object.freeze({
+    TEST: 'test',
+    JSON: 'json',
+    TXT: 'txt'
+});
 const paramsData = {
     languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
     parseOnly: { longName: 'parse-only', shortName: 'o' },
-    json: { longName: 'json', shortName: 'j' },
+    format: { longName: 'format', shortName: 'f', default: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
     prod: { longName: 'prod', shortName: 'p' },
     unidic: { longName: 'unidic', shortName: 'u' },
     testUnidic: { longName: 'test-unidic', shortName: 't' },

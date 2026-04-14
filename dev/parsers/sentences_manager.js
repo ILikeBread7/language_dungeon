@@ -6,7 +6,8 @@ const params = parseArgv(process.argv, {
     test3: { shortName: '3' },
     test4: { shortName: '4' },
     test5: { longName: 'test5', shortName: '5' },
-    test6: { longName: 'test6', shortName: '6', required: true, mapper: String }
+    test6: { longName: 'test6', shortName: '6', required: true, mapper: String },
+    test7: { longName: 'test7', allowed: [ 1, 2, 3 ], defaultValue: 1, mapper: Number }
 });
 
 Object.entries(params).forEach(([ key, value ]) => console.log(key, value));

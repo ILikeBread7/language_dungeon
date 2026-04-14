@@ -1,5 +1,5 @@
 /**
- * @typedef {{ longName: string, shortName: string, defaultValue: any, required: boolean, mapper: function(...string):void }} ParameterData
+ * @typedef {{ longName: string, shortName: string, defaultValue: any, required: boolean, allowed: [*]. mapper: function(...string):void }} ParameterData
  * @typedef {Object.<string,ParameterData>} ParametersInput
  */
 
@@ -10,7 +10,7 @@
  * @returns {Object.<string,*>} Parsed parameters
  */
 export function parseArgv(argv, parameters) {
-    let unknownArgument = false;
+    let wrongArgument = false;
     const result = mapParamsToDefaultValues(parameters);
     const args = argv.slice(2);
     const paramEntries = Object.entries(parameters);
@@ -24,7 +24,7 @@ export function parseArgv(argv, parameters) {
                 i += callParamMapper(args, i, param, result);
             } else {
                 console.warn(`Unknown argument: ${arg}`);
-                unknownArgument = true;
+                wrongArgument = true;
             }
             continue;
         }
@@ -37,7 +37,7 @@ export function parseArgv(argv, parameters) {
                     i += callParamMapper(args, i, param, result);
                 } else {
                     console.warn(`Unknown argument: ${arg}`);
-                    unknownArgument = true;
+                    wrongArgument = true;
                 }
             }
             continue;
@@ -46,16 +46,19 @@ export function parseArgv(argv, parameters) {
         result.files.push(arg);
     }
 
-    if (unknownArgument) {
-        process.exit(0);
+    for (const [ paramName, paramData ] of paramEntries) {
+        if (paramData.required && !paramData.isSet) {
+            console.warn(`Required parameter "${paramName}" has no value.`);
+            wrongArgument = true;
+        }
+
+        if (paramData.allowed && !paramData.allowed.includes(result[paramName])) {
+            console.warn(`Parameter "${paramName}" has a disallowed value "${result[paramName]}".`);
+            wrongArgument = true;
+        }
     }
 
-    const requiredParamsWithNoValue = paramEntries
-        .filter(([ paramName, paramData ]) => paramData.required && !Object.hasOwn(result, paramName));
-    if (requiredParamsWithNoValue.length > 0) {
-        for (const [ paramName ] of requiredParamsWithNoValue) {
-            console.warn(`Required parameter "${paramName}" has no value.`)
-        }
+    if (wrongArgument) {
         process.exit(0);
     }
 
