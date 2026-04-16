@@ -13,16 +13,16 @@ const FORMATS = Object.freeze({
 const paramsData = {
     languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
     parseOnly: { longName: 'parse-only', shortName: 'o' },
-    format: { longName: 'format', shortName: 'f', defaultValue: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
+    format: { longName: 'format', shortName: 'f', default: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
     json: { longName: 'json', shortName: 'j' },
     txt: { longName: 'txt', shortName: 't' },
     prod: { longName: 'prod', shortName: 'p' },
     unidic: { longName: 'unidic', shortName: 'u' },
     testUnidic: { longName: 'test-unidic', shortName: 'e' },
     allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
-    wordsSplitChar: { longName: 'split-char', shortName: 's', defaultValue: ',', mapper: String },
-    maxChunkSize: { longName: 'chunk-size', shortName: 'c', defaultValue: 10000000, mapper: Number },
-    maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', defaultValue: 5, mapper: Number },
+    wordsSplitChar: { longName: 'split-char', shortName: 's', default: ',', mapper: String },
+    maxChunkSize: { longName: 'chunk-size', shortName: 'c', default: 10000000, mapper: Number },
+    maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', default: 5, mapper: Number },
 };
 const params = parseArgv(process.argv, paramsData);
 params.textNodeIndividualChunkSize = Math.floor(params.maxChunkSize / 2);

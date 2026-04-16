@@ -1,5 +1,5 @@
 /**
- * @typedef {{ longName: string, shortName: string, defaultValue: any, required: boolean, allowed: [*]. mapper: function(...string):void }} ParameterData
+ * @typedef {{ longName: string, shortName: string, default: any, required: boolean, allowed: [*]. mapper: function(...string):void }} ParameterData
  * @typedef {Object.<string,ParameterData>} ParametersInput
  */
 
@@ -75,7 +75,7 @@ function mapParamsToDefaultValues(parameters) {
     for (const [ paramName, paramData ] of Object.entries(parameters)) {
         paramData.isSet = false;
         if (!paramData.required) {
-            result[paramName] = paramData.defaultValue ?? false;
+            result[paramName] = paramData.default ?? false;
         }
     }
     return result;

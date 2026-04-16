@@ -9,7 +9,7 @@ const paramsData = {
     maxChunkSize: { longName: 'chunk-size', shortName: 's', mapper: Number },
     maxSentencesForWord: { longName: 'max-sentences', shortName: 'm', mapper: Number },
     exposeGc: { longName: 'expose-gc', shortName: 'g', managerOnly: true },
-    subProcesses: { longName: 'sub-processes', shortName: 'p', defaultValue: 1, managerOnly: true, mapper: Number },
+    subProcesses: { longName: 'sub-processes', shortName: 'p', default: 1, managerOnly: true, mapper: Number },
 };
 const params = parseArgv(process.argv, paramsData);
 const files = params.files
