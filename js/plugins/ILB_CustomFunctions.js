@@ -60,10 +60,24 @@ var $f = $f || {};
         }
     }
 
+    $f.LANGUAGES = Object.freeze({
+        JAPANESE: 'jp',
+        INDONESIAN: 'id'
+    });
     let sentences = null;
-    fetch('js/plugins/data/id/sentences.json')
-        .then(response => response.json())
-        .then(data => sentences = data);
+    let quizData = null;
+    let quizAnswersMap = null;
+    $f.fetchData = language => {
+        return Promise.all([
+            fetch(`js/plugins/data/${language}/sentences.json`)
+                .then(response => response.json())
+                .then(data => sentences = data),
+            fetch(`js/plugins/data/${language}/quiz.json`)
+                .then(response => response.json())
+                .then(data => quizData = data)
+                .then(() => quizAnswersMap = new Map(quizData.map(quiz => [ quiz.question, quiz.answer ])))
+        ]);
+    };
 
     const QUIZ_START = 0;
     const QUIZ_ENTRIES_PER_LEVEL = 20;
@@ -333,13 +347,27 @@ var $f = $f || {};
         }
 
         $nv.correctAnswerIndex = quiz.correct;
-        $nv.exampleSentence = addWordTranslations(
-            addWordColor(
-                getExampleSentence(quiz.question),
-                quiz.question
-            ),
-            quiz
-        );
+        const translationScoreThreshold = 1;
+        
+        const word = quiz.question;
+        const sentence = getExampleSentence(quiz.question);
+        if (sentence.includes('[')) {
+            $nv.exampleSentence = addWordTranslationsConjugated(
+                sentence,
+                word,
+                translationScoreThreshold
+            );
+        } else {
+            $nv.exampleSentence = addWordTranslationsUnconjugated(
+                addWordColor(
+                    sentence,
+                    word
+                ),
+                word,
+                translationScoreThreshold
+            );
+        }
+
     };
 
     const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
@@ -371,15 +399,66 @@ var $f = $f || {};
         return sentence.replace(new RegExp(wordRegexString, 'ig'), replacerString);
     }
 
-    function addWordTranslations(sentence, quiz) {
-        const translationScoreThreshold = 1;
+    const AUXILIARIES = new Map([
+        [ 'たい', 'want to' ],
+        [ 'ます,意志推量形', "let's (polite)" ],
+        [ '疋,助数詞', 'small animal (counter)' ],
+        [ '本,助数詞', 'cylindrical object (counter)' ],
+        [ 'だ', 'to be / is' ],
+        [ 'た', 'was (past tense)' ],
+        [ 'の', "of / 's (possesive)" ],
+        [ 'ない', "not" ],
+        [ 'は', "as for (sentence topic marker)" ],
+        [ 'が', "is the one that is (sentence topic marker)" ],
+    ]);
 
+    /**
+     * 
+     * @param {string} sentence 
+     * @param {string} currentWord 
+     * @param {number} translationScoreThreshold 
+     */
+    function addWordTranslationsConjugated(sentence, currentWord, translationScoreThreshold) {
+        return sentence.replace(/\[(.*?)\]/g, (match, capture) => {
+            const parts = capture.split('|');
+            const wordInSentence = parts[0];
+            const baseWord = parts[1] || wordInSentence;
+            
+            if (currentWord === baseWord) {
+                return `\\c[3]${wordInSentence}\\c[0]`;
+            }
+            
+            if ((goodAnswers.get(baseWord) || [ 0 ])[0] > translationScoreThreshold) {
+                return wordInSentence + ' ';
+            }
+            if (parts.length === 1) {
+                return `${wordInSentence} \\c[2](${getWordOrAuxiliaryTranslation(baseWord)})\\c[0] `;
+            }
+
+            return `${wordInSentence} \\c[2](${parts.slice(1).map(getWordOrAuxiliaryTranslation).join(' - ')})\\c[0] `;
+        }).trim();
+    }
+
+    function getWordOrAuxiliaryTranslation(part) {
+        const word = quizAnswersMap.get(part);
+        if (word) {
+            return word;
+        }
+
+        if (!isNaN(part)) {
+            return part;
+        }
+
+        return AUXILIARIES.get(part) || `{${part}}`;
+    }
+
+    function addWordTranslationsUnconjugated(sentence, currentWord, translationScoreThreshold) {
         const SPACE_CODE = '_@_';
         const LEFT_PAREN_CODE = '_@@_';
         const RIGHT_PAREN_CODE = '_@@@_';
 
         const uniqueWordsSet = new Set(splitSentence(sentence));
-        uniqueWordsSet.delete(quiz.question);
+        uniqueWordsSet.delete(currentWord);
 
         [...uniqueWordsSet]
             .map(word => word.toLowerCase())
@@ -669,12 +748,5 @@ var $f = $f || {};
             return dictionaryEntries = [];
         }
     }
-
-    let quizData = null;
-    let quizAnswersMap = null;
-    fetch('js/plugins/data/id/quiz.json')
-        .then(response => response.json())
-        .then(data => quizData = data)
-        .then(() => quizAnswersMap = new Map(quizData.map(quiz => [ quiz.question, quiz.answer ])));
 
 })();
