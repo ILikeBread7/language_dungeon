@@ -359,10 +359,10 @@ var $f = $f || {};
             );
         } else {
             $nv.exampleSentence = addWordTranslationsUnconjugated(
-                addWordColor(
+                // addWordColor(
                     sentence,
-                    word
-                ),
+                //     word
+                // ),
                 word,
                 translationScoreThreshold
             );
@@ -388,15 +388,6 @@ var $f = $f || {};
         }
 
         return pickRandom(wordSentences);
-    }
-
-    function addWordColor(sentence, word) {
-        const wordRegexString = `(${word})`;
-        const replacerString = '\\c[3]$1\\c[0]'
-        if (sentence.includes(' ')) {
-            return sentence.replace(new RegExp(`\\b${wordRegexString}\\b`, 'ig'), replacerString);
-        }
-        return sentence.replace(new RegExp(wordRegexString, 'ig'), replacerString);
     }
 
     const AUXILIARIES = new Map([
@@ -467,37 +458,20 @@ var $f = $f || {};
     }
 
     function addWordTranslationsUnconjugated(sentence, currentWord, translationScoreThreshold) {
-        const SPACE_CODE = '_@_';
-        const LEFT_PAREN_CODE = '_@@_';
-        const RIGHT_PAREN_CODE = '_@@@_';
+        return sentence.replace(/\w+/g, match => {
+            const wordInSentence = match;
+            const baseWord = wordInSentence.toLowerCase();
+            
+            if (currentWord === baseWord) {
+                return colorCurrentWord(wordInSentence);
+            }
+            
+            if ((goodAnswers.get(baseWord) || [ 0 ])[0] > translationScoreThreshold) {
+                return wordInSentence;
+            }
 
-        const uniqueWordsSet = new Set(splitSentence(sentence));
-        uniqueWordsSet.delete(currentWord);
-
-        [...uniqueWordsSet]
-            .map(word => word.toLowerCase())
-            .filter(word => ((goodAnswers.get(word) || [ 0 ])[0]) <= translationScoreThreshold && quizAnswersMap.has(word))
-            .forEach(word => sentence = sentence.replace(
-                    new RegExp(`\\b(${word})\\b`, 'ig'),
-                    `$1${SPACE_CODE}\\c[2]${LEFT_PAREN_CODE}${quizAnswersMap.get(word).replace(/ /g, SPACE_CODE)}${RIGHT_PAREN_CODE}\\c[0]`
-                )
-            );
-
-        return sentence
-            .replace(new RegExp(RIGHT_PAREN_CODE, 'g'), ')')
-            .replace(new RegExp(LEFT_PAREN_CODE, 'g'), '(')
-            .replace(new RegExp(SPACE_CODE, 'g'), ' ');
-    }
-
-    function splitSentence(sentence) {
-        const ALPHABET_REGEX = /[a-z\s]+/ig;
-        if (sentence.match(ALPHABET_REGEX)) {
-            return sentence
-                .split(/[\s,、"—'.!?。！？(「『‚„“)」』‘“”]/)
-                .filter(Boolean);
-        }
-
-        return []; // TODO later for non alphabet based languages
+            return `${wordInSentence} ${colorExplanation(`(${quizAnswersMap.get(baseWord)})`)}`;
+        });
     }
 
     $f.answeredWrong = (event, answerIndex) => {
