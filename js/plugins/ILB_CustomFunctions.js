@@ -351,23 +351,14 @@ var $f = $f || {};
         
         const word = quiz.question;
         const sentence = getExampleSentence(quiz.question);
-        if (sentence.includes('[')) {
-            $nv.exampleSentence = addWordTranslationsConjugated(
-                sentence,
-                word,
-                translationScoreThreshold
-            );
-        } else {
-            $nv.exampleSentence = addWordTranslationsUnconjugated(
-                // addWordColor(
-                    sentence,
-                //     word
-                // ),
-                word,
-                translationScoreThreshold
-            );
-        }
-
+        const wordTranslationFunction = sentence.includes('[')
+            ? addWordTranslationsConjugated
+            : addWordTranslationsUnconjugated;
+        $nv.exampleSentence = wordTranslationFunction(
+            sentence,
+            word,
+            translationScoreThreshold
+        );
     };
 
     const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
