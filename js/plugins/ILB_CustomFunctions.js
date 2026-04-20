@@ -425,18 +425,32 @@ var $f = $f || {};
             const baseWord = parts[1] || wordInSentence;
             
             if (currentWord === baseWord) {
-                return `\\c[3]${wordInSentence}\\c[0]`;
+                return colorCurrentWord(wordInSentence);
             }
             
             if ((goodAnswers.get(baseWord) || [ 0 ])[0] > translationScoreThreshold) {
                 return wordInSentence + ' ';
             }
             if (parts.length === 1) {
-                return `${wordInSentence} \\c[2](${getWordOrAuxiliaryTranslation(baseWord)})\\c[0] `;
+                return `${wordInSentence} ${colorExplanation(`(${getWordOrAuxiliaryTranslation(baseWord)})`)} `;
             }
 
-            return `${wordInSentence} \\c[2](${parts.slice(1).map(getWordOrAuxiliaryTranslation).join(' - ')})\\c[0] `;
+            return `${wordInSentence} ${colorExplanation(`(${parts.slice(1).map(getWordOrAuxiliaryTranslation).join(' - ')})`)} `;
         }).trim();
+    }
+
+    function colorCurrentWord(string) {
+        const currentWordColorId = 3;
+        return colorString(string, currentWordColorId);
+    }
+
+    function colorExplanation(string) {
+        const explanationColorId = 2;
+        return colorString(string, explanationColorId);
+    }
+
+    function colorString(string, rpgMakerColorId) {
+        return `\\c[${rpgMakerColorId}]${string}\\c[0]`;
     }
 
     function getWordOrAuxiliaryTranslation(part) {
