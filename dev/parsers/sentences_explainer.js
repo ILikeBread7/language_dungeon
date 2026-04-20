@@ -38,7 +38,6 @@ if (params.unknownArgument) {
 }
 
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
-const UNIDIC_IGNORE_FORM_SUFFIXES = [ '一般', '撥音便' ];
 const UNIDIC_BLANK_FORM = '*';
 const UNIDIC_PUNCTUATION_TYPE = '補助記号';
 const JSON_DEV_CONFIG = {
@@ -103,14 +102,7 @@ function mapWordDataToText(wordData) {
 }
 
 function mapBaseWordWithFormToText(base, form) {
-    if (isIgnoredStandardForm(form)) {
-        return base;
-    }
     return `${base},${form}`;
-}
-
-function isIgnoredStandardForm(form) {
-    return UNIDIC_IGNORE_FORM_SUFFIXES.some(suffix => form.endsWith(suffix));
 }
 
 function findMostDetailedPos(token) {
