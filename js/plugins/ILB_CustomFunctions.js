@@ -350,7 +350,7 @@ var $f = $f || {};
         const translationScoreThreshold = 1;
         
         const word = quiz.question;
-        const sentence = getExampleSentence(quiz.question);
+        const sentence = getExampleSentence(word);
         const wordTranslationFunction = sentence.includes('[')
             ? addWordTranslationsConjugated
             : addWordTranslationsUnconjugated;
