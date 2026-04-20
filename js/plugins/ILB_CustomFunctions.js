@@ -64,6 +64,10 @@ var $f = $f || {};
         JAPANESE: 'jp',
         INDONESIAN: 'id'
     });
+    const LANGUAGE_PROGRESS_VARS = new Map([
+        [$f.LANGUAGES.JAPANESE, () => $nv.progressJapanese],
+        [$f.LANGUAGES.INDONESIAN, () => $nv.progressIndonesian]
+    ]);
     let sentences = null;
     let quizData = null;
     let quizAnswersMap = null;
@@ -686,7 +690,7 @@ var $f = $f || {};
     $f.setDirection = setDirection;
 
     $f.loadProgress = () => {
-        goodAnswers = new Map(Object.entries($nv.progress));
+        goodAnswers = new Map(Object.entries(getProgressObject()));
         quizLevel = [...goodAnswers.values()].reduce((acc, curr) => Math.max(acc, curr[1]), 1);
     };
 
@@ -699,9 +703,16 @@ var $f = $f || {};
             : (Math.min(answerValue[0], 0) - 1);
 
         goodAnswers.set(question, answerValue);
-        $nv.progress[question] = answerValue;
+        getProgressObject()[question] = answerValue;
 
         Game_Interpreter.prototype.pluginCommand('Persistent', ['Save']);
+    }
+
+    function getProgressObject() {
+        if (!$nv.progress[$nv.language]) {
+            $nv.progress[$nv.language] = {};
+        }
+        return $nv.progress[$nv.language];
     }
 
     $f.setDictionaryText = () => {
