@@ -1,41 +1,15 @@
 import fs from 'node:fs'
 import { TokenizerBuilder } from 'lindera-wasm-unidic-nodejs';
+import { parseArgv } from './utils.js';
 
 const SENTENCES_ARGS = [ '--sentences', '-s' ];
 const LANGUAGE_CODE_ARGS = [ '--lang-code', '-lc' ];
 const PROD_ARGS = [ '--prod', '-p' ];
 
-const params = {
-    sentencesFile: '',
-    languageFile: '',
-    languageCode: '',
-    prod: false,
-    unknownArgument: false
-};
-
-const args = process.argv.slice(2);
-for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg.startsWith('-')) {
-        if (SENTENCES_ARGS.includes(arg)) {
-            i++;
-            params.sentencesFile = args[i];
-        } else if (LANGUAGE_CODE_ARGS.includes(arg)) {
-            i++;
-            params.languageCode = args[i];
-        } else if (PROD_ARGS.includes(arg)) {
-            params.prod = true;
-        } else {
-            params.unknownArgument = true;
-            console.warn(`Unknown argument: ${arg}`);
-        }
-    } else {
-        params.sentencesFile = arg;
-    }
-}
-if (params.unknownArgument) {
-    process.exit(0);
-}
+const params = parseArgv(process.argv, {
+    sentencesFile: { longName: 'sentences', shortName: 's', required: true, mapper: String },
+    prod: { longName: 'prod', shortName: 'p' }
+});
 
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
 const UNIDIC_BLANK_FORM = '*';
@@ -47,7 +21,6 @@ const JSON_PROD_CONFIG = {
     spaces: 0
 }
 const jsonConfig = params.prod ? JSON_PROD_CONFIG : JSON_DEV_CONFIG;
-
 
 const tokenizerBuilder = new TokenizerBuilder();
 tokenizerBuilder.setDictionary('embedded://unidic');

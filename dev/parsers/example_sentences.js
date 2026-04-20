@@ -11,7 +11,7 @@ const FORMATS = Object.freeze({
     TXT: 'txt'
 });
 const paramsData = {
-    languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
+    languageFile: { longName: 'language-file', shortName: 'l', required: params => !params.testUnidic, mapper: String },
     parseOnly: { longName: 'parse-only', shortName: 'o' },
     format: { longName: 'format', shortName: 'f', default: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
     json: { longName: 'json', shortName: 'j' },

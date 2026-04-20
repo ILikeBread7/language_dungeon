@@ -47,7 +47,7 @@ export function parseArgv(argv, parameters) {
     }
 
     for (const [ paramName, paramData ] of paramEntries) {
-        if (paramData.required && !paramData.isSet) {
+        if (checkRequired(result, paramData.required) && !paramData.isSet) {
             console.warn(`Required parameter "${paramName}" has no value.`);
             wrongArgument = true;
         }
@@ -63,6 +63,14 @@ export function parseArgv(argv, parameters) {
     }
 
     return result;
+}
+
+function checkRequired(params, required) {
+    if (typeof required === 'function') {
+        return required(params);
+    }
+
+    return required;
 }
 
 /**
