@@ -100,15 +100,15 @@ var $f = $f || {};
                 continue;
             }
 
-            if (event.isStunned) {
-                event.isStunned = false;
+            if (event.quiz.isStunned) {
+                event.quiz.isStunned = false;
                 continue;
             }
 
             event.setMoveSpeed(realMoveSpeed);
             const playerDistance = distance($gamePlayer, event);
             if (playerDistance === 1) {
-                event.isAttacking = true;
+                event.quiz.isAttacking = true;
                 event.start();
                 currentEnemyIndex++;
                 return;
@@ -229,7 +229,7 @@ var $f = $f || {};
             return;
         }
 
-        this.isAttacking = false;
+        this.quiz.isAttacking = false;
         if ($ns.attackCancelled) { 
             $ns.attackCancelled = false;
         } else {
@@ -261,7 +261,11 @@ var $f = $f || {};
         $gameMap.events().forEach($f.setEnemyText);
         const portalEnemy = $gameMap.events()
             .find(event => event.event() && event.event().meta && event.event().meta.enemy);
-        portalEnemy.portalEnemy = true;
+        portalEnemy.quiz.portalEnemy = true;
+    }
+
+    $f.reloadSavedEnemies = () => {
+        $gameMap.events().forEach(setExistingEnemyText);
     }
 
     let alreadyAsked = [];
@@ -285,7 +289,7 @@ var $f = $f || {};
 
         let randomQuestion;
         // For enemies that got hit use already known words if possible
-        if (event.hit) {
+        if (event.quiz && event.quiz.isHit) {
             const minScore = 1;
             randomQuestion = pickRandomEligibleQuestion(minScore);
         }
@@ -314,16 +318,21 @@ var $f = $f || {};
         const correctIndex = answers.findIndex(answer => answer === randomQuestion.answer);
         const incorrectIndexes = shuffle(answers.map((_, index) => index).filter(index => index !== correctIndex));
 
-        event.quiz = {
+        // Object.assign to keep the isHit etc. properties
+        event.quiz = Object.assign(event.quiz || {}, {
             question: randomQuestion.question,
             answers: answers,
             correct: correctIndex,
             incorrect: incorrectIndexes,
             answeredWrong: [],
             incorrectAnswersToMark: -(goodAnswers.get(randomQuestion.question) || [ 0 ])[0]
-        };
+        });
 
-        $eventText.set(event.eventId(), event.quiz.question);
+        setExistingEnemyText(event);
+    }
+
+    function setExistingEnemyText(enemyEvent) {
+        $eventText.set(enemyEvent.eventId(), enemyEvent.quiz.question);
     }
 
     $f.setQuestionVariables = (event) => {
@@ -508,9 +517,9 @@ var $f = $f || {};
             enemyEvent.quiz.answeredWrong = [];
         }
 
-        if (enemyEvent.hit) {
+        if (enemyEvent.quiz.isHit) {
             $eventText.clear(enemyEvent.eventId());
-            if (enemyEvent.portalEnemy) {
+            if (enemyEvent.quiz.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.1) {
                 $f.placeEvent(enemyEvent.x, enemyEvent.y, 'potion');
@@ -518,8 +527,8 @@ var $f = $f || {};
             $gameMap.eraseEvent(enemyEvent.eventId());
 
         } else {
-            enemyEvent.isStunned = true;
-            enemyEvent.hit = true;
+            enemyEvent.quiz.isStunned = true;
+            enemyEvent.quiz.isHit = true;
             $f.setEnemyText(enemyEvent);
         }
     }
