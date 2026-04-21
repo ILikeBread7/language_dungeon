@@ -18,7 +18,7 @@ const paramsData = {
     txt: { longName: 'txt', shortName: 't' },
     prod: { longName: 'prod', shortName: 'p' },
     unidic: { longName: 'unidic', shortName: 'u' },
-    testUnidic: { longName: 'test-unidic', shortName: 'e' },
+    testUnidic: { longName: 'test-unidic', shortName: 'e', mapper: String },
     allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
     wordsSplitChar: { longName: 'split-char', shortName: 's', default: ',', mapper: String },
     maxChunkSize: { longName: 'chunk-size', shortName: 'c', default: 10000000, mapper: Number },
@@ -78,7 +78,7 @@ tokenizerBuilder.setDictionary('embedded://unidic');
 const tokenizer = tokenizerBuilder.build();
 
 if (params.testUnidic) {
-    const sentence = '新しくできた水族館にはまだ行ったことがありません。';
+    const sentence = params.testUnidic;
     const split = splitUnidic(sentence);
     console.log(split.join(', '));
     process.exit(0);
