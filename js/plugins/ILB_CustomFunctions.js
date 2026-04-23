@@ -28,6 +28,8 @@ var $f = $f || {};
 
 (function () {
 
+    const UNKNOWN_WORD_SCORE_THRESHOLD = 3;
+
     const _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
     Game_Interpreter.prototype.pluginCommand = function(command, args) {
         if (command === '$f') {
@@ -360,7 +362,7 @@ var $f = $f || {};
         }
 
         $nv.correctAnswerIndex = quiz.correct;
-        const translationScoreThreshold = 1;
+        const translationScoreThreshold = UNKNOWN_WORD_SCORE_THRESHOLD;
         
         const word = quiz.question;
         const sentence = getExampleSentence(word);
@@ -1487,7 +1489,7 @@ var $f = $f || {};
         return entries.join('\n');
     }
 
-    const dictionaryScoreThreshold = 1;
+    const dictionaryScoreThreshold = UNKNOWN_WORD_SCORE_THRESHOLD;
     const dictionaryPageLength = 16;
     let dictionaryEntryIndex = 0;
     let dictionaryEntries = [];
