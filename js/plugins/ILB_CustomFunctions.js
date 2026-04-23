@@ -1497,7 +1497,7 @@ var $f = $f || {};
         if (dictionaryEntryIndex === 0) {
             dictionaryEntries = $gameMap.events()
                 .filter(event => event && !event._erased && event.event().meta && event.event().meta.enemy && (goodAnswers.get(event.quiz.question) || [ 0 ])[0] <= dictionaryScoreThreshold)
-                .map(enemy => `\\c[3]${enemy.quiz.question}\\c[0]: ${enemy.quiz.answers[enemy.quiz.correct]}`);
+                .map(enemy => `${colorCurrentWord(enemy.quiz.question)}: ${enemy.quiz.answers[enemy.quiz.correct]}`);
         }
 
         if (dictionaryEntryIndex < dictionaryEntries.length) {
