@@ -384,6 +384,7 @@ function splitParser(text) {
     const QUOTE_CHAR = '"';
     const OPEN_QUOTE_PAREN_CHARS = OPEN_PAREN_CHARS + QUOTE_CHAR;
     const CLOSE_QUOTE_PAREN_CHARS = CLOSE_PAREN_CHARS + QUOTE_CHAR;
+    const DISALLOWED_END_OF_SENTENCE_CHARS = ',、';
     const NEWLINE_CHAR = '\n';
 
     const split = [];
@@ -416,7 +417,7 @@ function splitParser(text) {
             insideQuotes = false;
             sentenceStart = lastPeriodIndex;
         } else if (NEWLINE_CHAR === char) {
-            if (parens === 0 && !insideQuotes) {
+            if (parens === 0 && !insideQuotes && !DISALLOWED_END_OF_SENTENCE_CHARS.includes(text[i - 1])) {
                 const sentence = removeWrappingParensOrQuotes(text.substring(sentenceStart, i).trim(), OPEN_QUOTE_PAREN_CHARS, CLOSE_QUOTE_PAREN_CHARS);
                 if (
                     sentence
