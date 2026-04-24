@@ -81,7 +81,7 @@ const tokenizer = tokenizerBuilder.build();
 
 if (params.testUnidic) {
     const sentence = params.testUnidic;
-    const split = splitUnidic(sentence);
+    const split = testSplitUnidic(sentence);
     console.log(split.join(', '));
     process.exit(0);
 }
@@ -485,7 +485,7 @@ function isWhitespace(char) {
     return !char || char === ' ' || char === '\n';
 }
 
-function splitUnidic(sentence) {
+function testSplitUnidic(sentence) {
     const tokens = tokenizer.tokenize(sentence);
     const split = tokens.reduce((acc, curr) => {
         const wordType = curr.getDetail(0);
