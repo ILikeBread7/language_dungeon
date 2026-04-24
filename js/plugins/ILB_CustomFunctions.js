@@ -327,6 +327,7 @@ var $f = $f || {};
         // Object.assign to keep the isHit etc. properties
         event.quiz = Object.assign(event.quiz || {}, {
             question: randomQuestion.question,
+            kana: randomQuestion.kana,
             answers: answers,
             correct: correctIndex,
             incorrect: incorrectIndexes,
@@ -338,7 +339,7 @@ var $f = $f || {};
     }
 
     function setExistingEnemyText(enemyEvent) {
-        $eventText.set(enemyEvent.eventId(), enemyEvent.quiz.question);
+        $eventText.set(enemyEvent.eventId(), createQuizQuestionText(enemyEvent.quiz));
     }
 
     $f.setQuestionVariables = (event) => {
@@ -346,7 +347,7 @@ var $f = $f || {};
         const INCORRECT_COLOR = 10;
         const quiz = event.quiz;
 
-        $nv.question = quiz.question;
+        $nv.question = createQuizQuestionText(quiz);
         $nv.correctAnswer = quiz.answers[quiz.correct];
 
         quiz.answers.forEach((answer, index) => {
@@ -375,6 +376,10 @@ var $f = $f || {};
             translationScoreThreshold
         );
     };
+
+    function createQuizQuestionText(quiz) {
+        return quiz.question + (quiz.kana ? ` (${quiz.kana})` : '');
+    }
 
     const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
     Window_Base.prototype.convertEscapeCharacters = function(text) {
@@ -1188,10 +1193,10 @@ var $f = $f || {};
                 return wordInSentence + ' ';
             }
             if (parts.length === 1) {
-                return `${wordInSentence} ${colorExplanation(`(${getWordOrAuxiliaryTranslation(baseWord)})`)} `;
+                return `${wordInSentence} ${colorExplanation(`[${getWordOrAuxiliaryTranslation(baseWord)}]`)} `;
             }
 
-            return `${wordInSentence} ${colorExplanation(`(${parts.slice(1).map(getWordOrAuxiliaryTranslation).join(' - ')})`)} `;
+            return `${wordInSentence} ${colorExplanation(`[${parts.slice(1).map(getWordOrAuxiliaryTranslation).join(' - ')}]`)} `;
         }).trim();
     }
 
@@ -1235,7 +1240,7 @@ var $f = $f || {};
                 return wordInSentence;
             }
 
-            return `${wordInSentence} ${colorExplanation(`(${quizAnswersMap.get(baseWord)})`)}`;
+            return `${wordInSentence} ${colorExplanation(`[${quizAnswersMap.get(baseWord)}]`)}`;
         });
     }
 
@@ -1497,7 +1502,7 @@ var $f = $f || {};
         if (dictionaryEntryIndex === 0) {
             dictionaryEntries = $gameMap.events()
                 .filter(event => event && !event._erased && event.event().meta && event.event().meta.enemy && (goodAnswers.get(event.quiz.question) || [ 0 ])[0] <= dictionaryScoreThreshold)
-                .map(enemy => `${colorCurrentWord(enemy.quiz.question)}: ${enemy.quiz.answers[enemy.quiz.correct]}`);
+                .map(enemy => `${colorCurrentWord(createQuizQuestionText(enemy.quiz))}: ${enemy.quiz.answers[enemy.quiz.correct]}`);
         }
 
         if (dictionaryEntryIndex < dictionaryEntries.length) {
