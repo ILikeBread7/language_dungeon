@@ -383,20 +383,29 @@ function splitParser(text) {
     const CLOSE_PAREN_CHARS = ')' + END_QUOTE_CHARS;
     const QUOTE_CHAR = '"';
     const NEWLINE_CHAR = '\n';
+    const QUOTE_AND_PAREN_CHARS = OPEN_PAREN_CHARS + CLOSE_PAREN_CHARS  + QUOTE_CHAR;
 
     const split = [];
     let parens = 0;
     let insideQuotes = false;
+    let totalParensOrQuotes = 0;
     for (let i = 0, sentenceStart = 0; i < text.length; i++) {
         const char = text[i];
         if (QUOTE_CHAR === char) {
             insideQuotes = !insideQuotes;
+            totalParensOrQuotes++;
         } else if (OPEN_PAREN_CHARS.includes(char)) {
             parens++;
+            totalParensOrQuotes++;
         } else if (CLOSE_PAREN_CHARS.includes(char)) {
             parens--;
+            totalParensOrQuotes++;
             if (parens < 0) {
                 i = text.indexOf(NEWLINE_CHAR, i + 1) || text.length;
+                parens = 0;
+                totalParensOrQuotes = 0;
+                insideQuotes = false;
+                sentenceStart = i + 1;
             }
         } else if (parens === 0 && !insideQuotes && PERIOD_CHARS.includes(char)) {
             while (PERIOD_CHARS.includes(text[i + 1])) {
@@ -406,11 +415,14 @@ function splitParser(text) {
                 continue;
             }
             const lastPeriodIndex = i + 1;
-            split.push(text.substring(sentenceStart, lastPeriodIndex).trim());
+            split.push(removeWrappingParensOrQuotes(text.substring(sentenceStart, lastPeriodIndex).trim()), totalParensOrQuotes, QUOTE_AND_PAREN_CHARS);
+            parens = 0;
+            totalParensOrQuotes = 0;
+            insideQuotes = false;
             sentenceStart = lastPeriodIndex;
         } else if (NEWLINE_CHAR === char) {
             if (parens === 0 && !insideQuotes) {
-                const sentence = text.substring(sentenceStart, i).trim();
+                const sentence = removeWrappingParensOrQuotes(text.substring(sentenceStart, i).trim(), totalParensOrQuotes, QUOTE_AND_PAREN_CHARS);
                 if (
                     sentence
                     // Sentence is from a language that doesn't need punctuation to end sentences
@@ -427,12 +439,27 @@ function splitParser(text) {
             }
 
             parens = 0;
+            totalParensOrQuotes = 0;
             insideQuotes = false;
             sentenceStart = i + 1;
         }
     }
 
     return split;
+}
+
+function removeWrappingParensOrQuotes(sentence, totalParensOrQuotes, quoteAndParenChars) {
+    if (totalParensOrQuotes !== 2) {
+        return sentence;
+    }
+    if (sentenceIsWrappedInParensOrQuotes(sentence, quoteAndParenChars)) {
+        return sentence.substring(1, sentence.length - 1);
+    }
+    return sentence;
+}
+
+function sentenceIsWrappedInParensOrQuotes(sentence, quoteAndParenChars) {
+    return quoteAndParenChars.includes(sentence[0]) && quoteAndParenChars.includes(sentence[sentence.length - 1]);
 }
 
 /**
