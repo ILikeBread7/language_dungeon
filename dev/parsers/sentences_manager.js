@@ -9,6 +9,7 @@ const FORMATS = Object.freeze({
 });
 const paramsData = {
     languageFile: { longName: 'language-file', shortName: 'l', required: true, mapper: String },
+    particlesFile: { longName: 'particles-file', shortName: 'r', mapper: String },
     unidic: { longName: 'unidic', shortName: 'u' },
     allowUnknownWords: { longName: 'allow-unknown', shortName: 'a' },
     maxChunkSize: { longName: 'chunk-size', shortName: 's', mapper: Number },

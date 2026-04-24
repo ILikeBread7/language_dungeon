@@ -12,6 +12,7 @@ const FORMATS = Object.freeze({
 });
 const paramsData = {
     languageFile: { longName: 'language-file', shortName: 'l', required: params => !params.testUnidic, mapper: String },
+    particlesFile: { longName: 'particles-file', shortName: 'r', mapper: String },
     parseOnly: { longName: 'parse-only', shortName: 'o' },
     format: { longName: 'format', shortName: 'f', default: FORMATS.TEST, allowed: Object.values(FORMATS), mapper: String },
     json: { longName: 'json', shortName: 'j' },
@@ -38,6 +39,7 @@ if (params.txt) {
 
 const DEBUG_NUMBER_FORMAT = new Intl.NumberFormat();
 const UNKNOWN_WORD_PENALTY = Math.floor(Number.MAX_SAFE_INTEGER / 1000000);
+const PARTICLE_VALUE = 1;
 const ALPHABET_REGEX = /[a-z\s]+/ig;
 const QUOTES_REGEX = /„““”"/ig;
 const PUNCTUATION_SPLIT_REGEX = /[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/;
@@ -91,6 +93,17 @@ const wordsFrequencyMap = new Map(
     wordLines
         .flatMap((words, lineIndex) => words.map(word => [ word, lineIndex + 1 ]))
 );
+
+if (params.particlesFile) {
+    fs.readFileSync(params.particlesFile, 'utf8').split('\n').forEach(particle => {
+        if (!particle) {
+            return;
+        }
+
+        wordsFrequencyMap.set(particle, PARTICLE_VALUE);
+    });
+}
+
 const maxWordLength = wordsFrequencyMap.keys().reduce((acc, curr) => Math.max(acc, curr.length), 0);
 
 (async function() {
