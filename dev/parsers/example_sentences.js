@@ -386,6 +386,7 @@ function splitParser(text) {
     const CLOSE_QUOTE_PAREN_CHARS = CLOSE_PAREN_CHARS + QUOTE_CHAR;
     const DISALLOWED_END_OF_SENTENCE_CHARS = ',、';
     const NEWLINE_CHAR = '\n';
+    const ALL_CAPS_REGEX = /^[A-Z,.\s\d()'"‚„“‘“”-]+$/g;
 
     const split = [];
     let parens = 0;
@@ -412,25 +413,31 @@ function splitParser(text) {
                 continue;
             }
             const lastPeriodIndex = i + 1;
-            split.push(removeWrappingParensOrQuotes(text.substring(sentenceStart, lastPeriodIndex).trim(), OPEN_QUOTE_PAREN_CHARS, CLOSE_QUOTE_PAREN_CHARS));
+            const sentence = removeWrappingParensOrQuotes(text.substring(sentenceStart, lastPeriodIndex).trim(), OPEN_QUOTE_PAREN_CHARS, CLOSE_QUOTE_PAREN_CHARS);
+            if (!sentence.match(ALL_CAPS_REGEX)) {
+                split.push(sentence);
+            }
             parens = 0;
             insideQuotes = false;
             sentenceStart = lastPeriodIndex;
         } else if (NEWLINE_CHAR === char) {
-            if (parens === 0 && !insideQuotes && !DISALLOWED_END_OF_SENTENCE_CHARS.includes(text[i - 1])) {
+            if (parens === 0 && !insideQuotes) {
                 const sentence = removeWrappingParensOrQuotes(text.substring(sentenceStart, i).trim(), OPEN_QUOTE_PAREN_CHARS, CLOSE_QUOTE_PAREN_CHARS);
                 if (
                     sentence
                     // Sentence is from a language that doesn't need punctuation to end sentences
                     && (
-                        !sentence.match(ALPHABET_REGEX) || (
+                        (!sentence.match(ALPHABET_REGEX) && !DISALLOWED_END_OF_SENTENCE_CHARS.includes(sentence.length - 1))
+                        || (
                             // Sentence ends with a quote closed American-style, punctuation inside the quote - "Example."
                             END_QUOTE_CHARS.includes(sentence[sentence.length - 1])
                             && PERIOD_CHARS.includes(sentence[sentence.length - 2])
                         )
                     )
                 ) {
-                    split.push(sentence);
+                    if (!sentence.match(ALL_CAPS_REGEX)) {
+                        split.push(sentence);
+                    }
                 }
             }
 
