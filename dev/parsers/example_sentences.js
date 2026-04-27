@@ -44,6 +44,9 @@ const ALPHABET_REGEX = /[a-z\s]+/ig;
 const QUOTES_REGEX = /„““”"/ig;
 const PUNCTUATION_SPLIT_REGEX = /[\s,、"—'.!?。！？（(「『‚„“)）」』‘“”]/;
 const UNIDIC_JOIN_SUFFIXES = [ '助動詞', '接尾辞' ];
+const UNIDIC_JOIN_SPECIAL = new Map([
+    [ 'つ', '助数詞' ]
+]);
 const ABBREVIATIONS = new Set([
         'Mr',
         'Mrs',
@@ -81,7 +84,7 @@ const tokenizer = tokenizerBuilder.build();
 
 if (params.testUnidic) {
     const sentence = params.testUnidic;
-    const split = testSplitUnidic(sentence);
+    const split = splitUnidicToBaseForms(sentence);
     console.log(split.join(', '));
     process.exit(0);
 }
@@ -525,35 +528,24 @@ function isWhitespace(char) {
     return !char || char === ' ' || char === '\n';
 }
 
-function testSplitUnidic(sentence) {
-    const tokens = tokenizer.tokenize(sentence);
-    const split = tokens.reduce((acc, curr) => {
-        const wordType = curr.getDetail(0);
-        if (UNIDIC_JOIN_SUFFIXES.includes(wordType)) {
-            if (acc.length === 0) {
-                console.warn(`${wordType} at the start of a sentence: ${sentence}`);
-                return acc;
-            }
-            acc[acc.length - 1] += curr.surface;
-        } else {
-            acc.push(curr.surface);
-        }
-        return acc;
-    }, []);
-    return split;
-}
-
 function splitUnidicToBaseForms(sentence) {
     const tokens = tokenizer.tokenize(sentence);
     const split = [];
     
     for (const token of tokens) {
         const wordType = token.getDetail(0);
+        const baseForm = token.getDetail(10);
+        const pos = token.getDetail(2);
+
+        if (split.length > 0 && pos === UNIDIC_JOIN_SPECIAL.get(baseForm)) {
+            split[split.length - 1] += baseForm;
+            continue;
+        }
+
         if (UNIDIC_JOIN_SUFFIXES.includes(wordType)) {
             continue;
         }
         
-        const baseForm = token.getDetail(10);
         split.push(baseForm);
     }
 
