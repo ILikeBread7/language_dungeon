@@ -22,7 +22,7 @@ const $nce = {};
     const defaultVariableValues = [];
     const defaultSwitchValues = [];
 
-    fetch('../data/System.json')
+    fetch('data/System.json')
         .then(response => response.json())
         .then(system => {
             system.variables.forEach((name, index) => {
