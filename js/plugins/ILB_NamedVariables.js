@@ -78,7 +78,7 @@ const $nce = {};
             });
         });
 
-    fetch('../data/CommonEvents.json')
+    fetch('data/CommonEvents.json')
         .then(response => response.json())
         .then(commonEvents => {
             commonEvents.forEach(commonEvent => {
