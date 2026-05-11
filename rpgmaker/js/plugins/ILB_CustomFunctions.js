@@ -98,6 +98,10 @@ var $f = $f || {};
     const distanceToFollow = 5;
     let currentEnemyIndex = 0;
     function moveEnemies() {
+        if ($ns.portalUsed) {
+            return;
+        }
+
         const events = $gameMap.events();
         const realMoveSpeed = $gamePlayer.realMoveSpeed();
         for (; currentEnemyIndex < events.length; currentEnemyIndex++) {
