@@ -15,6 +15,7 @@ rpgmaker/js/plugins/*.js
 !rpgmaker/js/plugins/VE_DiagonalMovement.js
 !rpgmaker/js/plugins/SimpleDungeonMinimap.js
 !rpgmaker/js/plugins/PMD_HUD.js
+!rpgmaker/js/plugins/modules
 dev/parsers/example_texts
 dev/parsers/wordlists
 dev/parsers/wiktionary
