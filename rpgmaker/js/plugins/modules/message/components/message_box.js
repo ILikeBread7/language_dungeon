@@ -25,10 +25,17 @@ export class MessageBox extends HTMLElement {
                 position: absolute;
                 top: ${HIDDEN_TOP};
                 transition: top ${TRANSITION_TIME};
-                white-space: pre;
+                white-space: pre-wrap;
             }
         `;
         this.shadowRoot.append(style, messageContainer);
+
+        this._wordSpan = document.createElement('span');
+        this._wordShownPartSpan = document.createElement('span');
+        this._wordHiddenPartSpan = document.createElement('span');
+        this._wordHiddenPartSpan.style.visibility = 'hidden';
+        this._wordSpan.append(this._wordShownPartSpan, this._wordHiddenPartSpan);
+
         this._messageContainer = messageContainer;
         this._messageTextBuffer = [];
         this._messageTextHtmlTagStack = [ messageContainer ];
@@ -77,25 +84,35 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
-        const split = this._splitTextForDisplay(text);
-        for (const textPiece of split) {
-            if (this._isHtmlOpeningTag(textPiece)) {
-                const element = this._createElementFromHtml(textPiece);
+        const words = this._splitWordsForDisplay(text);
+        for (const word of words) {
+            if (this._isHtmlOpeningTag(word)) {
+                const element = this._createElementFromHtml(word);
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
                 currentTopElement.appendChild(element);
                 this._messageTextHtmlTagStack.push(element);
-            } else if (this._isHtmlClosingTag(textPiece)) {
+            } else if (this._isHtmlClosingTag(word)) {
                 if (this._messageTextHtmlTagStack.length === 1) {
                     console.warn(`Closing html tag when no tag is opened!`);
                 } else {
                     this._messageTextHtmlTagStack.pop();
                 }
             } else {
-                if (!this._messageTextDisplayImmediately) {
-                    await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
-                }
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
-                currentTopElement.innerHTML += textPiece;
+                this._wordHiddenPartSpan.innerHTML = word;
+                currentTopElement.appendChild(this._wordSpan);
+
+                for (const char of word) {
+                    if (!this._messageTextDisplayImmediately) {
+                        await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
+                    }
+                    this._wordShownPartSpan.innerHTML += char;
+                    this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
+                }
+
+                currentTopElement.removeChild(this._wordSpan);
+                currentTopElement.innerHTML += word;
+                this._wordShownPartSpan.innerHTML = '';
             }
         }
 
@@ -114,8 +131,8 @@ export class MessageBox extends HTMLElement {
      * 
      * @param {string} text May include html
      */
-    _splitTextForDisplay(text) {
-        return text.match(/<.*?>|.|\n/g);  // Split individual characters, but keep html tags intact
+    _splitWordsForDisplay(text) {
+        return text.match(/<.*?>|\s|[^<>\s]+/g) || [];  // Split individual words, but keep html tags intact
     }
 
     /**
