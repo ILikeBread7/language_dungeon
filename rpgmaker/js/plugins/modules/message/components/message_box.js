@@ -1,7 +1,10 @@
-const BOX_HEIGHT = '25vh';
+const INITIAL_LINES = 4;
+const LINES_CSS_VAR = '--lines';
+const LINE_HEIGHT = 1.2;
+const BOX_HEIGHT = `${INITIAL_LINES * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
-const TRANSITION_TIME = '1s';
-const CHAR_WRITE_WAIT = 200;
+const TRANSITION_TIME = '0.5s';
+const CHAR_WRITE_WAIT = 50;
 
 export class MessageBox extends HTMLElement {
 
@@ -13,11 +16,15 @@ export class MessageBox extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
 
+        const messageBox = document.createElement('div');
+        messageBox.part = messageBox.id = 'message-box';
         const messageContainer = document.createElement('div');
         messageContainer.part = messageContainer.id = 'message-container';
+        messageContainer.style.setProperty(LINES_CSS_VAR, 4);
+        messageBox.appendChild(messageContainer);
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
-            #${messageContainer.id} {
+            #${messageBox.id} {
                 width: 100%;
                 height: ${BOX_HEIGHT};
                 background: #000000;
@@ -26,9 +33,19 @@ export class MessageBox extends HTMLElement {
                 top: ${HIDDEN_TOP};
                 transition: top ${TRANSITION_TIME};
                 white-space: pre-wrap;
+                line-height: ${LINE_HEIGHT};
+                overflow: hidden;
+            }
+
+            #${messageContainer.id} {
+                width: 100%;
+                height: calc(${LINE_HEIGHT}em * var(${LINES_CSS_VAR}));
+                position: relative;
+                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${INITIAL_LINES}));
+                transition: top ${TRANSITION_TIME};
             }
         `;
-        this.shadowRoot.append(style, messageContainer);
+        this.shadowRoot.append(style, messageBox);
 
         this._wordSpan = document.createElement('span');
         this._wordShownPartSpan = document.createElement('span');
@@ -36,6 +53,7 @@ export class MessageBox extends HTMLElement {
         this._wordHiddenPartSpan.style.visibility = 'hidden';
         this._wordSpan.append(this._wordShownPartSpan, this._wordHiddenPartSpan);
 
+        this._messageBox = messageBox;
         this._messageContainer = messageContainer;
         this._messageTextBuffer = [];
         this._messageTextHtmlTagStack = [ messageContainer ];
@@ -56,17 +74,17 @@ export class MessageBox extends HTMLElement {
      */
     async _messageBoxTransition(top) {
         return new Promise((resolve) => {
-            this._messageContainer.style.top = top;
+            this._messageBox.style.top = top;
     
             const listener = element => {
-                if (element.target !== this._messageContainer) {
+                if (element.target !== this._messageBox) {
                     return;
                 }
     
-                this._messageContainer.removeEventListener('transitionend', listener);
+                this._messageBox.removeEventListener('transitionend', listener);
                 resolve();
             };
-            this._messageContainer.addEventListener('transitionend', listener);
+            this._messageBox.addEventListener('transitionend', listener);
         });
     }
 
@@ -84,6 +102,7 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
+        this._messageContainerReset();
         const words = this._splitWordsForDisplay(text);
         for (const word of words) {
             if (this._isHtmlOpeningTag(word)) {
@@ -101,6 +120,10 @@ export class MessageBox extends HTMLElement {
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
                 this._wordHiddenPartSpan.innerHTML = word;
                 currentTopElement.appendChild(this._wordSpan);
+
+                if (this._wordSpan.getBoundingClientRect().bottom > this._messageContainer.getBoundingClientRect().bottom) {
+                    await this._messageContainerScroll();
+                }
 
                 for (const char of word) {
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
@@ -168,6 +191,28 @@ export class MessageBox extends HTMLElement {
      */
     _isWhitespace(char) {
         return char.trim() === '';
+    }
+
+    async _messageContainerScroll() {
+        return new Promise(resolve => {
+            this._messageContainer.style.setProperty(LINES_CSS_VAR, Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + 1);
+            const listener = event => {
+                if (event.target !== this._messageContainer) {
+                    return;
+                }
+    
+                this._messageContainer.removeEventListener('transitionend', listener);
+                resolve();
+            };
+            this._messageContainer.addEventListener('transitionend', listener);
+        })
+    }
+
+    _messageContainerReset() {
+        this._messageContainer.innerHTML = '';
+        this._messageContainer.style.setProperty(LINES_CSS_VAR, INITIAL_LINES);
+        this._messageContainer.style.setProperty('transition', 'unset');
+        setTimeout(() => this._messageContainer.style.removeProperty('transition'), 10);
     }
 
 }
