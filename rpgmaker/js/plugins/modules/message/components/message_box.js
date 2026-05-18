@@ -103,7 +103,7 @@ export class MessageBox extends HTMLElement {
                 currentTopElement.appendChild(this._wordSpan);
 
                 for (const char of word) {
-                    if (!this._messageTextDisplayImmediately) {
+                    if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
                         await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
                     }
                     this._wordShownPartSpan.innerHTML += char;
@@ -159,6 +159,15 @@ export class MessageBox extends HTMLElement {
         const template = document.createElement('template');
         template.innerHTML = html.trim();
         return template.content.firstElementChild;
+    }
+
+    /**
+     * 
+     * @param {string} char 
+     * @returns 
+     */
+    _isWhitespace(char) {
+        return char.trim() === '';
     }
 
 }
