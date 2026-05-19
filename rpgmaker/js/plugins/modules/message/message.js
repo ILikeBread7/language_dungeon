@@ -21,5 +21,5 @@ async function displayText(text) {
     await box.messageBoxDisplayText(repeatedText.join('\n'));
 }
 
-setTimeout(() => displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!!`));
+setTimeout(() => displayText(/*html*/`Test123!!! <hr> <span style="color:green">GREEN</span> Text!!!`));
 

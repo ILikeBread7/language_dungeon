@@ -5,6 +5,22 @@ const BOX_HEIGHT = `${INITIAL_LINES * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
 const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
+const VOID_TAGS = [
+    '<area>',
+    '<base>',
+    '<br>',
+    '<col>',
+    '<embed>',
+    '<hr>',
+    '<img>',
+    '<input>',
+    '<link>',
+    '<meta>',
+    '<param>',
+    '<source>',
+    '<track>',
+    '<wbr>'
+];
 
 export class MessageBox extends HTMLElement {
 
@@ -109,7 +125,9 @@ export class MessageBox extends HTMLElement {
                 const element = this._createElementFromHtml(token);
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
                 currentTopElement.appendChild(element);
-                this._messageTextHtmlTagStack.push(element);
+                if (!VOID_TAGS.includes(token)) {
+                    this._messageTextHtmlTagStack.push(element);
+                }
             } else if (this._isHtmlClosingTag(token)) {
                 if (this._messageTextHtmlTagStack.length === 1) {
                     console.warn(`Closing html tag when no tag is opened!`);
