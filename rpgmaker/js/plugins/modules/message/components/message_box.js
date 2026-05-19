@@ -211,8 +211,9 @@ export class MessageBox extends HTMLElement {
     _messageContainerReset() {
         this._messageContainer.innerHTML = '';
         this._messageContainer.style.setProperty(LINES_CSS_VAR, INITIAL_LINES);
-        this._messageContainer.style.setProperty('transition', 'unset');
-        setTimeout(() => this._messageContainer.style.removeProperty('transition'), 10);
+        this._messageContainer.style.setProperty('transition-duration', '0s');
+        void this._messageContainer.clientWidth;
+        this._messageContainer.style.removeProperty('transition-duration');
     }
 
 }
