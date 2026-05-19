@@ -6,20 +6,20 @@ const HIDDEN_TOP = '100vh';
 const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
 const VOID_TAGS = [
-    '<area>',
-    '<base>',
-    '<br>',
-    '<col>',
-    '<embed>',
-    '<hr>',
-    '<img>',
-    '<input>',
-    '<link>',
-    '<meta>',
-    '<param>',
-    '<source>',
-    '<track>',
-    '<wbr>'
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr'
 ];
 
 export class MessageBox extends HTMLElement {
@@ -125,7 +125,7 @@ export class MessageBox extends HTMLElement {
                 const element = this._createElementFromHtml(token);
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
                 currentTopElement.appendChild(element);
-                if (!VOID_TAGS.includes(token)) {
+                if (!this._isVoidTag(token)) {
                     this._messageTextHtmlTagStack.push(element);
                 }
             } else if (this._isHtmlClosingTag(token)) {
@@ -140,7 +140,11 @@ export class MessageBox extends HTMLElement {
                 currentTopElement.appendChild(this._wordSpan);
 
                 for (const char of token) {
-                    if (this._wordHiddenPartSpan.getBoundingClientRect().top >= this._messageContainer.getBoundingClientRect().bottom) {
+                    const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
+                    if (
+                        this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
+                        || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
+                    ) {
                         await this._messageContainerScroll();
                     }
 
@@ -209,6 +213,15 @@ export class MessageBox extends HTMLElement {
      */
     _isWhitespace(char) {
         return char.trim() === '';
+    }
+
+    /**
+     * 
+     * @param {string} tag 
+     */
+    _isVoidTag(tag) {
+        const tagName = tag.substring(1, tag.length - 1).split(' ')[0];
+        return VOID_TAGS.includes(tagName);
     }
 
     async _messageContainerScroll() {
