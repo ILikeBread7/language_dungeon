@@ -63,6 +63,9 @@ export class MessageBox extends HTMLElement {
         `;
         this.shadowRoot.append(style, messageBox);
 
+        this._wholeTextSpan = document.createElement('span');
+        this._wholeTextSpan.style.visibility = 'hidden';
+        this._wholeTextLines = 0;
         this._wordSpan = document.createElement('span');
         this._wordShownPartSpan = document.createElement('span');
         this._wordHiddenPartSpan = document.createElement('span');
@@ -119,6 +122,8 @@ export class MessageBox extends HTMLElement {
      */
     async messageBoxDisplayText(text) {
         this._messageContainerReset();
+        this._findAndSaveWholeTextLinesNumber(text);
+
         const tokens = this._splitTextWithHtmlForDisplay(text);
         for (const token of tokens) {
             if (this._isHtmlOpeningTag(token)) {
@@ -224,9 +229,31 @@ export class MessageBox extends HTMLElement {
         return VOID_TAGS.includes(tagName);
     }
 
+    /**
+     * 
+     * @param {string} text 
+     */
+    _findAndSaveWholeTextLinesNumber(text) {
+        this._wholeTextSpan.innerHTML = text;
+        this._messageContainer.appendChild(this._wholeTextSpan);
+        const style = getComputedStyle(this._wholeTextSpan);
+        const fontSize = Number(style.fontSize.substring(0, style.fontSize.length - 2));
+
+        this._wholeTextLines = Math.ceil(this._wholeTextSpan.getBoundingClientRect().height / (fontSize * LINE_HEIGHT));
+        console.log(this._wholeTextLines)
+        this._messageContainer.removeChild(this._wholeTextSpan);
+        this._wholeTextSpan.innerHTML = '';
+    }
+
     async _messageContainerScroll() {
         return new Promise(resolve => {
-            this._messageContainer.style.setProperty(LINES_CSS_VAR, Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + 1);
+            this._messageContainer.style.setProperty(
+                LINES_CSS_VAR, 
+                Math.min(
+                    Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + LINES_PER_SCREEN,
+                    this._wholeTextLines
+                )
+            );
             const listener = event => {
                 if (event.target !== this._messageContainer) {
                     return;
