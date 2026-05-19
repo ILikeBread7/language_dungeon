@@ -1,7 +1,7 @@
-const INITIAL_LINES = 4;
+const LINES_PER_SCREEN = 4;
 const LINES_CSS_VAR = '--lines';
 const LINE_HEIGHT = 1.2;
-const BOX_HEIGHT = `${INITIAL_LINES * LINE_HEIGHT}em`;
+const BOX_HEIGHT = `${LINES_PER_SCREEN * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
 const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
@@ -57,7 +57,7 @@ export class MessageBox extends HTMLElement {
                 width: 100%;
                 height: calc(${LINE_HEIGHT}em * var(${LINES_CSS_VAR}));
                 position: relative;
-                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${INITIAL_LINES}));
+                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${LINES_PER_SCREEN}));
                 transition: top ${TRANSITION_TIME};
             }
         `;
@@ -241,7 +241,7 @@ export class MessageBox extends HTMLElement {
 
     _messageContainerReset() {
         this._messageContainer.innerHTML = '';
-        this._messageContainer.style.setProperty(LINES_CSS_VAR, INITIAL_LINES);
+        this._messageContainer.style.setProperty(LINES_CSS_VAR, LINES_PER_SCREEN);
         this._messageContainer.style.setProperty('transition-duration', '0s');
         void this._messageContainer.clientWidth;
         this._messageContainer.style.removeProperty('transition-duration');
