@@ -103,14 +103,14 @@ export class MessageBox extends HTMLElement {
      */
     async messageBoxDisplayText(text) {
         this._messageContainerReset();
-        const words = this._splitWordsForDisplay(text);
-        for (const word of words) {
-            if (this._isHtmlOpeningTag(word)) {
-                const element = this._createElementFromHtml(word);
+        const tokens = this._splitTextWithHtmlForDisplay(text);
+        for (const token of tokens) {
+            if (this._isHtmlOpeningTag(token)) {
+                const element = this._createElementFromHtml(token);
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
                 currentTopElement.appendChild(element);
                 this._messageTextHtmlTagStack.push(element);
-            } else if (this._isHtmlClosingTag(word)) {
+            } else if (this._isHtmlClosingTag(token)) {
                 if (this._messageTextHtmlTagStack.length === 1) {
                     console.warn(`Closing html tag when no tag is opened!`);
                 } else {
@@ -118,14 +118,14 @@ export class MessageBox extends HTMLElement {
                 }
             } else {
                 const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
-                this._wordHiddenPartSpan.innerHTML = word;
+                this._wordHiddenPartSpan.innerHTML = token;
                 currentTopElement.appendChild(this._wordSpan);
 
-                if (this._wordSpan.getBoundingClientRect().bottom > this._messageContainer.getBoundingClientRect().bottom) {
-                    await this._messageContainerScroll();
-                }
+                for (const char of token) {
+                    if (this._wordHiddenPartSpan.getBoundingClientRect().top >= this._messageContainer.getBoundingClientRect().bottom) {
+                        await this._messageContainerScroll();
+                    }
 
-                for (const char of word) {
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
                         await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
                     }
@@ -134,7 +134,7 @@ export class MessageBox extends HTMLElement {
                 }
 
                 currentTopElement.removeChild(this._wordSpan);
-                currentTopElement.innerHTML += word;
+                currentTopElement.innerHTML += token;
                 this._wordShownPartSpan.innerHTML = '';
             }
         }
@@ -154,8 +154,8 @@ export class MessageBox extends HTMLElement {
      * 
      * @param {string} text May include html
      */
-    _splitWordsForDisplay(text) {
-        return text.match(/<.*?>|\s|[^<>\s]+/g) || [];  // Split individual words, but keep html tags intact
+    _splitTextWithHtmlForDisplay(text) {
+        return text.match(/<.*?>|[^<>]+/g) || [];  // Split html tags from text
     }
 
     /**
