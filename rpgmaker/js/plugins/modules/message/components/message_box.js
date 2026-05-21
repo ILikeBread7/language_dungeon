@@ -34,10 +34,19 @@ export class MessageBox extends HTMLElement {
 
         const messageBox = document.createElement('div');
         messageBox.part = messageBox.id = 'message-box';
+
         const messageContainer = document.createElement('div');
         messageContainer.part = messageContainer.id = 'message-container';
         messageContainer.style.setProperty(LINES_CSS_VAR, 4);
+
+        const hiddenWholeTextSpan = document.createElement('span');
+        hiddenWholeTextSpan.id = 'whole-text-span';
+
+        const displayedTextSpan = document.createElement('span');
+
+        messageContainer.append(hiddenWholeTextSpan, displayedTextSpan);
         messageBox.appendChild(messageContainer);
+
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
             #${messageBox.id} {
@@ -60,12 +69,15 @@ export class MessageBox extends HTMLElement {
                 top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${LINES_PER_SCREEN}));
                 transition: top ${TRANSITION_TIME};
             }
+
+            #${hiddenWholeTextSpan.id} {
+                position: absolute;
+                visibility: hidden;
+                z-index: -1;
+            }
         `;
         this.shadowRoot.append(style, messageBox);
 
-        this._wholeTextSpan = document.createElement('span');
-        this._wholeTextSpan.style.visibility = 'hidden';
-        this._wholeTextLines = 0;
         this._wordSpan = document.createElement('span');
         this._wordShownPartSpan = document.createElement('span');
         this._wordHiddenPartSpan = document.createElement('span');
@@ -74,9 +86,13 @@ export class MessageBox extends HTMLElement {
 
         this._messageBox = messageBox;
         this._messageContainer = messageContainer;
+        this._hiddenWholeTextSpan = hiddenWholeTextSpan;
+        this._displayedTextSpan = displayedTextSpan;
         this._messageTextBuffer = [];
-        this._messageTextHtmlTagStack = [ messageContainer ];
+        this._messageTextHtmlTagStack = [ displayedTextSpan ];
         this._messageTextDisplayImmediately = false;
+
+        window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
     }
 
     async messageBoxShow() {
@@ -110,19 +126,11 @@ export class MessageBox extends HTMLElement {
     /**
      * 
      * @param {string} text May include html
-     */
-    messageBoxSetText(text) {
-        this._messageContainer.innerHTML = text;
-    }
-
-    /**
-     * 
-     * @param {string} text May include html
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
         this._messageContainerReset();
-        this._findAndSaveWholeTextLinesNumber(text);
+        this._hiddenWholeTextSpan.innerHTML = text;
 
         const tokens = this._splitTextWithHtmlForDisplay(text);
         for (const token of tokens) {
@@ -229,20 +237,30 @@ export class MessageBox extends HTMLElement {
         return VOID_TAGS.includes(tagName);
     }
 
+    _findWholeTextLinesNumber() {
+        return this._findLinesNumber(this._hiddenWholeTextSpan);
+    }
+
+    _findShownTextLinesNumber() {
+        return this._findLinesNumber(this._displayedTextSpan);
+    }
+
     /**
      * 
-     * @param {string} text 
+     * @param {HTMLElement} element 
      */
-    _findAndSaveWholeTextLinesNumber(text) {
-        this._wholeTextSpan.innerHTML = text;
-        this._messageContainer.appendChild(this._wholeTextSpan);
-        const style = getComputedStyle(this._wholeTextSpan);
-        const fontSize = Number(style.fontSize.substring(0, style.fontSize.length - 2));
+    _findLinesNumber(element) {
+        const style = getComputedStyle(element);
+        const lineHeight = this._getNumberFromCssPxString(style.lineHeight);
+        return Math.ceil(element.getBoundingClientRect().height / lineHeight);
+    }
 
-        this._wholeTextLines = Math.ceil(this._wholeTextSpan.getBoundingClientRect().height / (fontSize * LINE_HEIGHT));
-        console.log(this._wholeTextLines)
-        this._messageContainer.removeChild(this._wholeTextSpan);
-        this._wholeTextSpan.innerHTML = '';
+    /**
+     * 
+     * @param {string} cssValue css value in pixels
+     */
+    _getNumberFromCssPxString(cssValue) {
+        return Number(cssValue.substring(0, cssValue.length - 2));
     }
 
     async _messageContainerScroll() {
@@ -251,7 +269,7 @@ export class MessageBox extends HTMLElement {
                 LINES_CSS_VAR, 
                 Math.min(
                     Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + LINES_PER_SCREEN,
-                    this._wholeTextLines
+                    this._findWholeTextLinesNumber()
                 )
             );
             const listener = event => {
@@ -266,12 +284,34 @@ export class MessageBox extends HTMLElement {
         })
     }
 
+    _adjustContainerScrollAfterResize() {
+        this._messageContainer.style.setProperty(
+            LINES_CSS_VAR, 
+            this._roundToNearestFullLinesPerScreenNumber(this._findShownTextLinesNumber())
+        );
+    }
+
     _messageContainerReset() {
-        this._messageContainer.innerHTML = '';
+        this._displayedTextSpan.innerHTML = '';
+        this._preventMessageContainerScrollTransition();
+    }
+
+    _preventMessageContainerScrollTransition() {
         this._messageContainer.style.setProperty(LINES_CSS_VAR, LINES_PER_SCREEN);
         this._messageContainer.style.setProperty('transition-duration', '0s');
         void this._messageContainer.clientWidth;
         this._messageContainer.style.removeProperty('transition-duration');
+    }
+
+    /**
+     * 
+     * @param {number} linesNumber 
+     */
+    _roundToNearestFullLinesPerScreenNumber(linesNumber) {
+        return Math.max(
+            LINES_PER_SCREEN,
+            Math.ceil(linesNumber / LINES_PER_SCREEN) * LINES_PER_SCREEN
+        );
     }
 
 }
