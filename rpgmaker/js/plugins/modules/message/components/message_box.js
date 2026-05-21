@@ -286,8 +286,11 @@ export class MessageBox extends HTMLElement {
 
     _adjustContainerScrollAfterResize() {
         this._messageContainer.style.setProperty(
-            LINES_CSS_VAR, 
-            this._roundToNearestFullLinesPerScreenNumber(this._findShownTextLinesNumber())
+            LINES_CSS_VAR,
+            Math.min(
+                this._roundToNearestFullLinesPerScreenNumber(this._findShownTextLinesNumber()),
+                this._findWholeTextLinesNumber()
+            )
         );
     }
 
