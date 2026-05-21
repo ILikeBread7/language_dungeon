@@ -1,10 +1,5 @@
-const LINES_PER_SCREEN = 4;
 const LINES_CSS_VAR = '--lines';
-const LINE_HEIGHT = 1.2;
-const BOX_HEIGHT = `${LINES_PER_SCREEN * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
-const TRANSITION_TIME = '0.5s';
-const CHAR_WRITE_WAIT = 50;
 const VOID_TAGS = [
     'area',
     'base',
@@ -50,24 +45,30 @@ export class MessageBox extends HTMLElement {
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
             #${messageBox.id} {
+                --lines-per-screen: 4;
+                --line-height: 1.2;
+                --scroll-transition-time: 0.5s;
+                --char-write-time-ms: 50;
+                --box-height: calc(1em * var(--line-height) * var(--lines-per-screen));
+
                 width: 100%;
-                height: ${BOX_HEIGHT};
+                height: var(--box-height);
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
                 top: ${HIDDEN_TOP};
-                transition: top ${TRANSITION_TIME};
+                transition: top var(--scroll-transition-time);
                 white-space: pre-wrap;
-                line-height: ${LINE_HEIGHT};
+                line-height: var(--line-height);
                 overflow: hidden;
             }
 
             #${messageContainer.id} {
                 width: 100%;
-                height: calc(${LINE_HEIGHT}em * var(${LINES_CSS_VAR}));
+                height: var(--box-height);
                 position: relative;
-                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${LINES_PER_SCREEN}));
-                transition: top ${TRANSITION_TIME};
+                top: calc(-1em * var(--line-height) * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
+                transition: top var(--scroll-transition-time);
             }
 
             #${hiddenWholeTextSpan.id} {
@@ -92,11 +93,15 @@ export class MessageBox extends HTMLElement {
         this._messageTextHtmlTagStack = [ displayedTextSpan ];
         this._messageTextDisplayImmediately = false;
 
+        // this._saveCssVariables();
+
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
+        new MutationObserver(() => this._saveCssVariables()).observe(messageBox, { attributes: true });
+        // setTimeout(() => this._messageBox.style.setProperty('--line-height', 1.1), 1000)
     }
 
     async messageBoxShow() {
-        return await this._messageBoxTransition(/*css*/`calc(100vh - ${BOX_HEIGHT})`);
+        return await this._messageBoxTransition(/*css*/`calc(${HIDDEN_TOP} - var(--box-height))`);
     }
 
     async messageBoxHide() {
@@ -162,7 +167,7 @@ export class MessageBox extends HTMLElement {
                     }
 
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
-                        await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
+                        await new Promise(resolve => setTimeout(resolve, this._charWriteTimeMs));
                     }
                     this._wordShownPartSpan.innerHTML += char;
                     this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
@@ -268,7 +273,7 @@ export class MessageBox extends HTMLElement {
             this._messageContainer.style.setProperty(
                 LINES_CSS_VAR, 
                 Math.min(
-                    Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + LINES_PER_SCREEN,
+                    Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + this._linesPerScreen,
                     this._findWholeTextLinesNumber()
                 )
             );
@@ -296,11 +301,11 @@ export class MessageBox extends HTMLElement {
 
     _messageContainerReset() {
         this._displayedTextSpan.innerHTML = '';
+        this._messageContainer.style.setProperty(LINES_CSS_VAR, this._linesPerScreen);
         this._preventMessageContainerScrollTransition();
     }
 
     _preventMessageContainerScrollTransition() {
-        this._messageContainer.style.setProperty(LINES_CSS_VAR, LINES_PER_SCREEN);
         this._messageContainer.style.setProperty('transition-duration', '0s');
         void this._messageContainer.clientWidth;
         this._messageContainer.style.removeProperty('transition-duration');
@@ -312,9 +317,16 @@ export class MessageBox extends HTMLElement {
      */
     _roundToNearestFullLinesPerScreenNumber(linesNumber) {
         return Math.max(
-            LINES_PER_SCREEN,
-            Math.ceil(linesNumber / LINES_PER_SCREEN) * LINES_PER_SCREEN
+            this._linesPerScreen,
+            Math.ceil(linesNumber / this._linesPerScreen) * this._linesPerScreen
         );
+    }
+
+    _saveCssVariables() {
+        const style = getComputedStyle(this._messageBox);
+        this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
+        this._charWriteTimeMs = Number(style.getPropertyValue('--char-write-time-ms'));
+        console.log(this._linesPerScreen, this._charWriteTimeMs)
     }
 
 }
