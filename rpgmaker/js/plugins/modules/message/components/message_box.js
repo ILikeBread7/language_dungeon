@@ -1,6 +1,4 @@
 const LINES_CSS_VAR = '--lines';
-const LINE_HEIGHT = 1.2;
-const BOX_HEIGHT = `${4 * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
 const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
@@ -52,24 +50,28 @@ export class MessageBox extends HTMLElement {
         style.innerHTML = /*css*/`
             #${messageBox.id} {
                 --lines-per-screen: 4;
+                --line-height: 1.2;
+                --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
 
                 width: 100%;
-                height: ${BOX_HEIGHT};
+                height: var(--box-height);
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
                 top: ${HIDDEN_TOP};
                 transition: top ${TRANSITION_TIME};
                 white-space: pre-wrap;
-                line-height: ${LINE_HEIGHT};
+                line-height: var(--line-height);
                 overflow: hidden;
             }
 
             #${messageContainer.id} {
+                --container-height: calc(1em * var(--line-height) * var(${LINES_CSS_VAR}));
+
                 width: 100%;
-                height: calc(${LINE_HEIGHT}em * var(${LINES_CSS_VAR}));
+                height: var(--container-height);
                 position: relative;
-                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
+                top: calc(-1em * var(--line-height) * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
                 transition: top ${TRANSITION_TIME};
             }
 
@@ -99,7 +101,7 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        return await this._messageBoxTransition(/*css*/`calc(100vh - ${BOX_HEIGHT})`);
+        return await this._messageBoxTransition(/*css*/`calc(${HIDDEN_TOP} - var(--box-height))`);
     }
 
     async messageBoxHide() {
