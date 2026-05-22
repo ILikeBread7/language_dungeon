@@ -1,6 +1,5 @@
 const LINES_CSS_VAR = '--lines';
 const HIDDEN_TOP = '100vh';
-const CHAR_WRITE_WAIT = 50;
 const VOID_TAGS = [
     'area',
     'base',
@@ -28,8 +27,6 @@ export class MessageBox extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
 
-        this._linesPerScreen = 4;
-
         const messageBox = document.createElement('div');
         messageBox.part = messageBox.id = 'message-box';
 
@@ -51,6 +48,7 @@ export class MessageBox extends HTMLElement {
                 --lines-per-screen: 4;
                 --line-height: 1.2;
                 --scroll-transition-time: 0.5s;
+                --char-write-wait-ms: 50;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
 
                 width: 100%;
@@ -98,6 +96,9 @@ export class MessageBox extends HTMLElement {
         this._messageTextDisplayImmediately = false;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
+
+        // Take some property values from css variables
+        new MutationObserver(() => this._saveCssVariables()).observe(messageBox, { attributes: true });
     }
 
     async messageBoxShow() {
@@ -167,7 +168,7 @@ export class MessageBox extends HTMLElement {
                     }
 
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
-                        await new Promise(resolve => setTimeout(resolve, CHAR_WRITE_WAIT));
+                        await new Promise(resolve => setTimeout(resolve, this._charWriteWaitMs));
                     }
                     this._wordShownPartSpan.innerHTML += char;
                     this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
@@ -320,6 +321,17 @@ export class MessageBox extends HTMLElement {
             this._linesPerScreen,
             Math.ceil(linesNumber / this._linesPerScreen) * this._linesPerScreen
         );
+    }
+
+    _saveCssVariables() {
+        const style = getComputedStyle(this._messageBox);
+        this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
+        this._charWriteWaitMs = Number(style.getPropertyValue('--char-write-wait-ms'));
+        
+        const lines = Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR));
+        this._messageContainer.style.setProperty(LINES_CSS_VAR, Math.max(lines - this._linesPerScreen, this._linesPerScreen));
+
+        console.log(this._linesPerScreen, this._charWriteWaitMs)
     }
 
 }
