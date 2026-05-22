@@ -1,6 +1,5 @@
 const LINES_CSS_VAR = '--lines';
 const HIDDEN_TOP = '100vh';
-const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
 const VOID_TAGS = [
     'area',
@@ -51,6 +50,7 @@ export class MessageBox extends HTMLElement {
             #${messageBox.id} {
                 --lines-per-screen: 4;
                 --line-height: 1.2;
+                --scroll-transition-time: 0.5s;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
 
                 width: 100%;
@@ -59,7 +59,7 @@ export class MessageBox extends HTMLElement {
                 color: #ffffff;
                 position: absolute;
                 top: ${HIDDEN_TOP};
-                transition: top ${TRANSITION_TIME};
+                transition: top var(--scroll-transition-time);
                 white-space: pre-wrap;
                 line-height: var(--line-height);
                 overflow: hidden;
@@ -72,7 +72,7 @@ export class MessageBox extends HTMLElement {
                 height: var(--container-height);
                 position: relative;
                 top: calc(-1em * var(--line-height) * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
-                transition: top ${TRANSITION_TIME};
+                transition: top var(--scroll-transition-time);
             }
 
             #${hiddenWholeTextSpan.id} {
