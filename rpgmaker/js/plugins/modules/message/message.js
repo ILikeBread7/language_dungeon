@@ -8,7 +8,7 @@ async function displayText(text) {
     await box.messageBoxShow();
     // setTimeout(() => box.messageBoxDisplayImmediately(), 1000);
     const repeatedText = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 10; i++) {
         repeatedText.push(text);
     }
     await box.messageBoxDisplayText(repeatedText.join('\n'));
