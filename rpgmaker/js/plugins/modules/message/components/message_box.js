@@ -1,7 +1,6 @@
-const LINES_PER_SCREEN = 4;
 const LINES_CSS_VAR = '--lines';
 const LINE_HEIGHT = 1.2;
-const BOX_HEIGHT = `${LINES_PER_SCREEN * LINE_HEIGHT}em`;
+const BOX_HEIGHT = `${4 * LINE_HEIGHT}em`;
 const HIDDEN_TOP = '100vh';
 const TRANSITION_TIME = '0.5s';
 const CHAR_WRITE_WAIT = 50;
@@ -32,6 +31,8 @@ export class MessageBox extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
 
+        this._linesPerScreen = 4;
+
         const messageBox = document.createElement('div');
         messageBox.part = messageBox.id = 'message-box';
 
@@ -50,6 +51,8 @@ export class MessageBox extends HTMLElement {
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
             #${messageBox.id} {
+                --lines-per-screen: 4;
+
                 width: 100%;
                 height: ${BOX_HEIGHT};
                 background: #000000;
@@ -66,7 +69,7 @@ export class MessageBox extends HTMLElement {
                 width: 100%;
                 height: calc(${LINE_HEIGHT}em * var(${LINES_CSS_VAR}));
                 position: relative;
-                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - ${LINES_PER_SCREEN}));
+                top: calc(-${LINE_HEIGHT}em * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
                 transition: top ${TRANSITION_TIME};
             }
 
@@ -268,7 +271,7 @@ export class MessageBox extends HTMLElement {
             this._messageContainer.style.setProperty(
                 LINES_CSS_VAR, 
                 Math.min(
-                    Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + LINES_PER_SCREEN,
+                    Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR)) + this._linesPerScreen,
                     this._findWholeTextLinesNumber()
                 )
             );
@@ -300,7 +303,7 @@ export class MessageBox extends HTMLElement {
     }
 
     _preventMessageContainerScrollTransition() {
-        this._messageContainer.style.setProperty(LINES_CSS_VAR, LINES_PER_SCREEN);
+        this._messageContainer.style.setProperty(LINES_CSS_VAR, this._linesPerScreen);
         this._messageContainer.style.setProperty('transition-duration', '0s');
         void this._messageContainer.clientWidth;
         this._messageContainer.style.removeProperty('transition-duration');
@@ -312,8 +315,8 @@ export class MessageBox extends HTMLElement {
      */
     _roundToNearestFullLinesPerScreenNumber(linesNumber) {
         return Math.max(
-            LINES_PER_SCREEN,
-            Math.ceil(linesNumber / LINES_PER_SCREEN) * LINES_PER_SCREEN
+            this._linesPerScreen,
+            Math.ceil(linesNumber / this._linesPerScreen) * this._linesPerScreen
         );
     }
 
