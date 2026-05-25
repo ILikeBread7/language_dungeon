@@ -4,9 +4,23 @@
         overflow: hidden;
     }
 
+    ilb-message-box {
+        --lines-per-screen: 7;
+    }
+
     ilb-message-box::part(message-box) {
         font-size: 32px;
         background: purple;
+        transition-property: opacity;
+        top: calc((100vh - var(--box-height)) / 2);
+    }
+
+    ilb-message-box[data-state="hidden"]::part(message-box) {
+        opacity: 0;
+    }
+
+    ilb-message-box[data-state="shown"]::part(message-box) {
+        opacity: 1;
     }
 </style>
 <script type="module" src="message.js"></script>

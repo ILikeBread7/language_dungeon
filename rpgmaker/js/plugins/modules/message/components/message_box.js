@@ -1,5 +1,7 @@
 const LINES_CSS_VAR = '--lines';
 const HIDDEN_TOP = '100vh';
+const HIDDEN_STATE = 'hidden';
+const SHOWN_STATE = 'shown';
 const VOID_TAGS = [
     'area',
     'base',
@@ -28,6 +30,7 @@ export class MessageBox extends HTMLElement {
         this.attachShadow({ mode: 'open' });
 
         const messageBox = document.createElement('div');
+        this.dataset.state = HIDDEN_STATE;
         messageBox.part = messageBox.id = 'message-box';
 
         const messageContainer = document.createElement('div');
@@ -44,20 +47,30 @@ export class MessageBox extends HTMLElement {
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
-            #${messageBox.id} {
+            :host {
                 --lines-per-screen: 4;
                 --line-height: 1.2;
-                --scroll-transition-time: 0.5s;
+                --transition-time: 0.5s;
                 --char-write-wait-ms: 50;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
+            }
 
+            :host([data-state="${SHOWN_STATE}"])::part(message-box) {
+                top: calc(${HIDDEN_TOP} - var(--box-height));
+            }
+
+            :host([data-state="${HIDDEN_STATE}"])::part(message-box) {
+                top: ${HIDDEN_TOP};
+            }
+
+            #${messageBox.id} {
                 width: 100%;
                 height: var(--box-height);
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
-                top: ${HIDDEN_TOP};
-                transition: top var(--scroll-transition-time);
+                transition-property: top;
+                transition-duration: var(--transition-time);
                 white-space: pre-wrap;
                 line-height: var(--line-height);
                 overflow: hidden;
@@ -70,7 +83,7 @@ export class MessageBox extends HTMLElement {
                 height: var(--container-height);
                 position: relative;
                 top: calc(-1em * var(--line-height) * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
-                transition: top var(--scroll-transition-time);
+                transition: top var(--transition-time);
             }
 
             #${hiddenWholeTextSpan.id} {
@@ -98,24 +111,24 @@ export class MessageBox extends HTMLElement {
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
         // Take some property values from css variables
-        new MutationObserver(() => this._saveCssVariables()).observe(messageBox, { attributes: true });
+        new MutationObserver(() => this._saveCssVariables()).observe(this, { attributes: true });
     }
 
     async messageBoxShow() {
-        return await this._messageBoxTransition(/*css*/`calc(${HIDDEN_TOP} - var(--box-height))`);
+        return await this._messageBoxChangeState(SHOWN_STATE);
     }
 
     async messageBoxHide() {
-        return await this._messageBoxTransition(HIDDEN_TOP);
+        return await this._messageBoxChangeState(HIDDEN_STATE);
     }
 
     /**
      * 
      * @param {string} top css value
      */
-    async _messageBoxTransition(top) {
+    async _messageBoxChangeState(state) {
         return new Promise((resolve) => {
-            this._messageBox.style.top = top;
+            this.dataset.state = state;
     
             const listener = element => {
                 if (element.target !== this._messageBox) {
@@ -324,7 +337,7 @@ export class MessageBox extends HTMLElement {
     }
 
     _saveCssVariables() {
-        const style = getComputedStyle(this._messageBox);
+        const style = getComputedStyle(this);
         this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
         this._charWriteWaitMs = Number(style.getPropertyValue('--char-write-wait-ms'));
         
