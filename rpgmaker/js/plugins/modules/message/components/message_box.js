@@ -55,11 +55,11 @@ export class MessageBox extends HTMLElement {
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
             }
 
-            :host([data-state="${SHOWN_STATE}"])::part(message-box) {
+            :host[data-state="${SHOWN_STATE}"]::part(message-box) {
                 top: calc(${HIDDEN_TOP} - var(--box-height));
             }
 
-            :host([data-state="${HIDDEN_STATE}"])::part(message-box) {
+            :host[data-state="${HIDDEN_STATE}"]::part(message-box) {
                 top: ${HIDDEN_TOP};
             }
 
