@@ -39,6 +39,7 @@ export class MessageBox extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this._dependencies = dependencies;
+        this._waitForInputResolve = null;
 
         const messageBox = document.createElement('div');
         this.dataset.state = BOX_STATE.HIDDEN;
@@ -188,7 +189,9 @@ export class MessageBox extends HTMLElement {
                         this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
                         || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
                     ) {
+                        await this._waitForInput();
                         await this._messageContainerScroll();
+                        this._messageTextDisplayImmediately = false;
                     }
 
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
@@ -208,10 +211,29 @@ export class MessageBox extends HTMLElement {
         if (this._messageTextHtmlTagStack.length !== 1) {
             this._messageTextHtmlTagStack.splice(1);
         }
-        this._messageTextDisplayImmediately = false;
+
+        await this._waitForInput();
     }
 
     messageBoxDisplayImmediately() {
+        this._messageTextDisplayImmediately = true;
+    }
+
+    /**
+     * 
+     * @returns {Promise<void>}
+     */
+    async _waitForInput() {
+        return new Promise(resolve => {
+            this._waitForInputResolve = resolve;
+        });
+    }
+
+    input() {
+        if (this._waitForInputResolve) {
+            this._waitForInputResolve();
+            this._waitForInputResolve = null;
+        }
         this._messageTextDisplayImmediately = true;
     }
 
@@ -325,6 +347,7 @@ export class MessageBox extends HTMLElement {
     }
 
     _messageContainerReset() {
+        this._messageTextDisplayImmediately = false;
         this._displayedTextSpan.innerHTML = '';
         this._preventMessageContainerScrollTransition();
     }

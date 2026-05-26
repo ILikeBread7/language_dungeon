@@ -16,4 +16,7 @@ async function displayText(text) {
 }
 
 setTimeout(() => displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!!`));
-
+document.addEventListener('click', () => {
+    console.log('click');
+    box.input();
+});
