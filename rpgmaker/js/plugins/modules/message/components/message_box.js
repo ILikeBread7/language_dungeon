@@ -160,6 +160,8 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
+        void this._messageBox.clientWidth;
+        await this.messageBoxShow();
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
 
@@ -213,6 +215,8 @@ export class MessageBox extends HTMLElement {
         }
 
         await this._waitForInput();
+        this._messageContainerReset();
+        await this.messageBoxHide();
     }
 
     messageBoxDisplayImmediately() {
