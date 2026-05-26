@@ -25,9 +25,16 @@ export class MessageBox extends HTMLElement {
         return 'ilb-message-box';
     }
 
-    constructor() {
+    /**
+     * 
+     * @param { {
+     *  wait: (time: number) => Promise<void>
+     * } } dependencies 
+     */
+    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
         super();
         this.attachShadow({ mode: 'open' });
+        this._dependencies = dependencies;
 
         const messageBox = document.createElement('div');
         this.dataset.state = HIDDEN_STATE;
@@ -181,7 +188,7 @@ export class MessageBox extends HTMLElement {
                     }
 
                     if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
-                        await new Promise(resolve => setTimeout(resolve, this._charWriteWaitMs));
+                        await this._dependencies.wait(this._charWriteWaitMs);
                     }
                     this._wordShownPartSpan.innerHTML += char;
                     this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
