@@ -1,7 +1,11 @@
 const LINES_CSS_VAR = '--lines';
 const HIDDEN_TOP = '100vh';
-const HIDDEN_STATE = 'hidden';
-const SHOWN_STATE = 'shown';
+
+const BOX_STATE = Object.freeze({
+    HIDDEN: 'hidden',
+    SHOWN: 'shown'
+});
+
 const VOID_TAGS = [
     'area',
     'base',
@@ -37,7 +41,7 @@ export class MessageBox extends HTMLElement {
         this._dependencies = dependencies;
 
         const messageBox = document.createElement('div');
-        this.dataset.state = HIDDEN_STATE;
+        this.dataset.state = BOX_STATE.HIDDEN;
         messageBox.part = messageBox.id = 'message-box';
 
         const messageContainer = document.createElement('div');
@@ -62,11 +66,11 @@ export class MessageBox extends HTMLElement {
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
             }
 
-            :host[data-state="${SHOWN_STATE}"]::part(message-box) {
+            :host[data-state="${BOX_STATE.SHOWN}"]::part(message-box) {
                 top: calc(${HIDDEN_TOP} - var(--box-height));
             }
 
-            :host[data-state="${HIDDEN_STATE}"]::part(message-box) {
+            :host[data-state="${BOX_STATE.HIDDEN}"]::part(message-box) {
                 top: ${HIDDEN_TOP};
             }
 
@@ -122,11 +126,11 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        return await this._messageBoxChangeState(SHOWN_STATE);
+        return await this._messageBoxChangeState(BOX_STATE.SHOWN);
     }
 
     async messageBoxHide() {
-        return await this._messageBoxChangeState(HIDDEN_STATE);
+        return await this._messageBoxChangeState(BOX_STATE.HIDDEN);
     }
 
     /**
