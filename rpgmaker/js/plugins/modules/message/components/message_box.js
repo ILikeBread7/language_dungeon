@@ -387,6 +387,10 @@ export class MessageBox extends HTMLElement {
     }
 
     _adjustContainerScrollAfterResize() {
+        // Temporarily remove the hidden part span from document flow
+        // so it doesn't affect the shown lines number calculations
+        this._wordHiddenPartSpan.style.setProperty('position', 'absolute');
+
         this._messageContainer.style.setProperty(
             LINES_CSS_VAR,
             Math.min(
@@ -394,6 +398,8 @@ export class MessageBox extends HTMLElement {
                 this._findWholeTextLinesNumber()
             )
         );
+
+        this._wordHiddenPartSpan.style.removeProperty('position');
     }
 
     _messageContainerReset() {
