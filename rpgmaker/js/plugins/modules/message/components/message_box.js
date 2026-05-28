@@ -1,7 +1,7 @@
 const LINES_CSS_VAR = '--lines';
 const HIDDEN_TOP = '100vh';
 
-const BOX_STATE = Object.freeze({
+const VISIBILITY_STATE = Object.freeze({
     HIDDEN: 'hidden',
     SHOWN: 'shown'
 });
@@ -42,7 +42,7 @@ export class MessageBox extends HTMLElement {
         this._waitForInputResolve = null;
 
         const messageBox = document.createElement('div');
-        this.dataset.state = BOX_STATE.HIDDEN;
+        this.dataset.state = VISIBILITY_STATE.HIDDEN;
         messageBox.part = messageBox.id = 'message-box';
 
         const messageContainer = document.createElement('div');
@@ -57,6 +57,11 @@ export class MessageBox extends HTMLElement {
         messageContainer.append(hiddenWholeTextSpan, displayedTextSpan);
         messageBox.appendChild(messageContainer);
 
+        const nextPageIndicator = document.createElement('div');
+        nextPageIndicator.part = nextPageIndicator.id = 'next-page-indicator';
+        nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
+        messageBox.appendChild(nextPageIndicator);
+
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
             :host {
@@ -67,11 +72,11 @@ export class MessageBox extends HTMLElement {
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
             }
 
-            :host[data-state="${BOX_STATE.SHOWN}"]::part(message-box) {
+            :host[data-state="${VISIBILITY_STATE.SHOWN}"]::part(${messageBox.part}) {
                 top: calc(${HIDDEN_TOP} - var(--box-height));
             }
 
-            :host[data-state="${BOX_STATE.HIDDEN}"]::part(message-box) {
+            :host[data-state="${VISIBILITY_STATE.HIDDEN}"]::part(${messageBox.part}) {
                 top: ${HIDDEN_TOP};
             }
 
@@ -103,6 +108,38 @@ export class MessageBox extends HTMLElement {
                 visibility: hidden;
                 z-index: -1;
             }
+
+            #${nextPageIndicator.id} {
+                position: absolute;
+                bottom: 0.125em;
+                right: 0.125em;
+                width: 0.325em;
+                height: 0.325em;
+                clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                background: #ffffff;
+            }
+
+            #${nextPageIndicator.id}[data-state="${VISIBILITY_STATE.SHOWN}"] {
+                animation-name: blinking;
+                --animation-duration: 1s;
+                animation-duration: var(--animation-duration);
+                animation-delay: calc(var(--animation-duration) / -2);
+                animation-iteration-count: infinite;
+                visibility: visible;
+            }
+
+            #${nextPageIndicator.id}[data-state="${VISIBILITY_STATE.HIDDEN}"] {
+                visibility: hidden;
+            }
+
+            @keyframes blinking {
+                0% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0;
+                }
+            }
         `;
         this.shadowRoot.append(style, messageBox);
 
@@ -114,6 +151,7 @@ export class MessageBox extends HTMLElement {
 
         this._messageBox = messageBox;
         this._messageContainer = messageContainer;
+        this._nextPageIndicator = nextPageIndicator;
         this._hiddenWholeTextSpan = hiddenWholeTextSpan;
         this._displayedTextSpan = displayedTextSpan;
         this._messageTextBuffer = [];
@@ -127,11 +165,11 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        return await this._messageBoxChangeState(BOX_STATE.SHOWN);
+        return await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
     }
 
     async messageBoxHide() {
-        return await this._messageBoxChangeState(BOX_STATE.HIDDEN);
+        return await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
     }
 
     /**
@@ -191,7 +229,9 @@ export class MessageBox extends HTMLElement {
                         this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
                         || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
                     ) {
+                        this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                         await this._waitForInput();
+                        this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                         await this._messageContainerScroll();
                         this._messageTextDisplayImmediately = false;
                     }
