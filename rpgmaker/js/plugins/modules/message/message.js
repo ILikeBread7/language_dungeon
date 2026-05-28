@@ -16,7 +16,7 @@ async function displayText(text) {
     await box.messageBoxDisplayText(fullText);
 }
 
-displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!!`);
+displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!! <span style="visibility:hidden;position:relative">should be invisible <span style="position:absolute;top:0px;left:0px">this by extension too</span> after</span> After span`);
 document.addEventListener('click', () => {
     console.log('click');
     box.input();

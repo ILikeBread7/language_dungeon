@@ -155,7 +155,7 @@ export class MessageBox extends HTMLElement {
         this._hiddenWholeTextSpan = hiddenWholeTextSpan;
         this._displayedTextSpan = displayedTextSpan;
         this._messageTextBuffer = [];
-        this._messageTextHtmlTagStack = [ displayedTextSpan ];
+        this._messageTextHtmlTagStack = [ { element: displayedTextSpan, isVisible: true } ];
         this._messageTextDisplayImmediately = false;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
@@ -207,10 +207,11 @@ export class MessageBox extends HTMLElement {
         for (const token of tokens) {
             if (this._isHtmlOpeningTag(token)) {
                 const element = this._createElementFromHtml(token);
-                const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
+                const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1].element;
                 currentTopElement.appendChild(element);
                 if (!this._isVoidTag(token)) {
-                    this._messageTextHtmlTagStack.push(element);
+                    const isVisible = element.checkVisibility({ visibilityProperty: true, opacityProperty: true, contentVisibilityAuto: true });
+                    this._messageTextHtmlTagStack.push({ element, isVisible });
                 }
             } else if (this._isHtmlClosingTag(token)) {
                 if (this._messageTextHtmlTagStack.length === 1) {
@@ -219,33 +220,38 @@ export class MessageBox extends HTMLElement {
                     this._messageTextHtmlTagStack.pop();
                 }
             } else {
-                const currentTopElement = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
-                this._wordHiddenPartSpan.innerHTML = token;
-                currentTopElement.appendChild(this._wordSpan);
+                const { element: currentTopElement, isVisible } = this._messageTextHtmlTagStack[this._messageTextHtmlTagStack.length - 1];
+                
+                if (isVisible) {
+                    currentTopElement.appendChild(this._wordSpan);
+                    this._wordHiddenPartSpan.innerHTML = token;
 
-                for (const char of token) {
-                    const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
-                    if (
-                        this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
-                        || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
-                    ) {
-                        this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
-                        await this._waitForInput();
-                        this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
-                        await this._messageContainerScroll();
-                        this._messageTextDisplayImmediately = false;
+                    for (const char of token) {
+                        const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
+                        if (
+                            this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
+                            || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
+                        ) {
+                            this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
+                            await this._waitForInput();
+                            this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
+                            await this._messageContainerScroll();
+                            this._messageTextDisplayImmediately = false;
+                        }
+    
+                        if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
+                            await this._dependencies.wait(this._charWriteWaitMs);
+                        }
+                        this._wordShownPartSpan.innerHTML += char;
+                        this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
                     }
 
-                    if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
-                        await this._dependencies.wait(this._charWriteWaitMs);
-                    }
-                    this._wordShownPartSpan.innerHTML += char;
-                    this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
+                    currentTopElement.removeChild(this._wordSpan);
+                    currentTopElement.innerHTML += token;
+                    this._wordShownPartSpan.innerHTML = '';
+                } else {
+                    currentTopElement.innerHTML += token;
                 }
-
-                currentTopElement.removeChild(this._wordSpan);
-                currentTopElement.innerHTML += token;
-                this._wordShownPartSpan.innerHTML = '';
             }
         }
 
