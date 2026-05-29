@@ -25,8 +25,12 @@ const VOID_TAGS = [
 
 export class MessageBox extends HTMLElement {
 
-    static get tag() {
-        return 'ilb-message-box';
+    /**
+     * 
+     * @param {string} [tagName] 
+     */
+    static register(tagName) {
+        registerMessageBox(tagName);
     }
 
     /**
@@ -441,4 +445,12 @@ export class MessageBox extends HTMLElement {
 
 }
 
-customElements.define(MessageBox.tag, MessageBox);
+/**
+ * 
+ * @param {string} [tagName] 
+ */
+export function registerMessageBox(tagName = 'message-box') {
+    if (!customElements.get(tagName)) {
+        customElements.define(tagName, MessageBox);
+    }
+}

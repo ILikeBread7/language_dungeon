@@ -4,22 +4,22 @@
         overflow: hidden;
     }
 
-    ilb-message-box {
+    message-box {
         --lines-per-screen: 2;
     }
 
-    ilb-message-box::part(message-box) {
+    message-box::part(message-box) {
         font-size: 32px;
         background: purple;
         transition-property: opacity;
         top: calc((100vh - var(--box-height)) / 2);
     }
 
-    ilb-message-box[data-state="hidden"]::part(message-box) {
+    message-box[data-state="hidden"]::part(message-box) {
         opacity: 0;
     }
 
-    ilb-message-box[data-state="shown"]::part(message-box) {
+    message-box[data-state="shown"]::part(message-box) {
         opacity: 1;
     }
 </style>

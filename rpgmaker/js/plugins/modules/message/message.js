@@ -1,4 +1,5 @@
 import { MessageBox } from './components/message_box.js';
+MessageBox.register();
 
 console.log('messagw!');
 const box = new MessageBox();
