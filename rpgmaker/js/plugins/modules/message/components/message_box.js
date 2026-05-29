@@ -111,10 +111,12 @@ export class MessageBox extends HTMLElement {
 
             #${nextPageIndicator.id} {
                 position: absolute;
-                bottom: 0.125em;
-                right: 0.125em;
-                width: 0.325em;
-                height: 0.325em;
+                --bottom-right-margin: 0.125em;
+                bottom: var(--bottom-right-margin);
+                right: var(--bottom-right-margin);
+                --triangle-side-length: 0.325em;
+                width: var(--triangle-side-length);
+                height: calc(var(--triangle-side-length) * 0.87);
                 clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
                 background: #ffffff;
             }
