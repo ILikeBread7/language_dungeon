@@ -161,6 +161,7 @@ export class MessageBox extends HTMLElement {
         this._messageTextBuffer = [];
         this._messageTextHtmlTagStack = [ { element: displayedTextSpan, isVisible: true } ];
         this._messageTextDisplayImmediately = false;
+        this._preventScroll = false;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
@@ -239,7 +240,11 @@ export class MessageBox extends HTMLElement {
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
-                            await this._messageContainerScroll();
+                            if (this._preventScroll) {
+                                this._preventScroll = false;
+                            } else {
+                                await this._messageContainerScroll();
+                            }
                             this._messageTextDisplayImmediately = false;
                         }
     
@@ -404,6 +409,12 @@ export class MessageBox extends HTMLElement {
         );
 
         this._wordHiddenPartSpan.style.removeProperty('position');
+
+        if (this._wordHiddenPartSpan.innerHTML && this._wordHiddenPartSpan.getBoundingClientRect().top < this._wordShownPartSpan.getBoundingClientRect().bottom) {
+            this._preventScroll = true;
+        } else {
+            this._preventScroll = false;
+        }
     }
 
     _messageContainerReset() {
