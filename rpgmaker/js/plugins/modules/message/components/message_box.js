@@ -410,11 +410,7 @@ export class MessageBox extends HTMLElement {
 
         this._wordHiddenPartSpan.style.removeProperty('position');
 
-        if (this._wordHiddenPartSpan.innerHTML && this._wordHiddenPartSpan.getBoundingClientRect().top < this._wordShownPartSpan.getBoundingClientRect().bottom) {
-            this._preventScroll = true;
-        } else {
-            this._preventScroll = false;
-        }
+        this._preventScroll = this._wordHiddenPartSpan.innerHTML && this._wordHiddenPartSpan.getBoundingClientRect().top < this._wordShownPartSpan.getBoundingClientRect().bottom;
     }
 
     _messageContainerReset() {
