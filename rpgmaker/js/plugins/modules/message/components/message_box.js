@@ -114,22 +114,20 @@ export class MessageBox extends HTMLElement {
             }
 
             #${nextPageIndicator.id} {
-                position: absolute;
-                --bottom-right-margin: 0.125em;
-                bottom: var(--bottom-right-margin);
-                right: var(--bottom-right-margin);
                 --triangle-side-length: 0.325em;
+                --triangle-height: calc(var(--triangle-side-length) * 0.87);
+                position: absolute;
+                bottom: calc(var(--triangle-height) * 1.5);
+                right: 0.125em;
                 width: var(--triangle-side-length);
-                height: calc(var(--triangle-side-length) * 0.87);
+                height: var(--triangle-height);
                 clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
                 background: #ffffff;
             }
 
             #${nextPageIndicator.id}[data-state="${VISIBILITY_STATE.SHOWN}"] {
-                animation-name: blinking;
-                --animation-duration: 1s;
-                animation-duration: var(--animation-duration);
-                animation-delay: calc(var(--animation-duration) / -2);
+                animation-name: floating;
+                animation-duration: 1s;
                 animation-iteration-count: infinite;
                 visibility: visible;
             }
@@ -138,12 +136,12 @@ export class MessageBox extends HTMLElement {
                 visibility: hidden;
             }
 
-            @keyframes blinking {
+            @keyframes floating {
                 0% {
-                    opacity: 1;
+                    transform: translateY(0%);
                 }
                 50% {
-                    opacity: 0;
+                    transform: translateY(100%);
                 }
             }
         `;
