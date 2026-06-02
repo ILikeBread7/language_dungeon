@@ -445,7 +445,7 @@ export class MessageBox extends HTMLElement {
         const lines = Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR));
         this._messageContainer.style.setProperty(LINES_CSS_VAR, Math.max(lines - this._linesPerScreen, this._linesPerScreen));
 
-        console.log(this._linesPerScreen, this._charWriteWaitMs)
+        this._adjustContainerScrollAfterResize();
     }
 
 }
