@@ -3,24 +3,5 @@
         margin: 0;
         overflow: hidden;
     }
-
-    message-box {
-        --lines-per-screen: 2;
-    }
-
-    message-box::part(message-box) {
-        font-size: 32px;
-        background: purple;
-        transition-property: opacity;
-        top: calc((100vh - var(--box-height)) / 2);
-    }
-
-    message-box[data-state="hidden"]::part(message-box) {
-        opacity: 0;
-    }
-
-    message-box[data-state="shown"]::part(message-box) {
-        opacity: 1;
-    }
 </style>
-<script type="module" src="message.js"></script>
+<script type="module" src="message_test.js"></script>

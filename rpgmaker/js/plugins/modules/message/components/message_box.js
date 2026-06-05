@@ -76,11 +76,11 @@ export class MessageBox extends HTMLElement {
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
             }
 
-            :host[data-state="${VISIBILITY_STATE.SHOWN}"]::part(${messageBox.part}) {
+            :host([data-state="${VISIBILITY_STATE.SHOWN}"])::part(${messageBox.part}) {
                 top: calc(${HIDDEN_TOP} - var(--box-height));
             }
 
-            :host[data-state="${VISIBILITY_STATE.HIDDEN}"]::part(${messageBox.part}) {
+            :host([data-state="${VISIBILITY_STATE.HIDDEN}"])::part(${messageBox.part}) {
                 top: ${HIDDEN_TOP};
             }
 
@@ -233,10 +233,7 @@ export class MessageBox extends HTMLElement {
 
                     for (const char of token) {
                         const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
-                        if (
-                            this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom
-                            || this._wordShownPartSpan.getBoundingClientRect().bottom > messageBoxBottom
-                        ) {
+                        if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
@@ -444,6 +441,7 @@ export class MessageBox extends HTMLElement {
         const style = getComputedStyle(this);
         this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
         this._charWriteWaitMs = Number(style.getPropertyValue('--char-write-wait-ms'));
+        this._textUnderScreenTolerance = this._getNumberFromCssPxString(style.getPropertyValue('font-size')) * 0.75;
         this._adjustContainerScrollAfterResize();
     }
 
