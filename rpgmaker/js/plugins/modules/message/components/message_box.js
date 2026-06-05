@@ -402,9 +402,12 @@ export class MessageBox extends HTMLElement {
 
         this._messageContainer.style.setProperty(
             LINES_CSS_VAR,
-            Math.min(
-                this._roundToNearestFullLinesPerScreenNumber(this._findShownTextLinesNumber()),
-                this._findWholeTextLinesNumber()
+            Math.max(
+                Math.min(
+                    this._roundToNearestFullLinesPerScreenNumber(this._findShownTextLinesNumber()),
+                    this._findWholeTextLinesNumber()
+                ),
+                this._linesPerScreen
             )
         );
 
@@ -441,10 +444,6 @@ export class MessageBox extends HTMLElement {
         const style = getComputedStyle(this);
         this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
         this._charWriteWaitMs = Number(style.getPropertyValue('--char-write-wait-ms'));
-        
-        const lines = Number(this._messageContainer.style.getPropertyValue(LINES_CSS_VAR));
-        this._messageContainer.style.setProperty(LINES_CSS_VAR, Math.max(lines - this._linesPerScreen, this._linesPerScreen));
-
         this._adjustContainerScrollAfterResize();
     }
 
