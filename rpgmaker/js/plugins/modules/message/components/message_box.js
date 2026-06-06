@@ -90,6 +90,7 @@ export class MessageBox extends HTMLElement {
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
+                left: 0px;
                 transition-property: top;
                 transition-duration: var(--transition-time);
                 white-space: pre-wrap;
