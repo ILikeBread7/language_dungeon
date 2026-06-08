@@ -73,6 +73,7 @@ export class MessageBox extends HTMLElement {
                 --transition-time: 0.5s;
                 --char-write-wait-ms: 50;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
+                visibility: hidden;
             }
 
             :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${messageBox.id} {
@@ -169,16 +170,19 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        return await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
+        this.style.setProperty('visibility', 'visible');
+        await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
     }
 
     async messageBoxHide() {
-        return await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
+        await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
+        this.style.removeProperty('visibility');
     }
 
     /**
      * 
      * @param {string} top css value
+     * @returns {Promise<void>}
      */
     async _messageBoxChangeState(state) {
         return new Promise((resolve) => {
@@ -202,8 +206,9 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
-        void this._messageBox.clientWidth;
-        await this.messageBoxShow();
+        if (!this._messageBox.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true })) {
+            await this.messageBoxShow();
+        }
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
 

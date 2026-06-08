@@ -14,6 +14,13 @@ export function addMessageBox() {
     document.body.style.setProperty('overflow', 'hidden');
     document.body.style.setProperty('margin', '0px');
     document.body.appendChild(messageBox);
+
+    window.$messageBox = {
+        messageBox,
+        setMessageBoxCss,
+        appendMessageBoxCss
+    };
+
     return messageBox;
 }
 
@@ -41,4 +48,12 @@ export function appendMessageBoxCss(css) {
     }
     messageBoxStyle.innerHTML += '\n' + css;
     messageBox.forceUpdateAfterCssChange();
+}
+
+// polyfill for RPG Maker MV's older nw.js version
+if (!HTMLElement.prototype.checkVisibility) {
+    HTMLElement.prototype.checkVisibility = function() {
+        const style = getComputedStyle(this);
+        return style.display !== 'hidden' && style.visibility !== 'none' && style.opacity !== '0';
+    }
 }
