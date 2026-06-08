@@ -206,7 +206,7 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
-        if (!this._messageBox.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true })) {
+        if (!this.isVisible()) {
             await this.messageBoxShow();
         }
         this._messageContainerReset();
@@ -272,6 +272,14 @@ export class MessageBox extends HTMLElement {
 
         await this._waitForInput();
         this._messageContainerReset();
+    }
+
+    /**
+     * 
+     * @param {string} text 
+     */
+    async messageBoxDisplaySingleMessage(text) {
+        await this.messageBoxDisplayText(text);
         await this.messageBoxHide();
     }
 
@@ -451,6 +459,14 @@ export class MessageBox extends HTMLElement {
 
     forceUpdateAfterCssChange() {
         this._saveCssVariables();
+    }
+
+    isVisible() {
+        return this._messageBox.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true });
+    }
+
+    isWaiting() {
+        return !!this._waitForInputResolve;
     }
 
 }

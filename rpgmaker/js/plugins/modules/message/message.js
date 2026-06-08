@@ -64,5 +64,31 @@ if (!HTMLElement.prototype.checkVisibility) {
 
 function registerMessageBoxForRpgMaker() {
     const gameMessagePrototype = window.Game_Message.prototype;
-    gameMessagePrototype.add = text => messageBox.messageBoxDisplayText(text);
+    const gameInterpreterPrototype = window.Game_Interpreter.prototype;
+    const input = window.Input;
+    const gameMessage = window.$gameMessage;
+
+    let texts = [];
+    gameMessagePrototype.add = function(text) {
+        console.log('add', text)
+        texts.push(text);
+    }
+
+    gameMessagePrototype.isBusy = function() {
+        if (input.isTriggered('pageup')) {
+            console.log(messageBox.isWaiting())
+            messageBox.input();
+        }
+        return messageBox.isVisible();
+    };
+
+    const _setWaitMode = gameInterpreterPrototype.setWaitMode;
+    gameInterpreterPrototype.setWaitMode = async function(waitMode) {
+        _setWaitMode.call(this, waitMode);
+
+        if (!gameMessage.isBusy()) {
+            await messageBox.messageBoxDisplaySingleMessage(texts.join('\n'));
+            texts = [];
+        }
+    };
 }

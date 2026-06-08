@@ -13,8 +13,10 @@ async function displayText(text) {
         repeatedText.push(text);
     }
     const fullText = repeatedText.join('\n');
+    await box.messageBoxDisplaySingleMessage(fullText);
     await box.messageBoxDisplayText(fullText);
     await box.messageBoxDisplayText(fullText);
+    await box.messageBoxHide();
 }
 
 displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!!`);
