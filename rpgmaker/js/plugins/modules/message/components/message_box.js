@@ -444,6 +444,10 @@ export class MessageBox extends HTMLElement {
         this._adjustContainerScrollAfterResize();
     }
 
+    forceUpdateAfterCssChange() {
+        this._saveCssVariables();
+    }
+
 }
 
 /**
