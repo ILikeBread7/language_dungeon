@@ -1,5 +1,4 @@
 const LINES_CSS_VAR = '--lines';
-const HIDDEN_TOP = '100vh';
 
 const VISIBILITY_STATE = Object.freeze({
     HIDDEN: 'hidden',
@@ -77,11 +76,11 @@ export class MessageBox extends HTMLElement {
             }
 
             :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${messageBox.id} {
-                top: calc(${HIDDEN_TOP} - var(--box-height));
+                opacity: 1;
             }
 
             :host([data-state="${VISIBILITY_STATE.HIDDEN}"]) #${messageBox.id} {
-                top: ${HIDDEN_TOP};
+                opacity: 0;
             }
 
             #${messageBox.id} {
@@ -90,7 +89,7 @@ export class MessageBox extends HTMLElement {
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
-                transition-property: top;
+                transition-property: opacity;
                 transition-duration: var(--transition-time);
                 white-space: pre-wrap;
                 line-height: var(--line-height);
