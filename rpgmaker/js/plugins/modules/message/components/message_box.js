@@ -76,11 +76,11 @@ export class MessageBox extends HTMLElement {
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
             }
 
-            :host([data-state="${VISIBILITY_STATE.SHOWN}"])::part(${messageBox.part}) {
+            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${messageBox.id} {
                 top: calc(${HIDDEN_TOP} - var(--box-height));
             }
 
-            :host([data-state="${VISIBILITY_STATE.HIDDEN}"])::part(${messageBox.part}) {
+            :host([data-state="${VISIBILITY_STATE.HIDDEN}"]) #${messageBox.id} {
                 top: ${HIDDEN_TOP};
             }
 
@@ -90,7 +90,6 @@ export class MessageBox extends HTMLElement {
                 background: #000000;
                 color: #ffffff;
                 position: absolute;
-                left: 0px;
                 transition-property: top;
                 transition-duration: var(--transition-time);
                 white-space: pre-wrap;
