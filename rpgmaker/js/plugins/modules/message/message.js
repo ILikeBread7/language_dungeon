@@ -1,6 +1,9 @@
 import { MessageBox } from './components/message_box.js';
 
 const messageBoxStyle = document.createElement('style');
+/**
+ * @type {MessageBox}
+ */
 let messageBox = null;
 
 export function addMessageBox() {
@@ -20,6 +23,7 @@ export function addMessageBox() {
         setMessageBoxCss,
         appendMessageBoxCss
     };
+    setTimeout(registerMessageBoxForRpgMaker, 1000);
 
     return messageBox;
 }
@@ -56,4 +60,9 @@ if (!HTMLElement.prototype.checkVisibility) {
         const style = getComputedStyle(this);
         return style.display !== 'hidden' && style.visibility !== 'none' && style.opacity !== '0';
     }
+}
+
+function registerMessageBoxForRpgMaker() {
+    const gameMessagePrototype = window.Game_Message.prototype;
+    gameMessagePrototype.add = text => messageBox.messageBoxDisplayText(text);
 }
