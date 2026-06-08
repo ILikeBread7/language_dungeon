@@ -6,7 +6,10 @@ let messageBox = null;
 export function addMessageBox() {
     MessageBox.register();
     messageBox = new MessageBox();
-    messageBox.shadowRoot.getElementById('message-box').style.setProperty('z-index', 999);
+    const boxInlineStyle = messageBox.shadowRoot.getElementById('message-box').style;
+    boxInlineStyle.setProperty('z-index', 999);
+    boxInlineStyle.setProperty('bottom', '0px');
+
     messageBox.shadowRoot.appendChild(messageBoxStyle);
     document.body.style.setProperty('overflow', 'hidden');
     document.body.style.setProperty('margin', '0px');
