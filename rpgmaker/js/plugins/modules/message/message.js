@@ -1,4 +1,4 @@
-import { MessageBox } from './components/message_box.js';
+import { BOX_STATE, MessageBox } from './components/message_box.js';
 
 const messageBoxStyle = document.createElement('style');
 /**
@@ -38,7 +38,7 @@ export function setMessageBoxCss(css) {
         return;
     }
     messageBoxStyle.innerHTML = css;
-    messageBox.forceUpdateAfterCssChange();
+    messageBox.messageBoxForceUpdateAfterCssChange();
 }
 
 /**
@@ -51,7 +51,7 @@ export function appendMessageBoxCss(css) {
         return;
     }
     messageBoxStyle.innerHTML += '\n' + css;
-    messageBox.forceUpdateAfterCssChange();
+    messageBox.messageBoxForceUpdateAfterCssChange();
 }
 
 // polyfill for RPG Maker MV's older nw.js version
@@ -63,32 +63,39 @@ if (!HTMLElement.prototype.checkVisibility) {
 }
 
 function registerMessageBoxForRpgMaker() {
-    const gameMessagePrototype = window.Game_Message.prototype;
-    const gameInterpreterPrototype = window.Game_Interpreter.prototype;
+    const _Game_Message_prototype = window.Game_Message.prototype;
+    const _Game_Interpreter_prototype = window.Game_Interpreter.prototype;
     const input = window.Input;
-    const gameMessage = window.$gameMessage;
+    const _Window_Message_prototype = window.Window_Message.prototype;
+    const _Scene_Base_prototype = window.Scene_Base.prototype;
 
-    let texts = [];
-    gameMessagePrototype.add = function(text) {
-        console.log('add', text)
-        texts.push(text);
-    }
-
-    gameMessagePrototype.isBusy = function() {
-        if (input.isTriggered('pageup')) {
-            console.log(messageBox.isWaiting())
+    const _Scene_Base_prototype_update = _Scene_Base_prototype.update;
+    _Scene_Base_prototype.update = function() {
+        _Scene_Base_prototype_update.call(this);
+        if (messageBox.messageBoxState !== BOX_STATE.CLOSED && input.isTriggered('ok')) {
             messageBox.input();
         }
-        return messageBox.isVisible();
-    };
+    }
 
-    const _setWaitMode = gameInterpreterPrototype.setWaitMode;
-    gameInterpreterPrototype.setWaitMode = async function(waitMode) {
-        _setWaitMode.call(this, waitMode);
+    _Game_Message_prototype.isBusy = function() {
+        return messageBox.messageBoxState !== BOX_STATE.CLOSED;
+    }
 
-        if (!gameMessage.isBusy()) {
-            await messageBox.messageBoxDisplaySingleMessage(texts.join('\n'));
-            texts = [];
+    _Game_Interpreter_prototype.command101 = async function() {
+        if (messageBox.messageBoxState === BOX_STATE.CLOSED) {
+            do {
+                const texts = [];
+                while (this.nextEventCode() === 401) {  // Text data
+                    this._index++;
+                    texts.push(this.currentCommand().parameters[0]);
+                }
+                this.setWaitMode('message');
+                await messageBox.messageBoxDisplayText(texts.join('\n'));
+                console.log(this.currentCommand().code, this.nextEventCode())
+            } while(this.currentCommand().code === 101);    // Show message
+            await messageBox.messageBoxHide();
         }
-    };
+        
+        return false;
+    }
 }

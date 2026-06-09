@@ -5,6 +5,15 @@ const VISIBILITY_STATE = Object.freeze({
     SHOWN: 'shown'
 });
 
+export const BOX_STATE = Object.freeze({
+    OPENING: 1,
+    WRITING: 2,
+    WAITING_FOR_SCROLL: 3,
+    WAITING_FOR_CLOSE: 4,
+    CLOSING: 5,
+    CLOSED: 6
+});
+
 const VOID_TAGS = [
     'area',
     'base',
@@ -162,6 +171,7 @@ export class MessageBox extends HTMLElement {
         this._messageTextHtmlTagStack = [ { element: displayedTextSpan, isVisible: true } ];
         this._messageTextDisplayImmediately = false;
         this._preventScroll = false;
+        this._boxState = BOX_STATE.CLOSED;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
@@ -170,13 +180,17 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
+        this._boxState = BOX_STATE.OPENING;
         this.style.setProperty('visibility', 'visible');
         await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
+        this._boxState = BOX_STATE.WRITING;
     }
 
     async messageBoxHide() {
+        this._boxState = BOX_STATE.CLOSING;
         await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
+        this._boxState = BOX_STATE.CLOSED;
     }
 
     /**
@@ -206,9 +220,10 @@ export class MessageBox extends HTMLElement {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text) {
-        if (!this.isVisible()) {
+        if (!this.messageBoxIsVisible()) {
             await this.messageBoxShow();
         }
+        this._boxState = BOX_STATE.WRITING;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
 
@@ -238,8 +253,10 @@ export class MessageBox extends HTMLElement {
                     for (const char of token) {
                         const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
                         if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
+                            this._boxState = BOX_STATE.WAITING_FOR_SCROLL;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
+                            this._boxState = BOX_STATE.WRITING;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                             if (this._preventScroll) {
                                 this._preventScroll = false;
@@ -270,6 +287,7 @@ export class MessageBox extends HTMLElement {
             this._messageTextHtmlTagStack.splice(1);
         }
 
+        this._boxState = BOX_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
     }
@@ -457,16 +475,20 @@ export class MessageBox extends HTMLElement {
         this._adjustContainerScrollAfterResize();
     }
 
-    forceUpdateAfterCssChange() {
+    messageBoxForceUpdateAfterCssChange() {
         this._saveCssVariables();
     }
 
-    isVisible() {
+    messageBoxIsVisible() {
         return this._messageBox.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true });
     }
 
-    isWaiting() {
+    messageBoxIsWaiting() {
         return !!this._waitForInputResolve;
+    }
+
+    get messageBoxState() {
+        return this._boxState;
     }
 
 }
