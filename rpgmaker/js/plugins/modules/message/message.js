@@ -81,21 +81,29 @@ function registerMessageBoxForRpgMaker() {
         return messageBox.messageBoxState !== BOX_STATE.CLOSED;
     }
 
-    _Game_Interpreter_prototype.command101 = async function() {
+    let asyncCommand101Promise = null;
+    _Game_Interpreter_prototype.command101 = function() {
+        if (!asyncCommand101Promise) {
+            asyncCommand101Promise = asyncCommand101(this);
+            asyncCommand101Promise.then(() => asyncCommand101Promise = null);
+        }
+
+        return false;
+    }
+
+    async function asyncCommand101(gameInterpreter) {
         if (messageBox.messageBoxState === BOX_STATE.CLOSED) {
             do {
                 const texts = [];
-                while (this.nextEventCode() === 401) {  // Text data
-                    this._index++;
-                    texts.push(this.currentCommand().parameters[0]);
+                while (gameInterpreter.nextEventCode() === 401) {  // Text data
+                    gameInterpreter._index++;
+                    texts.push(gameInterpreter.currentCommand().parameters[0]);
                 }
-                this.setWaitMode('message');
+                gameInterpreter.setWaitMode('message');
                 await messageBox.messageBoxDisplayText(texts.join('\n'));
-                console.log(this.currentCommand().code, this.nextEventCode())
-            } while(this.currentCommand().code === 101);    // Show message
+                gameInterpreter._index++;
+            } while(gameInterpreter.currentCommand() && gameInterpreter.currentCommand().code === 101);    // Show message
             await messageBox.messageBoxHide();
         }
-        
-        return false;
     }
 }
