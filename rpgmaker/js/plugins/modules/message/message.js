@@ -66,6 +66,7 @@ function registerMessageBoxForRpgMaker() {
     const _Game_Message_prototype = window.Game_Message.prototype;
     const _Game_Interpreter_prototype = window.Game_Interpreter.prototype;
     const input = window.Input;
+    const gameMessage = window.$gameMessage;
     const _Window_Message_prototype = window.Window_Message.prototype;
     const _Scene_Base_prototype = window.Scene_Base.prototype;
 
@@ -93,35 +94,57 @@ function registerMessageBoxForRpgMaker() {
 
     async function asyncCommand101(gameInterpreter) {
         if (messageBox.messageBoxState === BOX_STATE.CLOSED) {
+            let index = gameInterpreter._index;
+            
             do {
                 const texts = [];
-                while (gameInterpreter.nextEventCode() === 401) {  // Text data
-                    gameInterpreter._index++;
-                    texts.push(gameInterpreter.currentCommand().parameters[0]);
+                while (nextCommand(gameInterpreter, index).code === 401) {  // Text data
+                    index++;
+                    texts.push(currentCommand(gameInterpreter, index).parameters[0]);
                 }
 
                 // For now copy from regular RPG Maker
-                switch (gameInterpreter.nextEventCode()) {
+                switch (nextCommand(gameInterpreter, index).code) {
                     case 102:  // Show Choices
-                        gameInterpreter._index++;
-                        gameInterpreter.setupChoices(gameInterpreter.currentCommand().parameters);
+                        index++;
+                        gameInterpreter.setupChoices(currentCommand(gameInterpreter, index).parameters);
                         break;
                     case 103:  // Input Number
-                        gameInterpreter._index++;
-                        gameInterpreter.setupNumInput(gameInterpreter.currentCommand().parameters);
+                        index++;
+                        gameInterpreter.setupNumInput(currentCommand(gameInterpreter, index).parameters);
                         break;
                     case 104:  // Select Item
-                        gameInterpreter._index++;
-                        gameInterpreter.setupItemChoice(gameInterpreter.currentCommand().parameters);
+                        index++;
+                        gameInterpreter.setupItemChoice(currentCommand(gameInterpreter, index).parameters);
                         break;
                 }
 
-                gameInterpreter._index++;
+                index++;
                 gameInterpreter.setWaitMode('message');
                 await messageBox.messageBoxDisplayText(texts.join('\n'));
-            } while(gameInterpreter.currentCommand() && gameInterpreter.currentCommand().code === 101);    // Show message
+            } while(currentCommand(gameInterpreter, index).code === 101);    // Show message
 
             await messageBox.messageBoxHide();
+            gameInterpreter._index = index;
         }
+    }
+
+    function currentCommand(gameInterpreter, index) {
+        return gameInterpreter._list[index] || { code: 0 };
+    }
+
+    function nextCommand(gameInterpreter, index) {
+        return gameInterpreter._list[index + 1] || { code: 0 };
+    }
+
+    const _Game_Interpreter_prototype_setupChoices = _Game_Interpreter_prototype.setupChoices;
+    _Game_Interpreter_prototype.setupChoices = function(params) {
+        _Game_Interpreter_prototype_setupChoices.call(this, params);
+        const defaultCallback = gameMessage._choiceCallback;
+        gameMessage.setChoiceCallback(() => {
+            defaultCallback();
+            messageBox.messageBoxDisplayImmediately();
+            messageBox.input();
+        });
     }
 }
