@@ -99,10 +99,28 @@ function registerMessageBoxForRpgMaker() {
                     gameInterpreter._index++;
                     texts.push(gameInterpreter.currentCommand().parameters[0]);
                 }
+
+                // For now copy from regular RPG Maker
+                switch (gameInterpreter.nextEventCode()) {
+                    case 102:  // Show Choices
+                        gameInterpreter._index++;
+                        gameInterpreter.setupChoices(gameInterpreter.currentCommand().parameters);
+                        break;
+                    case 103:  // Input Number
+                        gameInterpreter._index++;
+                        gameInterpreter.setupNumInput(gameInterpreter.currentCommand().parameters);
+                        break;
+                    case 104:  // Select Item
+                        gameInterpreter._index++;
+                        gameInterpreter.setupItemChoice(gameInterpreter.currentCommand().parameters);
+                        break;
+                }
+
+                gameInterpreter._index++;
                 gameInterpreter.setWaitMode('message');
                 await messageBox.messageBoxDisplayText(texts.join('\n'));
-                gameInterpreter._index++;
             } while(gameInterpreter.currentCommand() && gameInterpreter.currentCommand().code === 101);    // Show message
+
             await messageBox.messageBoxHide();
         }
     }
