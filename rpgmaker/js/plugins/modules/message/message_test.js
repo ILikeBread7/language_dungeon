@@ -1,5 +1,7 @@
+import { ChoicesList } from './components/choices_list.js';
 import { MessageBox } from './components/message_box.js';
 MessageBox.register();
+ChoicesList.register();
 
 console.log('messagw!');
 const box = new MessageBox();
@@ -24,3 +26,6 @@ document.addEventListener('click', () => {
     console.log('click');
     box.input();
 });
+
+const choices = new ChoicesList();
+document.body.appendChild(choices);
