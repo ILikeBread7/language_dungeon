@@ -144,7 +144,7 @@ function registerMessageBoxForRpgMaker() {
         gameMessage.setChoiceCallback(() => {
             defaultCallback();
             messageBox.messageBoxDisplayImmediately();
-            messageBox.input();
+            messageBox.messageBoxHide();
         });
     }
 }
