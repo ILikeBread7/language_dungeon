@@ -27,5 +27,10 @@ document.addEventListener('click', () => {
     box.input();
 });
 
-const choices = new ChoicesList();
-document.body.appendChild(choices);
+const choicesList = new ChoicesList();
+document.body.appendChild(choicesList);
+const options = [];
+for (let i = 1; i <= 5; i++) {
+    options.push({ text: `Option: ${i}` });
+}
+choicesList.choicesListSetChoices(options);
