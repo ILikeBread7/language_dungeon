@@ -31,6 +31,6 @@ const choicesList = new ChoicesList();
 document.body.appendChild(choicesList);
 const options = [];
 for (let i = 1; i <= 5; i++) {
-    options.push({ text: `Option: ${i}` });
+    options.push({ text: `Option: ${i}`, enabled: i % 2 === 0, visible: i % 3 !== 0, cssClass: ' test  qqqq '  });
 }
 choicesList.choicesListSetChoices(options);

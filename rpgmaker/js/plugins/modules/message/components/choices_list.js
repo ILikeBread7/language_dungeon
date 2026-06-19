@@ -66,6 +66,11 @@ export class ChoicesList extends HTMLElement {
             #${choicesList.id} > li:not(:first-of-type) {
                 margin-top: 10px;
             }
+
+            #${choicesList.id} > li[data-disabled="disabled"] {
+                pointer-events: none;
+                opacity: 0.6;
+            }
         `;
         this.shadowRoot.append(style, choicesList);
 
@@ -84,13 +89,29 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * 
-     * @param {[{text: string}]} options 
+     * @param {[{
+     *  text: string,
+     *  enabled?: boolean,
+     *  visible?: boolean,
+     *  cssClass?: string
+     * }]} options 
      */
     async choicesListSetChoices(options) {
         this._choicesList.innerHTML = '';
-        for (const option of options) {
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            if (!option.visible && option.visible !== undefined) {
+                continue;
+            }
             const optionElement = document.createElement('li');
             optionElement.innerHTML = option.text;
+            optionElement.dataset.index = i;
+            if (!option.enabled && option.enabled !== undefined) {
+                optionElement.dataset.disabled = 'disabled';
+            }
+            if (option.cssClass) {
+                optionElement.className = option.cssClass;
+            }
             this._choicesList.appendChild(optionElement);
         }
         if (!this.choicesListIsVisible()) {
