@@ -34,3 +34,14 @@ for (let i = 1; i <= 5; i++) {
     options.push({ text: `Option: ${i}`, enabled: i % 2 === 0, visible: i % 3 !== 0, cssClass: ' test  qqqq '  });
 }
 choicesList.choicesListSetChoices(options);
+
+document.addEventListener('keydown', event => {
+    switch (event.key) {
+        case 'ArrowDown':
+            choicesList.choicesListSelectNextOption();
+            break;
+        case 'ArrowUp':
+            choicesList.choicesListSelectPreviousOption();
+            break;
+    }
+})

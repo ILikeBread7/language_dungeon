@@ -33,14 +33,7 @@ export class ChoicesList extends HTMLElement {
                 return;
             }
             const index = Number(element.dataset.index);
-            this._selectedIndex = index;
-            for (const option of this._displayedOptions) {
-                const optionElement = option.element;
-                if (optionElement) {
-                    optionElement.removeAttribute('data-selected');
-                }
-            }
-            element.dataset.selected = 'selected';
+            this.choicesListSelectOption(index);
         });
 
         const style = document.createElement('style');
@@ -147,6 +140,72 @@ export class ChoicesList extends HTMLElement {
 
     choicesListIsVisible() {
         return this._choicesList.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true });
+    }
+
+    choicesListSelectNextOption() {
+        if (!this._displayedOptions) {
+            return;
+        }
+        
+        const currentIndex = this._selectedIndex === undefined ? -1 : this._selectedIndex;
+        for (let i = currentIndex + 1; i < this._displayedOptions.length; i++) {
+            const option = this._displayedOptions[i];
+            if (this.choicesListSelectOption(i)) {
+                return;
+            }
+        }
+
+        for (let i = 0; i < this._displayedOptions.length; i++) {
+            if (this.choicesListSelectOption(i)) {
+                return;
+            }
+        }
+    }
+
+    choicesListSelectPreviousOption() {
+        if (!this._displayedOptions) {
+            return;
+        }
+        
+        const currentIndex = this._selectedIndex === undefined ? this._displayedOptions.length : this._selectedIndex;
+        for (let i = currentIndex - 1; i >= 0; i--) {
+            const option = this._displayedOptions[i];
+            if (this.choicesListSelectOption(i)) {
+                return;
+            }
+        }
+
+        for (let i = this._displayedOptions.length; i >= 0; i--) {
+            if (this.choicesListSelectOption(i)) {
+                return;
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param {number} index 
+     * @returns {boolean} true if selected successfully, false if couldn't select
+     */
+    choicesListSelectOption(index) {
+        if (!this._displayedOptions) {
+            return false;
+        }
+
+        const option = this._displayedOptions[index];
+        if (!option || !option.element || option.element.dataset.disabled) {
+            return false;
+        }
+
+        for (const displayedOption of this._displayedOptions) {
+            const optionElement = displayedOption.element;
+            if (optionElement) {
+                optionElement.removeAttribute('data-selected');
+            }
+        }
+        option.element.dataset.selected = 'selected';
+        this._selectedIndex = index;
+        return true;
     }
 
     /**
