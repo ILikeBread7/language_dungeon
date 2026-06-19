@@ -27,6 +27,21 @@ export class ChoicesList extends HTMLElement {
         const choicesList = document.createElement('ul');
         choicesList.part = choicesList.id = 'choices-list';
         this.dataset.state = VISIBILITY_STATE.HIDDEN;
+        choicesList.addEventListener('pointerover', event => {
+            const element = event.target;
+            if (element.nodeName !== 'LI') {
+                return;
+            }
+            const index = Number(element.dataset.index);
+            this._selectedIndex = index;
+            for (const option of this._displayedOptions) {
+                const optionElement = option.element;
+                if (optionElement) {
+                    optionElement.removeAttribute('data-selected');
+                }
+            }
+            element.dataset.selected = 'selected';
+        });
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
@@ -61,6 +76,7 @@ export class ChoicesList extends HTMLElement {
             #${choicesList.id} > li {
                 background: yellow;
                 text-align: center;
+                cursor: pointer;
             }
 
             #${choicesList.id} > li:not(:first-of-type) {
@@ -70,6 +86,11 @@ export class ChoicesList extends HTMLElement {
             #${choicesList.id} > li[data-disabled="disabled"] {
                 pointer-events: none;
                 opacity: 0.6;
+            }
+
+            #${choicesList.id} > li[data-selected="selected"] {
+                background: blue;
+                color: white;
             }
         `;
         this.shadowRoot.append(style, choicesList);
@@ -85,6 +106,7 @@ export class ChoicesList extends HTMLElement {
     async choicesListHide() {
         await this._choicesListChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
+        delete this._displayedOptions;
     }
 
     /**
@@ -98,9 +120,12 @@ export class ChoicesList extends HTMLElement {
      */
     async choicesListSetChoices(options) {
         this._choicesList.innerHTML = '';
+        this._displayedOptions = [];
+        delete this._selectedIndex;
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
             if (!option.visible && option.visible !== undefined) {
+                this._displayedOptions.push(option);
                 continue;
             }
             const optionElement = document.createElement('li');
@@ -113,6 +138,7 @@ export class ChoicesList extends HTMLElement {
                 optionElement.className = option.cssClass;
             }
             this._choicesList.appendChild(optionElement);
+            this._displayedOptions.push({ ...option, element: optionElement });
         }
         if (!this.choicesListIsVisible()) {
             await this.choicesListShow();
