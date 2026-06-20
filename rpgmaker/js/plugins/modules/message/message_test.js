@@ -33,7 +33,11 @@ const options = [];
 for (let i = 1; i <= 5; i++) {
     options.push({ text: `Option: ${i}`, enabled: i % 2 === 0, visible: i % 3 !== 0, cssClass: ' test  qqqq '  });
 }
-choicesList.choicesListSetChoices(options);
+
+(async () => {
+    const result = await choicesList.choicesListSetChoices(options);
+    console.log(result);
+})();
 
 document.addEventListener('keydown', event => {
     switch (event.key) {
@@ -42,6 +46,11 @@ document.addEventListener('keydown', event => {
             break;
         case 'ArrowUp':
             choicesList.choicesListSelectPreviousOption();
+            break;
+        case 'Enter':
+            if (choicesList.choicesListConfirmCurrent()) {
+                choicesList.choicesListHide();
+            }
             break;
     }
 })

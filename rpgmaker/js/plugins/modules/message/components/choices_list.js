@@ -27,6 +27,7 @@ export class ChoicesList extends HTMLElement {
         const choicesList = document.createElement('ul');
         choicesList.part = choicesList.id = 'choices-list';
         this.dataset.state = VISIBILITY_STATE.HIDDEN;
+
         choicesList.addEventListener('pointerover', event => {
             const element = event.target;
             if (element.nodeName !== 'LI') {
@@ -34,6 +35,17 @@ export class ChoicesList extends HTMLElement {
             }
             const index = Number(element.dataset.index);
             this.choicesListSelectOption(index);
+        });
+
+        choicesList.addEventListener('click', event => {
+            const element = event.target;
+            if (element.nodeName !== 'LI') {
+                return;
+            }
+            const index = Number(element.dataset.index);
+            if (this.choicesListConfirmOption(index)) {
+                this.choicesListHide();
+            }
         });
 
         const style = document.createElement('style');
@@ -99,7 +111,6 @@ export class ChoicesList extends HTMLElement {
     async choicesListHide() {
         await this._choicesListChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
-        delete this._displayedOptions;
     }
 
     /**
@@ -110,11 +121,13 @@ export class ChoicesList extends HTMLElement {
      *  visible?: boolean,
      *  cssClass?: string
      * }]} options 
+     * @returns {Promise<{ index: number, text: string }>}
      */
     async choicesListSetChoices(options) {
         this._choicesList.innerHTML = '';
         this._displayedOptions = [];
         delete this._selectedIndex;
+
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
             if (!option.visible && option.visible !== undefined) {
@@ -136,6 +149,10 @@ export class ChoicesList extends HTMLElement {
         if (!this.choicesListIsVisible()) {
             await this.choicesListShow();
         }
+        
+        return new Promise(resolve => {
+            this._choicesPromise = resolve;
+        });
     }
 
     choicesListIsVisible() {
@@ -206,6 +223,40 @@ export class ChoicesList extends HTMLElement {
         option.element.dataset.selected = 'selected';
         this._selectedIndex = index;
         return true;
+    }
+
+    /**
+     * 
+     * @param {number} index 
+     * @returns {boolean} true if confirm succeeded, false if couldn't confirm (invalid option etc.)
+     */
+    choicesListConfirmOption(index) {
+        if (!this._displayedOptions) {
+            return false;
+        }
+
+        const option = this._displayedOptions[index];
+        if (!option || !option.element || option.element.dataset.disabled) {
+            return false;
+        }
+
+        if (!this._choicesPromise) {
+            return false;
+        }
+        this._choicesPromise({ index, text: option.text });
+        
+        delete this._choicesPromise;
+        delete this._selectedIndex;
+        delete this._displayedOptions;
+        return true;
+    }
+
+    /**
+     * 
+     * @returns {boolean} true if confirm succeeded, false if couldn't confirm (invalid option etc.)
+     */
+    choicesListConfirmCurrent() {
+        return this.choicesListConfirmOption(this._selectedIndex);
     }
 
     /**
