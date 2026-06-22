@@ -89,6 +89,18 @@ function registerComponentsForRpgMaker() {
         if (messageBox.messageBoxState !== BOX_STATE.CLOSED && input.isTriggered('ok')) {
             messageBox.input();
         }
+
+        if (choicesList.choicesListIsVisible()) {
+            if (input.isTriggered('up')) {
+                choicesList.choicesListSelectPreviousOption();
+            } else if (input.isTriggered('down')) {
+                choicesList.choicesListSelectNextOption();
+            } else if (input.isTriggered('ok')) {
+                choicesList.choicesListConfirmCurrent();
+            } else if (input.isTriggered('cancel')) {
+                choicesList.choicesListCancel();
+            }
+        }
     }
 
     _Game_Message_prototype.isBusy = function() {
@@ -172,7 +184,9 @@ function registerComponentsForRpgMaker() {
             const choices = gameInterpreter._params[0].clone()
                 .map(text => ({ text }));
 
-            return await choicesList.choicesListSetChoices(choices);
+            const playerChoice =  await choicesList.choicesListSetChoices(choices);
+            await choicesList.choicesListHide();
+            return playerChoice;
         }
     }
 }

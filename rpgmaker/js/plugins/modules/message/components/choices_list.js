@@ -43,9 +43,7 @@ export class ChoicesList extends HTMLElement {
                 return;
             }
             const index = Number(element.dataset.index);
-            if (this.choicesListConfirmOption(index)) {
-                this.choicesListHide();
-            }
+            this.choicesListConfirmOption(index);
         });
 
         const style = document.createElement('style');

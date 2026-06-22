@@ -37,6 +37,7 @@ for (let i = 1; i <= 5; i++) {
 (async () => {
     const result = await choicesList.choicesListSetChoices(options);
     console.log(result);
+    await choicesList.choicesListHide();
 })();
 
 document.addEventListener('keydown', event => {
@@ -48,13 +49,9 @@ document.addEventListener('keydown', event => {
             choicesList.choicesListSelectPreviousOption();
             break;
         case 'Enter':
-            if (choicesList.choicesListConfirmCurrent()) {
-                choicesList.choicesListHide();
-            }
+            choicesList.choicesListConfirmCurrent();
             break;
         case 'Escape':
-            if (choicesList.choicesListCancel()) {
-                choicesList.choicesListHide();
-            }
+            choicesList.choicesListCancel();
     }
 })
