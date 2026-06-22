@@ -79,6 +79,7 @@ function registerComponentsForRpgMaker() {
     const _Game_Message_prototype = window.Game_Message.prototype;
     const _Game_Interpreter_prototype = window.Game_Interpreter.prototype;
     const input = window.Input;
+    const touchInput = window.TouchInput;
     const gameMessage = window.$gameMessage;
     const _Window_Message_prototype = window.Window_Message.prototype;
     const _Scene_Base_prototype = window.Scene_Base.prototype;
@@ -94,10 +95,10 @@ function registerComponentsForRpgMaker() {
                 choicesList.choicesListSelectNextOption();
             } else if (input.isTriggered('ok')) {
                 choicesList.choicesListConfirmCurrent();
-            } else if (input.isTriggered('cancel')) {
+            } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
                 choicesList.choicesListCancel();
             }
-        } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && input.isTriggered('ok')) {
+        } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
             messageBox.messageBoxInput();
         }
     }
