@@ -97,6 +97,10 @@ export class ChoicesList extends HTMLElement {
                 background: blue;
                 color: white;
             }
+
+            #${choicesList.id} > li[data-chosen="chosen"] {
+                background: aqua;
+            }
         `;
         this.shadowRoot.append(style, choicesList);
 
@@ -243,6 +247,7 @@ export class ChoicesList extends HTMLElement {
         if (!this._choicesPromise) {
             return false;
         }
+        option.element.dataset.chosen = 'chosen';
         this._choicesPromise({ index, text: option.text });
         
         delete this._choicesPromise;
