@@ -261,6 +261,22 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * 
+     * @returns true if cancel succeeded, false if couldn't cancel
+     */
+    choicesListCancel() {
+        if (!this._choicesPromise) {
+            return false;
+        }
+        this._choicesPromise({ index: -1, cancelled: true });
+        
+        delete this._choicesPromise;
+        delete this._selectedIndex;
+        delete this._displayedOptions;
+        return true;
+    }
+
+    /**
+     * 
      * @param {string} top css value
      * @returns {Promise<void>}
      */

@@ -52,5 +52,9 @@ document.addEventListener('keydown', event => {
                 choicesList.choicesListHide();
             }
             break;
+        case 'Escape':
+            if (choicesList.choicesListCancel()) {
+                choicesList.choicesListHide();
+            }
     }
 })
