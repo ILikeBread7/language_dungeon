@@ -1,3 +1,4 @@
+import { ChoicesList } from './components/choices_list.js';
 import { BOX_STATE, MessageBox } from './components/message_box.js';
 
 const messageBoxStyle = document.createElement('style');
@@ -5,6 +6,11 @@ const messageBoxStyle = document.createElement('style');
  * @type {MessageBox}
  */
 let messageBox = null;
+
+/**
+ * @type {ChoicesList}
+ */
+let choicesList = null;
 
 export function addMessageBox() {
     MessageBox.register();
@@ -23,8 +29,15 @@ export function addMessageBox() {
         setMessageBoxCss,
         appendMessageBoxCss
     };
-    setTimeout(registerMessageBoxForRpgMaker, 1000);
 
+    ChoicesList.register();
+    choicesList = new ChoicesList();
+    document.body.appendChild(choicesList);
+    const listInlineStyle = choicesList.shadowRoot.getElementById('choices-list').style;
+    listInlineStyle.setProperty('z-index', 999);
+    // listInlineStyle.setProperty('bottom', '0px');
+
+    setTimeout(registerComponentsForRpgMaker, 1000);
     return messageBox;
 }
 
@@ -62,7 +75,7 @@ if (!HTMLElement.prototype.checkVisibility) {
     }
 }
 
-function registerMessageBoxForRpgMaker() {
+function registerComponentsForRpgMaker() {
     const _Game_Message_prototype = window.Game_Message.prototype;
     const _Game_Interpreter_prototype = window.Game_Interpreter.prototype;
     const input = window.Input;
@@ -79,7 +92,8 @@ function registerMessageBoxForRpgMaker() {
     }
 
     _Game_Message_prototype.isBusy = function() {
-        return messageBox.messageBoxState !== BOX_STATE.CLOSED;
+        return messageBox.messageBoxState !== BOX_STATE.CLOSED
+            || choicesList.choicesListIsVisible();
     }
 
     let asyncCommand101Promise = null;
@@ -93,7 +107,7 @@ function registerMessageBoxForRpgMaker() {
     }
 
     async function asyncCommand101(gameInterpreter) {
-        if (messageBox.messageBoxState === BOX_STATE.CLOSED) {
+        if (!gameMessage.isBusy()) {
             let index = gameInterpreter._index;
             
             do {
@@ -137,14 +151,28 @@ function registerMessageBoxForRpgMaker() {
         return gameInterpreter._list[index + 1] || { code: 0 };
     }
 
-    const _Game_Interpreter_prototype_setupChoices = _Game_Interpreter_prototype.setupChoices;
-    _Game_Interpreter_prototype.setupChoices = function(params) {
-        _Game_Interpreter_prototype_setupChoices.call(this, params);
-        const defaultCallback = gameMessage._choiceCallback;
-        gameMessage.setChoiceCallback(() => {
-            defaultCallback();
-            messageBox.messageBoxDisplayImmediately();
-            messageBox.messageBoxHide();
-        });
+    let asyncCommand102Promise = null;
+    _Game_Interpreter_prototype.command102 = function() {
+        if (!asyncCommand102Promise) {
+            asyncCommand102Promise = asyncCommand102(this);
+            asyncCommand102Promise.then(playerChoice => {
+                asyncCommand102Promise = null;
+                this._branch[this._indent] = playerChoice.index;
+            });
+        }
+
+        return false;
+    }
+
+    async function asyncCommand102(gameInterpreter) {
+        if (!gameMessage.isBusy()) {
+            gameInterpreter._index++;
+            gameInterpreter.setWaitMode('message');
+
+            const choices = gameInterpreter._params[0].clone()
+                .map(text => ({ text }));
+
+            return await choicesList.choicesListSetChoices(choices);
+        }
     }
 }
