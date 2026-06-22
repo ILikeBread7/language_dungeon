@@ -86,9 +86,6 @@ function registerComponentsForRpgMaker() {
     const _Scene_Base_prototype_update = _Scene_Base_prototype.update;
     _Scene_Base_prototype.update = function() {
         _Scene_Base_prototype_update.call(this);
-        if (messageBox.messageBoxState !== BOX_STATE.CLOSED && input.isTriggered('ok')) {
-            messageBox.input();
-        }
 
         if (choicesList.choicesListIsVisible()) {
             if (input.isTriggered('up')) {
@@ -100,6 +97,8 @@ function registerComponentsForRpgMaker() {
             } else if (input.isTriggered('cancel')) {
                 choicesList.choicesListCancel();
             }
+        } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && input.isTriggered('ok')) {
+            messageBox.messageBoxInput();
         }
     }
 
@@ -133,7 +132,16 @@ function registerComponentsForRpgMaker() {
                 switch (nextCommand(gameInterpreter, index).code) {
                     case 102:  // Show Choices
                         index++;
-                        gameInterpreter.setupChoices(currentCommand(gameInterpreter, index).parameters);
+                        const params = currentCommand(gameInterpreter, index).parameters;
+                        const choices = params[0].clone()
+                            .map(text => ({ text }));
+
+                        const playerChoicePromise = choicesList.choicesListSetChoices(choices);
+                        playerChoicePromise.then(async playerChoice => {
+                            messageBox.messageBoxForceFinish();
+                            await choicesList.choicesListHide();
+                            gameInterpreter._branch[gameInterpreter._indent] = playerChoice.index;
+                        });
                         break;
                     case 103:  // Input Number
                         index++;

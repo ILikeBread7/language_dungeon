@@ -171,6 +171,7 @@ export class MessageBox extends HTMLElement {
         this._messageTextHtmlTagStack = [ { element: displayedTextSpan, isVisible: true } ];
         this._messageTextDisplayImmediately = false;
         this._preventScroll = false;
+        this._forceFinish = false;
         this._boxState = BOX_STATE.CLOSED;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
@@ -310,17 +311,26 @@ export class MessageBox extends HTMLElement {
      * @returns {Promise<void>}
      */
     async _waitForInput() {
+        if (this._forceFinish) {
+            return;
+        }
+
         return new Promise(resolve => {
             this._waitForInputResolve = resolve;
         });
     }
 
-    input() {
+    messageBoxInput() {
         if (this._waitForInputResolve) {
             this._waitForInputResolve();
             this._waitForInputResolve = null;
         }
         this._messageTextDisplayImmediately = true;
+    }
+
+    messageBoxForceFinish() {
+        this._forceFinish = true;
+        this.messageBoxInput();
     }
 
     /**
@@ -445,6 +455,7 @@ export class MessageBox extends HTMLElement {
 
     _messageContainerReset() {
         this._messageTextDisplayImmediately = false;
+        this._forceFinish = false;
         this._displayedTextSpan.innerHTML = '';
         this._preventMessageContainerScrollTransition();
     }
