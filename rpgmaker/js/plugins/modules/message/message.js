@@ -2,6 +2,7 @@ import { ChoicesList } from './components/choices_list.js';
 import { BOX_STATE, MessageBox } from './components/message_box.js';
 
 const messageBoxStyle = document.createElement('style');
+const choicesListStyle = document.createElement('style');
 /**
  * @type {MessageBox}
  */
@@ -30,15 +31,25 @@ export function addMessageBox() {
         appendMessageBoxCss
     };
 
+    return messageBox;
+}
+
+export function addChoicesList() {
     ChoicesList.register();
     choicesList = new ChoicesList();
     document.body.appendChild(choicesList);
     const listInlineStyle = choicesList.shadowRoot.getElementById('choices-list').style;
     listInlineStyle.setProperty('z-index', 999);
-    // listInlineStyle.setProperty('bottom', '0px');
 
-    setTimeout(registerComponentsForRpgMaker, 1000);
-    return messageBox;
+    choicesList.shadowRoot.appendChild(choicesListStyle);
+
+    window.$choicesList = {
+        choicesList,
+        setChoicesListCss,
+        appendChoicesListCss
+    };
+
+    return choicesList;
 }
 
 /**
@@ -67,6 +78,30 @@ export function appendMessageBoxCss(css) {
     messageBox.messageBoxForceUpdateAfterCssChange();
 }
 
+/**
+ * 
+ * @param {string} css 
+ */
+export function setChoicesListCss(css) {
+    if (!choicesList) {
+        console.warn('Choices List not added');
+        return;
+    }
+    choicesListStyle.innerHTML = css;
+}
+
+/**
+ * 
+ * @param {string} css 
+ */
+export function appendChoicesListCss(css) {
+    if (!choicesList) {
+        console.warn('Choices List not added');
+        return;
+    }
+    choicesListStyle.innerHTML += '\n' + css;
+}
+
 // polyfill for RPG Maker MV's older nw.js version
 if (!HTMLElement.prototype.checkVisibility) {
     HTMLElement.prototype.checkVisibility = function() {
@@ -75,7 +110,7 @@ if (!HTMLElement.prototype.checkVisibility) {
     }
 }
 
-function registerComponentsForRpgMaker() {
+export function registerComponentsForRpgMaker() {
     const _Game_Message_prototype = window.Game_Message.prototype;
     const _Game_Interpreter_prototype = window.Game_Interpreter.prototype;
     const input = window.Input;
