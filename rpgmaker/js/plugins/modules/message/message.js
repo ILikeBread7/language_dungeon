@@ -129,7 +129,6 @@ function registerComponentsForRpgMaker() {
                     texts.push(currentCommand(gameInterpreter, index).parameters[0]);
                 }
 
-                // For now copy from regular RPG Maker
                 switch (nextCommand(gameInterpreter, index).code) {
                     case 102:  // Show Choices
                         index++;
@@ -144,14 +143,14 @@ function registerComponentsForRpgMaker() {
                             gameInterpreter._branch[gameInterpreter._indent] = playerChoice.index;
                         });
                         break;
-                    case 103:  // Input Number
-                        index++;
-                        gameInterpreter.setupNumInput(currentCommand(gameInterpreter, index).parameters);
-                        break;
-                    case 104:  // Select Item
-                        index++;
-                        gameInterpreter.setupItemChoice(currentCommand(gameInterpreter, index).parameters);
-                        break;
+                    // case 103:  // Input Number
+                    //     index++;
+                    //     gameInterpreter.setupNumInput(currentCommand(gameInterpreter, index).parameters);
+                    //     break;
+                    // case 104:  // Select Item
+                    //     index++;
+                    //     gameInterpreter.setupItemChoice(currentCommand(gameInterpreter, index).parameters);
+                    //     break;
                 }
 
                 index++;
