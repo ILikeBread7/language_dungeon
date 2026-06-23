@@ -1,6 +1,23 @@
 import { ChoicesList } from './components/choices_list.js';
 import { BOX_STATE, MessageBox } from './components/message_box.js';
 
+const style = document.createElement('style');
+style.innerHTML = /*css*/`
+    :root {
+        --mesage-choice-transition-time: 0.25s;
+    }
+
+    choices-list {
+        --transition-time: var(--mesage-choice-transition-time);
+    }
+
+    message-box {
+        --transition-time: var(--mesage-choice-transition-time);
+        --char-write-wait-ms: 25;
+    }
+`;
+document.body.appendChild(style);
+
 const messageBoxStyle = document.createElement('style');
 const choicesListStyle = document.createElement('style');
 /**
@@ -12,6 +29,12 @@ let messageBox = null;
  * @type {ChoicesList}
  */
 let choicesList = null;
+
+export function initializeAll() {
+    void addMessageBox();
+    void addChoicesList();
+    setTimeout(registerComponentsForRpgMaker, 1000);
+}
 
 export function addMessageBox() {
     MessageBox.register();
