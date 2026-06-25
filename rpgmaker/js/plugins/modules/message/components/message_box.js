@@ -218,15 +218,19 @@ export class MessageBox extends HTMLElement {
     /**
      * 
      * @param {string} text May include html
+     * @param {boolean} [displayImmediately=false] True if text should be shown immediately, not character per character
      * @description Displays the text one character at a time
      */
-    async messageBoxDisplayText(text) {
+    async messageBoxDisplayText(text, displayImmediately = false) {
         if (!this.messageBoxIsVisible()) {
             await this.messageBoxShow();
         }
         this._boxState = BOX_STATE.WRITING;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
+        if (displayImmediately) {
+            this.messageBoxDisplayImmediately();
+        }
 
         const tokens = this._splitTextWithHtmlForDisplay(text);
         for (const token of tokens) {

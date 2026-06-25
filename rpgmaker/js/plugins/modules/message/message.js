@@ -141,6 +141,7 @@ export function registerComponentsForRpgMaker() {
     const gameMessage = window.$gameMessage;
     const _Window_Message_prototype = window.Window_Message.prototype;
     const _Scene_Base_prototype = window.Scene_Base.prototype;
+    const convertEscapeCharacters = window.Window_Base.prototype.convertEscapeCharacters;
 
     const _Scene_Base_prototype_update = _Scene_Base_prototype.update;
     _Scene_Base_prototype.update = function() {
@@ -179,12 +180,18 @@ export function registerComponentsForRpgMaker() {
     async function asyncCommand101(gameInterpreter) {
         if (!gameMessage.isBusy()) {
             let index = gameInterpreter._index;
-            
+            let showImmediately = false;
+
             do {
                 const texts = [];
                 while (nextCommand(gameInterpreter, index).code === 401) {  // Text data
                     index++;
-                    texts.push(currentCommand(gameInterpreter, index).parameters[0]);
+                    let text = currentCommand(gameInterpreter, index).parameters[0];
+                    if (text.startsWith('\\>')) {
+                        text = text.substring(2);
+                        showImmediately = true;
+                    }
+                    texts.push(text);
                 }
 
                 switch (nextCommand(gameInterpreter, index).code) {
@@ -192,7 +199,7 @@ export function registerComponentsForRpgMaker() {
                         index++;
                         const params = currentCommand(gameInterpreter, index).parameters;
                         const choices = params[0].clone()
-                            .map(text => ({ text }));
+                            .map(text => ({ text: convertEscapeCharacters(text) }));
 
                         const playerChoicePromise = choicesList.choicesListSetChoices(choices);
                         playerChoicePromise.then(async playerChoice => {
@@ -213,7 +220,7 @@ export function registerComponentsForRpgMaker() {
 
                 index++;
                 gameInterpreter.setWaitMode('message');
-                await messageBox.messageBoxDisplayText(texts.join('\n'));
+                await messageBox.messageBoxDisplayText(texts.join('\n'), showImmediately);
             } while(currentCommand(gameInterpreter, index).code === 101);    // Show message
 
             await messageBox.messageBoxHide();
@@ -248,7 +255,7 @@ export function registerComponentsForRpgMaker() {
             gameInterpreter.setWaitMode('message');
 
             const choices = gameInterpreter._params[0].clone()
-                .map(text => ({ text }));
+                .map(text => ({ text: convertEscapeCharacters(text) }));
 
             const playerChoice =  await choicesList.choicesListSetChoices(choices);
             await choicesList.choicesListHide();
