@@ -347,19 +347,21 @@ var $f = $f || {};
     }
 
     $f.setQuestionVariables = (event) => {
-        const DEFAULT_COLOR = 0;
-        const INCORRECT_COLOR = 10;
+        const INCORRECT_COLOR = '#ff3810';
         const quiz = event.quiz;
 
-        $nv.question = createQuizQuestionText(quiz);
+        const questionColor = '#66cc40';
+        $nv.question = colorString(createQuizQuestionText(quiz), questionColor);
         $nv.correctAnswer = quiz.answers[quiz.correct];
 
+        const answerVarsOffset = 5;
         quiz.answers.forEach((answer, index) => {
-            $gameVariables.setValue(index + 12, DEFAULT_COLOR);
-            $gameVariables.setValue(index + 5, answer);
+            $gameVariables.setValue(index + answerVarsOffset, answer);
         });
         quiz.answeredWrong.forEach(wrongAnswerIndex => {
-            $gameVariables.setValue(wrongAnswerIndex + 12, INCORRECT_COLOR);
+            const index = wrongAnswerIndex + answerVarsOffset;
+            const answer = $gameVariables.value(index);
+            $gameVariables.setValue(index, /*html*/`<span style="color:${INCORRECT_COLOR}">${answer}</span>`);
         });
         const incorrectAnswersToMark = Math.min(quiz.incorrectAnswersToMark, 2);
         for (let i = 0; i < incorrectAnswersToMark; i++) {
@@ -1215,17 +1217,17 @@ var $f = $f || {};
     }
 
     function colorCurrentWord(string) {
-        const currentWordColorId = 3;
-        return colorString(string, currentWordColorId);
+        const currentWordColor = '#66cc40';
+        return colorString(string, currentWordColor);
     }
 
     function colorExplanation(string) {
-        const explanationColorId = 2;
-        return colorString(string, explanationColorId);
+        const explanationColor = '#ff784c';
+        return colorString(string, explanationColor);
     }
 
-    function colorString(string, rpgMakerColorId) {
-        return `\\c[${rpgMakerColorId}]${string}\\c[0]`;
+    function colorString(string, htmlColorCode) {
+        return /*html*/`<span style="color:${htmlColorCode}">${string}</span>`;
     }
 
     function getWordOrAuxiliaryTranslation(part) {
