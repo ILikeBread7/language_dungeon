@@ -220,7 +220,7 @@ export function registerComponentsForRpgMaker() {
 
                 index++;
                 gameInterpreter.setWaitMode('message');
-                await messageBox.messageBoxDisplayText(texts.join('\n'), showImmediately);
+                await messageBox.messageBoxDisplayText(convertEscapeCharacters(texts.join('\n')), showImmediately);
             } while(currentCommand(gameInterpreter, index).code === 101);    // Show message
 
             await messageBox.messageBoxHide();
