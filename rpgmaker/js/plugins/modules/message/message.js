@@ -181,8 +181,10 @@ export function registerComponentsForRpgMaker() {
         }
     }
 
+    const _Game_Message_isBusy = _Game_Message_prototype.isBusy;
     _Game_Message_prototype.isBusy = function() {
-        return messageBox.messageBoxState !== BOX_STATE.CLOSED
+        return _Game_Message_isBusy.call(this)
+            || messageBox.messageBoxState !== BOX_STATE.CLOSED
             || choicesList.choicesListIsVisible();
     }
 
