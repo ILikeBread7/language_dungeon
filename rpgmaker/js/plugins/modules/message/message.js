@@ -4,7 +4,7 @@ import { BOX_STATE, MessageBox } from './components/message_box.js';
 const style = document.createElement('style');
 style.innerHTML = /*css*/`
     :root {
-        --mesage-choice-transition-time: 0.25s;
+        --mesage-choice-transition-time: 0.1s;
     }
 
     choices-list {
