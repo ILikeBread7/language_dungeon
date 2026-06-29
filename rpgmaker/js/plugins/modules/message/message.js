@@ -35,6 +35,11 @@ let messageBox = null;
  */
 let choicesList = null;
 
+/**
+ * @type {number}
+ */
+let choicesCancelType;
+
 export function initializeAll() {
     void addMessageBox();
     void addChoicesList();
@@ -160,7 +165,16 @@ export function registerComponentsForRpgMaker() {
             } else if (input.isTriggered('ok')) {
                 choicesList.choicesListConfirmCurrent();
             } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
-                choicesList.choicesListCancel();
+                switch (choicesCancelType) {
+                    case -1: break; // Disallow
+                    case -2:    // Branch
+                        choicesList.choicesListCancel();
+                        break;
+                    default:
+                        choicesList.choicesListSelectOption(choicesCancelType);
+                        choicesList.choicesListConfirmOption(choicesCancelType);
+                        break;
+                }
             }
         } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
             messageBox.messageBoxInput();
@@ -203,14 +217,16 @@ export function registerComponentsForRpgMaker() {
                     case 102:  // Show Choices
                         index++;
                         const params = currentCommand(gameInterpreter, index).parameters;
-                        const choices = params[0].clone()
-                            .map(text => ({ text: convertEscapeCharacters(text) }));
+                        const { choices, defaultType, cancelType } = extractChoiceParams(params);
+                        choicesCancelType = cancelType;
 
                         const playerChoicePromise = choicesList.choicesListSetChoices(choices);
+                        choicesList.choicesListSelectOption(defaultType);
                         playerChoicePromise.then(async playerChoice => {
                             messageBox.messageBoxForceFinish();
                             await choicesList.choicesListHide();
-                            gameInterpreter._branch[gameInterpreter._indent] = playerChoice.index;
+                            const index = playerChoice.cancelled ? -2 : playerChoice.index;
+                            gameInterpreter._branch[gameInterpreter._indent] = index;
                         });
                         break;
                     // case 103:  // Input Number
@@ -247,7 +263,8 @@ export function registerComponentsForRpgMaker() {
             asyncCommand102Promise = asyncCommand102(this);
             asyncCommand102Promise.then(playerChoice => {
                 asyncCommand102Promise = null;
-                this._branch[this._indent] = playerChoice.index;
+                const index = playerChoice.cancelled ? -2 : playerChoice.index;
+                this._branch[this._indent] = index;
             });
         }
 
@@ -259,12 +276,35 @@ export function registerComponentsForRpgMaker() {
             gameInterpreter._index++;
             gameInterpreter.setWaitMode('message');
 
-            const choices = gameInterpreter._params[0].clone()
-                .map(text => ({ text: convertEscapeCharacters(text) }));
+            const params = gameInterpreter._params;
+            const { choices, defaultType, cancelType } = extractChoiceParams(params);
+            choicesCancelType = cancelType;
 
-            const playerChoice =  await choicesList.choicesListSetChoices(choices);
+            const choiceListPromise = choicesList.choicesListSetChoices(choices);
+            choicesList.choicesListSelectOption(defaultType);
+
+            const playerChoice =  await choiceListPromise;
             await choicesList.choicesListHide();
             return playerChoice;
         }
+    }
+
+    function extractChoiceParams(params) {
+        const choices = params[0].clone()
+            .map(text => ({ text: convertEscapeCharacters(text) }));
+        
+        let cancelType = params[1];
+        const defaultType = params.length > 2 ? params[2] : 0;
+        const positionType = params.length > 3 ? params[3] : 2;
+        const background = params.length > 4 ? params[4] : 0;
+        if (cancelType >= choices.length) {
+            cancelType = -2;
+        }
+
+        return {
+            choices,
+            defaultType,
+            cancelType
+        };
     }
 }
