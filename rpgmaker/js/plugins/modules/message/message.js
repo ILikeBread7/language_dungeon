@@ -15,6 +15,11 @@ style.innerHTML = /*css*/`
         --transition-time: var(--mesage-choice-transition-time);
         --char-write-wait-ms: 25;
     }
+
+    message-box.whole-screen {
+        --box-height: 100vh;
+        --lines-per-screen: 32;
+    }
 `;
 document.body.appendChild(style);
 
