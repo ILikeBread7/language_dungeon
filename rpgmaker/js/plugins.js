@@ -4,7 +4,7 @@ var $plugins =
 [
 {"name":"ILB_NamedVariables","status":true,"description":"Exposes global objects $nv $ns $nc for named variables, switches and common events respectively","parameters":{}},
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
-{"name":"EventFloatingText","status":true,"description":"Displays floating text above events on the map.","parameters":{}},
+{"name":"EventFloatingText","status":false,"description":"Displays floating text above events on the map.","parameters":{}},
 {"name":"ILB_QuickTest","status":false,"description":"Auto starts the game","parameters":{}},
 {"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"2","MinRoomSize":"4","MaxRoomSize":"10","MinRooms":"5","MaxRooms":"7","ShowOuterWall":"OFF"}},
 {"name":"VE_DiagonalMovement","status":true,"description":"v1.00 - Allows diagonal movement for player and events.","parameters":{"Diagonal Adjust":"true","Diagonal Events":"true","Diagonal Fix":"false","Diagonal Trigger":"true","Corner Passability":"false\r"}},
@@ -15,5 +15,6 @@ var $plugins =
 {"name":"YEP_MessageCore","status":false,"description":"v1.19 Adds more features to the Message Window to customized\nthe way your messages appear and functions.","parameters":{"---General---":"","Default Rows":"4","Default Width":"Graphics.boxWidth","Face Indent":"Window_Base._faceWidth + 24","Fast Forward Key":"pagedown","Enable Fast Forward":"true","Word Wrapping":"false","Description Wrap":"false","Word Wrap Space":"false","Tight Wrap":"false","---Font---":"","Font Name":"GameFont","Font Name CH":"SimHei, Heiti TC, sans-serif","Font Name KR":"Dotum, AppleGothic, sans-serif","Font Size":"28","Font Size Change":"12","Font Changed Max":"96","Font Changed Min":"12","Font Outline":"4","Maintain Font":"false","---Name Box---":"","Name Box Buffer X":"-28","Name Box Buffer Y":"0","Name Box Padding":"this.standardPadding() * 4","Name Box Color":"0","Name Box Clear":"false","Name Box Added Text":"\\c[6]","Name Box Auto Close":"false"}},
 {"name":"PMD_HUD","status":true,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
-{"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}}
+{"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}},
+{"name":"ILB_CharacterLabelsHtml","status":true,"description":"","parameters":{}}
 ];

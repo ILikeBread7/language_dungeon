@@ -267,6 +267,7 @@ var $f = $f || {};
     }
 
     $f.setEnemyTexts = () => {
+        $characterLabels.clear();
         alreadyAsked = [];
         $gameMap.events().forEach($f.setEnemyText);
         const portalEnemy = $gameMap.events()
@@ -343,7 +344,7 @@ var $f = $f || {};
     }
 
     function setExistingEnemyText(enemyEvent) {
-        $eventText.set(enemyEvent.eventId(), createQuizQuestionText(enemyEvent.quiz));
+        enemyEvent.textLabel = createQuizQuestionText(enemyEvent.quiz);
     }
 
     $f.setQuestionVariables = (event) => {
@@ -1304,7 +1305,6 @@ var $f = $f || {};
         }
 
         if (enemyEvent.quiz.isHit) {
-            $eventText.clear(enemyEvent.eventId());
             if (enemyEvent.quiz.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.1) {
