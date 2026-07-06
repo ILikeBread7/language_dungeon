@@ -16,5 +16,5 @@ var $plugins =
 {"name":"PMD_HUD","status":true,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
 {"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}},
-{"name":"ILB_CharacterLabelsHtml","status":true,"description":"","parameters":{}}
+{"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}}
 ];

@@ -1,4 +1,29 @@
+//=============================================================================
+// ILB_CharacterLabelsHtml.js
+//=============================================================================
 
+/*:
+ * @plugindesc Adds text labels to characters (events and player)
+ *
+ * @author I_LIKE_BREAD7
+ *
+ * @help
+ * This plugin shows the value character.textLabel above the character
+ * as HTML text span.
+ * 
+ * Example usage:
+ * The following script call:
+ *  this.character(0).textLabel = 'Test'
+ * will create a label above the current event
+ * 
+ *  $gamePlayer.textLabel = 'Test'
+ * will create a label above the player
+ * 
+ *  $characterLabels.clear()
+ * Will clear all labels, but won't remove them from events or the player.
+ * Only to be used for leftover labels.
+ * Is performed automatically on map change.
+ */
 
 const $characterLabels = { };
 
