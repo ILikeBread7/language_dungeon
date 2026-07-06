@@ -93,4 +93,15 @@ const $characterLabels = { };
         _Game_Player_performTransfer.call(this);
     }
 
+    const _Game_Event_refresh = Game_Event.prototype.refresh;
+    Game_Event.prototype.refresh = function() {
+        _Game_Event_refresh.call(this);
+        
+        if (this.textLabelElement) {
+            this.textLabelElement.style.display = this._pageIndex === -1
+                ? 'none'
+                : 'unset';
+        }
+    }
+
 })();
