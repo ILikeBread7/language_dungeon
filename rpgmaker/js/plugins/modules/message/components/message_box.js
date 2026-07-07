@@ -8,10 +8,11 @@ const VISIBILITY_STATE = Object.freeze({
 export const BOX_STATE = Object.freeze({
     OPENING: 1,
     WRITING: 2,
-    WAITING_FOR_SCROLL: 3,
-    WAITING_FOR_CLOSE: 4,
-    CLOSING: 5,
-    CLOSED: 6
+    CLOSING: 3,
+    CLOSED: 4,
+
+    WAITING_FOR_SCROLL: 5,
+    WAITING_FOR_CLOSE: 6
 });
 
 const VOID_TAGS = [

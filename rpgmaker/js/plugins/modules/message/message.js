@@ -1,4 +1,4 @@
-import { ChoicesList } from './components/choices_list.js';
+import { ChoicesList, LIST_STATE } from './components/choices_list.js';
 import { BOX_STATE, MessageBox } from './components/message_box.js';
 
 const style = document.createElement('style');
@@ -157,7 +157,7 @@ export function registerComponentsForRpgMaker() {
     _Scene_Base_prototype.update = function() {
         _Scene_Base_prototype_update.call(this);
 
-        if (choicesList.choicesListIsVisible()) {
+        if (choicesList.choicesListState === LIST_STATE.OPEN) {
             if (input.isTriggered('up')) {
                 choicesList.choicesListSelectPreviousOption();
             } else if (input.isTriggered('down')) {
@@ -185,7 +185,7 @@ export function registerComponentsForRpgMaker() {
     _Game_Message_prototype.isBusy = function() {
         return _Game_Message_isBusy.call(this)
             || messageBox.messageBoxState !== BOX_STATE.CLOSED
-            || choicesList.choicesListIsVisible();
+            || choicesList.choicesListState !== LIST_STATE.CLOSED;
     }
 
     let asyncCommand101Promise = null;

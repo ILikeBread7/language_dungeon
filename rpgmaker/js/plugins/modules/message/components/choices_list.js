@@ -3,6 +3,13 @@ const VISIBILITY_STATE = Object.freeze({
     SHOWN: 'shown'
 });
 
+export const LIST_STATE = Object.freeze({
+    OPENING: 1,
+    OPEN: 2,
+    CLOSING: 3,
+    CLOSED: 4
+});
+
 export class ChoicesList extends HTMLElement {
 
     /**
@@ -102,17 +109,23 @@ export class ChoicesList extends HTMLElement {
         `;
         this.shadowRoot.append(style, choicesList);
 
+        this._listState = LIST_STATE.CLOSED;
+
         this._choicesList = choicesList;
     }
 
     async choicesListShow() {
+        this._listState = LIST_STATE.OPENING;
         this.style.setProperty('visibility', 'visible');
         await this._choicesListChangeState(VISIBILITY_STATE.SHOWN);
+        this._listState = LIST_STATE.OPEN;
     }
 
     async choicesListHide() {
+        this._listState = LIST_STATE.CLOSING;
         await this._choicesListChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
+        this._listState = LIST_STATE.CLOSED;
     }
 
     /**
@@ -297,6 +310,10 @@ export class ChoicesList extends HTMLElement {
             };
             this._choicesList.addEventListener('transitionend', listener);
         });
+    }
+
+    get choicesListState() {
+        return this._listState;
     }
 
 }
