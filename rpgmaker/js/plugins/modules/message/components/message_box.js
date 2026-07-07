@@ -1,10 +1,3 @@
-const LINES_CSS_VAR = '--lines';
-
-const VISIBILITY_STATE = Object.freeze({
-    HIDDEN: 'hidden',
-    SHOWN: 'shown'
-});
-
 export const BOX_STATE = Object.freeze({
     OPENING: 1,
     WRITING: 2,
@@ -13,6 +6,17 @@ export const BOX_STATE = Object.freeze({
 
     WAITING_FOR_SCROLL: 5,
     WAITING_FOR_CLOSE: 6
+});
+
+export const EVENTS = Object.freeze({
+    CHAR_SHOWN: 'charshown'
+});
+
+const LINES_CSS_VAR = '--lines';
+
+const VISIBILITY_STATE = Object.freeze({
+    HIDDEN: 'hidden',
+    SHOWN: 'shown'
 });
 
 const VOID_TAGS = [
@@ -274,6 +278,7 @@ export class MessageBox extends HTMLElement {
     
                         if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
                             await this._dependencies.wait(this._charWriteWaitMs);
+                            this.dispatchEvent(new CustomEvent(EVENTS.CHAR_SHOWN));
                         }
                         this._wordShownPartSpan.innerHTML += char;
                         this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);

@@ -1,5 +1,5 @@
 import { ChoicesList, LIST_STATE } from './components/choices_list.js';
-import { BOX_STATE, MessageBox } from './components/message_box.js';
+import { BOX_STATE, EVENTS as MESSAGE_BOX_EVENTS, MessageBox } from './components/message_box.js';
 
 const style = document.createElement('style');
 style.innerHTML = /*css*/`
@@ -63,6 +63,8 @@ export function addMessageBox() {
         setMessageBoxCss,
         appendMessageBoxCss
     };
+
+    messageBox.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => SoundManager.playCursor());
 
     return messageBox;
 }
