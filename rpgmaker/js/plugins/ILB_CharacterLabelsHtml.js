@@ -123,9 +123,11 @@ const $characterLabels = { };
         _Game_Event_refresh.call(this);
         
         if (this.textLabelElement) {
-            this.textLabelElement.style.display = this._pageIndex === -1
-                ? 'none'
-                : 'unset';
+            if (this._pageIndex === -1) {
+                this.textLabelElement.style.display = 'none';
+            } else {
+                this.textLabelElement.style.removeProperty('display');
+            }
         }
     }
 
