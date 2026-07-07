@@ -1,13 +1,19 @@
-const VISIBILITY_STATE = Object.freeze({
-    HIDDEN: 'hidden',
-    SHOWN: 'shown'
-});
-
 export const LIST_STATE = Object.freeze({
     OPENING: 1,
     OPEN: 2,
     CLOSING: 3,
     CLOSED: 4
+});
+
+export const CHOICES_LIST_EVENTS = Object.freeze({
+    OPTION_SELECT: 'optionselect',
+    OPTION_CONFIRM: 'optionconfirm',
+    CHOICES_CANCEL: 'choicescancel'
+});
+
+const VISIBILITY_STATE = Object.freeze({
+    HIDDEN: 'hidden',
+    SHOWN: 'shown'
 });
 
 export class ChoicesList extends HTMLElement {
@@ -237,6 +243,7 @@ export class ChoicesList extends HTMLElement {
         }
         option.element.dataset.selected = 'selected';
         this._selectedIndex = index;
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
         return true;
     }
 
@@ -264,6 +271,7 @@ export class ChoicesList extends HTMLElement {
         delete this._choicesPromise;
         delete this._selectedIndex;
         delete this._displayedOptions;
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_CONFIRM, { detail: { index, option } }));
         return true;
     }
 
@@ -288,6 +296,7 @@ export class ChoicesList extends HTMLElement {
         delete this._choicesPromise;
         delete this._selectedIndex;
         delete this._displayedOptions;
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.CHOICES_CANCEL));
         return true;
     }
 
