@@ -145,8 +145,13 @@ export class ChoicesList extends HTMLElement {
      * @returns {Promise<{ index: number, text: string }>}
      */
     async choicesListSetChoices(options) {
-        this._choicesList.innerHTML = '';
+        /**
+         * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
+         * @type {[ChoiceListOption]}
+        */
         this._displayedOptions = [];
+
+        this._choicesList.innerHTML = '';
         delete this._selectedIndex;
 
         for (let i = 0; i < options.length; i++) {
@@ -223,16 +228,25 @@ export class ChoicesList extends HTMLElement {
     /**
      * 
      * @param {number} index 
-     * @returns {boolean} true if selected successfully, false if couldn't select
+     * @returns Option if selected successfully, undefined if couldn't select
      */
     choicesListSelectOption(index) {
-        if (!this._displayedOptions) {
-            return false;
+        const option = this.choicesListSelectOptionNoEvent(index);
+        if (option) {
+            this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
         }
+        return option;
+    }
 
-        const option = this._displayedOptions[index];
-        if (!option || !option.element || option.element.dataset.disabled) {
-            return false;
+    /**
+     * 
+     * @param {number} index 
+     * @returns Option if selected successfully, undefined if couldn't select
+     */
+    choicesListSelectOptionNoEvent(index) {
+        const option = this._findEligibleOption(index);
+        if (!option) {
+            return;
         }
 
         for (const displayedOption of this._displayedOptions) {
@@ -243,27 +257,36 @@ export class ChoicesList extends HTMLElement {
         }
         option.element.dataset.selected = 'selected';
         this._selectedIndex = index;
-        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
-        return true;
+        return option;
     }
 
     /**
      * 
      * @param {number} index 
-     * @returns {boolean} true if confirm succeeded, false if couldn't confirm (invalid option etc.)
+     * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
     choicesListConfirmOption(index) {
-        if (!this._displayedOptions) {
-            return false;
+        const option = this.choicesListConfirmNoEvent(index);
+        if (!option) {
+            return;
         }
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_CONFIRM, { detail: { index, option } }));
+        return option;
+    }
 
-        const option = this._displayedOptions[index];
-        if (!option || !option.element || option.element.dataset.disabled) {
-            return false;
+    /**
+     * 
+     * @param {number} index 
+     * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
+     */
+    choicesListConfirmNoEvent(index) {
+        const option = this._findEligibleOption(index);
+        if (!option) {
+            return;
         }
 
         if (!this._choicesPromise) {
-            return false;
+            return;
         }
         option.element.dataset.chosen = 'chosen';
         this._choicesPromise({ index, text: option.text });
@@ -271,13 +294,12 @@ export class ChoicesList extends HTMLElement {
         delete this._choicesPromise;
         delete this._selectedIndex;
         delete this._displayedOptions;
-        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_CONFIRM, { detail: { index, option } }));
-        return true;
+        return option;
     }
 
     /**
      * 
-     * @returns {boolean} true if confirm succeeded, false if couldn't confirm (invalid option etc.)
+     * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
     choicesListConfirmCurrent() {
         return this.choicesListConfirmOption(this._selectedIndex);
@@ -285,9 +307,39 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * 
+     * @param {number} index 
+     * @returns Option if found, undefined otherwise
+     */
+    _findEligibleOption(index) {
+        if (!this._displayedOptions) {
+            return;
+        }
+
+        const option = this._displayedOptions[index];
+        if (!option || !option.element || option.element.dataset.disabled) {
+            return;
+        }
+
+        return option;
+    }
+
+    /**
+     * 
      * @returns true if cancel succeeded, false if couldn't cancel
      */
     choicesListCancel() {
+        const result = this.choicesListCancelNoEvent();
+        if (result) {
+            this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.CHOICES_CANCEL));
+        }
+        return result;
+    }
+    
+    /**
+     * 
+     * @returns true if cancel succeeded, false if couldn't cancel
+     */
+    choicesListCancelNoEvent() {
         if (!this._choicesPromise) {
             return false;
         }
@@ -296,7 +348,6 @@ export class ChoicesList extends HTMLElement {
         delete this._choicesPromise;
         delete this._selectedIndex;
         delete this._displayedOptions;
-        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.CHOICES_CANCEL));
         return true;
     }
 
