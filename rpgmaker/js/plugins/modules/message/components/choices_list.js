@@ -266,7 +266,7 @@ export class ChoicesList extends HTMLElement {
      * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
     choicesListConfirmOption(index) {
-        const option = this.choicesListConfirmNoEvent(index);
+        const option = this.choicesListConfirmOptionNoEvent(index);
         if (!option) {
             return;
         }
@@ -279,7 +279,7 @@ export class ChoicesList extends HTMLElement {
      * @param {number} index 
      * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
-    choicesListConfirmNoEvent(index) {
+    choicesListConfirmOptionNoEvent(index) {
         const option = this._findEligibleOption(index);
         if (!option) {
             return;
@@ -334,7 +334,7 @@ export class ChoicesList extends HTMLElement {
         }
         return result;
     }
-    
+
     /**
      * 
      * @returns true if cancel succeeded, false if couldn't cancel

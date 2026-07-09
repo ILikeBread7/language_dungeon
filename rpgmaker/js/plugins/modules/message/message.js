@@ -69,14 +69,16 @@ export function addMessageBox() {
     return messageBox;
 }
 
-let shouldPlayChoiceSe = true;
-const playSelectSe = () => SoundManager.playCursor();
-const playConfirmSe = () => SoundManager.playOk();
-const playCancelSe = () => SoundManager.playCancel();
-function playChoiceSe(playSeFunction) {
-    if (shouldPlayChoiceSe) {
-        playSeFunction();
-    }
+function playSelectSe() {
+    SoundManager.playCursor();
+}
+
+function playConfirmSe() {
+    SoundManager.playOk();
+}
+
+function playCancelSe() {
+    SoundManager.playCancel();
 }
 
 export function addChoicesList() {
@@ -94,9 +96,9 @@ export function addChoicesList() {
         appendChoicesListCss
     };
 
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, playChoiceSe.bind(null, playSelectSe));
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, playChoiceSe.bind(null, playConfirmSe));
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, playChoiceSe.bind(null, playCancelSe));
+    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, playSelectSe);
+    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, playConfirmSe);
+    choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, playCancelSe);
 
     return choicesList;
 }
@@ -181,22 +183,20 @@ export function registerComponentsForRpgMaker() {
             } else if (input.isTriggered('ok')) {
                 choicesList.choicesListConfirmCurrent();
             } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
-                shouldPlayChoiceSe = false;
                 switch (choicesCancelType) {
                     case -1: // Disallow
                         SoundManager.playBuzzer();
                         break;
                     case -2:    // Branch
-                        choicesList.choicesListCancel();
+                        choicesList.choicesListCancelNoEvent();
                         playCancelSe();
                         break;
                     default:
-                        choicesList.choicesListSelectOption(choicesCancelType);
-                        choicesList.choicesListConfirmOption(choicesCancelType);
+                        choicesList.choicesListSelectOptionNoEvent(choicesCancelType);
+                        choicesList.choicesListConfirmOptionNoEvent(choicesCancelType);
                         playCancelSe();
                         break;
                 }
-                shouldPlayChoiceSe = true;
             }
         } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
             messageBox.messageBoxInput();
@@ -245,9 +245,7 @@ export function registerComponentsForRpgMaker() {
                         choicesCancelType = cancelType;
 
                         const playerChoicePromise = choicesList.choicesListSetChoices(choices);
-                        shouldPlayChoiceSe = false;
-                        choicesList.choicesListSelectOption(defaultType);
-                        shouldPlayChoiceSe = true;
+                        choicesList.choicesListSelectOptionNoEvent(defaultType);
                         playerChoicePromise.then(async playerChoice => {
                             messageBox.messageBoxForceFinish();
                             await choicesList.choicesListHide();
@@ -307,9 +305,7 @@ export function registerComponentsForRpgMaker() {
             choicesCancelType = cancelType;
 
             const choiceListPromise = choicesList.choicesListSetChoices(choices);
-            shouldPlayChoiceSe = false;
-            choicesList.choicesListSelectOption(defaultType);
-            shouldPlayChoiceSe = true;
+            choicesList.choicesListSelectOptionNoEvent(defaultType);
 
             const playerChoice =  await choiceListPromise;
             await choicesList.choicesListHide();
