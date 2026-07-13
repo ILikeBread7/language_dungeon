@@ -1,24 +1,15 @@
-import { testMainMenu } from './components/main_menu.js';
+import { MainMenu } from './components/main_menu.js';
 
-export function testMenu() {
-    console.log('menu test!!!');
-    testMainMenu();
+export function initializeMainMenu() {
+    MainMenu.register();
+    const mainMenu = new MainMenu();
+    document.body.appendChild(mainMenu);
 }
 
-const _Scene_Menu_start = Scene_Menu.prototype.start;
 Scene_Menu.prototype.start = function() {
-    _Scene_Menu_start.call(this);
-    console.log('start');
+    Scene_MenuBase.prototype.start.call(this);
 }
 
-const _Scene_Menu_create = Scene_Menu.prototype.create;
 Scene_Menu.prototype.create = function() {
-    _Scene_Menu_create.call(this);
-    console.log('create');
-}
-
-const _Scene_Menu_initialize = Scene_Menu.prototype.initialize;
-Scene_Menu.prototype.initialize = function() {
-    _Scene_Menu_initialize.call(this);
-    console.log('initialize')
+    Scene_MenuBase.prototype.create.call(this);
 }
