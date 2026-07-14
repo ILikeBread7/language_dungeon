@@ -23,6 +23,9 @@ export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
     OPTION_CONFIRM: 'optionconfirm',
     CHOICES_CANCEL: 'choicescancel'
 });
+/**
+ * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoiceListEvent
+ */
 
 const VISIBILITY_STATE = /** @type {const} */ Object.freeze({
     HIDDEN: 'hidden',
@@ -183,7 +186,7 @@ export class ChoicesList extends HTMLElement {
         }
         
         return new Promise(resolve => {
-            this._choicesPromise = resolve;
+            this._choicesResolve = resolve;
         });
     }
 
@@ -291,13 +294,13 @@ export class ChoicesList extends HTMLElement {
             return;
         }
 
-        if (!this._choicesPromise) {
+        if (!this._choicesResolve) {
             return;
         }
         option.element.dataset.chosen = 'chosen';
-        this._choicesPromise({ index, text: option.text });
+        this._choicesResolve({ index, text: option.text });
         
-        delete this._choicesPromise;
+        delete this._choicesResolve;
         delete this._selectedIndex;
         delete this._displayedOptions;
         return option;
@@ -307,7 +310,7 @@ export class ChoicesList extends HTMLElement {
      * 
      * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
-    choicesListConfirmCurrent() {
+    choicesListConfirmCurrentOption() {
         return this.choicesListConfirmOption(this._selectedIndex);
     }
 
@@ -346,12 +349,12 @@ export class ChoicesList extends HTMLElement {
      * @returns true if cancel succeeded, false if couldn't cancel
      */
     choicesListCancelNoEvent() {
-        if (!this._choicesPromise) {
+        if (!this._choicesResolve) {
             return false;
         }
-        this._choicesPromise({ index: -1, cancelled: true });
+        this._choicesResolve({ index: -1, cancelled: true });
         
-        delete this._choicesPromise;
+        delete this._choicesResolve;
         delete this._selectedIndex;
         delete this._displayedOptions;
         return true;

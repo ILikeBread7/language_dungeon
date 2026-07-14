@@ -1,4 +1,4 @@
-import { ChoicesList } from '../../message/components/choices_list.js';
+import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
 
 export const MENU_STATE = /** @type {const} */ Object.freeze({
     OPENING: 1,
@@ -39,12 +39,16 @@ export class MainMenu extends HTMLElement {
         ChoicesList.register();
         this._choicesList = new ChoicesList();
         this._choicesList.part = this._choicesList.id = 'choices-list';;
+        
+        for (const eventName of [ CHOICES_LIST_EVENTS.CHOICES_CANCEL, CHOICES_LIST_EVENTS.OPTION_CONFIRM ]) {
+            this._choicesList.addEventListener(eventName, () => this._resolveMenuPromise());
+        }
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
             :host {
                 --transition-time: 0.1s;
-                --choices-list-transition-time: 0.25s;
+                --choices-list-transition-time: 0.2s;
                 visibility: hidden;
 
                 transition-property: opacity;
@@ -94,16 +98,14 @@ export class MainMenu extends HTMLElement {
      * @param {[ChoiceListChoice]} options 
      */
     async mainMenuSetOptions(options) {
-        const choicePromise = this._choicesList.choicesListSetChoices(options);
-        await Promise.all([
-            this.mainMenuShow(),
-            choicePromise
-        ]);
+        return new Promise(async (resolve) => {
+            this._menuResolve = resolve;
 
-        const choice = await choicePromise;
-        if (choice.index === options.length - 1) {
-            await this.mainMenuHide();
-        }
+            await Promise.all([
+                this.mainMenuShow(),
+                this._choicesList.choicesListSetChoices(options)
+            ]);
+        });
     }
 
     async mainMenuShow() {
@@ -118,6 +120,29 @@ export class MainMenu extends HTMLElement {
         await this._mainMenuChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
         this._menuState = MENU_STATE.CLOSED;
+    }
+
+    mainMenuSelectNextOption() {
+        this._choicesList.choicesListSelectNextOption();
+    }
+
+    mainMenuSelectPreviousOption() {
+        this._choicesList.choicesListSelectPreviousOption();
+    }
+
+    mainMenuConfirmCurrentOption() {
+        this._choicesList.choicesListConfirmCurrentOption();
+    }
+
+    mainMenuCancel() {
+        this._choicesList.choicesListCancel();
+    }
+
+    _resolveMenuPromise() {
+        if (this._menuResolve) {
+            this._menuResolve();
+            delete this._menuResolve;
+        }
     }
 
     /**

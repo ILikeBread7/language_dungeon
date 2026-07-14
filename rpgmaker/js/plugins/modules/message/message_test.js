@@ -49,7 +49,7 @@ document.addEventListener('keydown', event => {
             choicesList.choicesListSelectPreviousOption();
             break;
         case 'Enter':
-            choicesList.choicesListConfirmCurrent();
+            choicesList.choicesListConfirmCurrentOption();
             break;
         case 'Escape':
             choicesList.choicesListCancel();
