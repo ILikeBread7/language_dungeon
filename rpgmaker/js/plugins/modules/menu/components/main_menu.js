@@ -44,6 +44,7 @@ export class MainMenu extends HTMLElement {
         style.innerHTML = /*css*/`
             :host {
                 --transition-time: 0.1s;
+                --choices-list-transition-time: 0.25s;
                 visibility: hidden;
 
                 transition-property: opacity;
@@ -56,7 +57,7 @@ export class MainMenu extends HTMLElement {
                 display: block;
                 width: 100%;
                 height: 100%;
-                background: aqua;
+                background: purple;
                 opacity: 0.6;
             }
 
@@ -65,7 +66,21 @@ export class MainMenu extends HTMLElement {
             }
 
             :host([data-state="${VISIBILITY_STATE.HIDDEN}"]) {
+                transition-delay: calc(var(--choices-list-transition-time) - var(--transition-time));
                 opacity: 0;
+            }
+
+            #${this._choicesList.id}::part(choices-list) {
+                top: 0px;
+                left: 0px;
+                margin: 0px;
+                transform: translate(-100%, 0);
+                transition-property: transform;
+                transition-duration: var(--choices-list-transition-time);
+            }
+
+            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${this._choicesList.id}::part(choices-list) {
+                transform: translate(0);
             }
         `;
 
@@ -79,10 +94,16 @@ export class MainMenu extends HTMLElement {
      * @param {[ChoiceListChoice]} options 
      */
     async mainMenuSetOptions(options) {
+        const choicePromise = this._choicesList.choicesListSetChoices(options);
         await Promise.all([
             this.mainMenuShow(),
-            this._choicesList.choicesListSetChoices(options)
+            choicePromise
         ]);
+
+        const choice = await choicePromise;
+        if (choice.index === options.length - 1) {
+            await this.mainMenuHide();
+        }
     }
 
     async mainMenuShow() {
