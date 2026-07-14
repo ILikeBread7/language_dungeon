@@ -1,17 +1,30 @@
-export const LIST_STATE = Object.freeze({
+/**
+ * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
+ * @typedef { { 
+     *  text: string,
+     *  enabled?: boolean,
+     *  visible?: boolean,
+     *  cssClass?: string
+ *  } } ChoiceListChoice
+ */
+
+export const LIST_STATE = /** @type {const} */ Object.freeze({
     OPENING: 1,
     OPEN: 2,
     CLOSING: 3,
     CLOSED: 4
 });
+/**
+ * @typedef { Enum<LIST_STATE> } ListState
+ */
 
-export const CHOICES_LIST_EVENTS = Object.freeze({
+export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
     OPTION_SELECT: 'optionselect',
     OPTION_CONFIRM: 'optionconfirm',
     CHOICES_CANCEL: 'choicescancel'
 });
 
-const VISIBILITY_STATE = Object.freeze({
+const VISIBILITY_STATE = /** @type {const} */ Object.freeze({
     HIDDEN: 'hidden',
     SHOWN: 'shown'
 });
@@ -135,18 +148,11 @@ export class ChoicesList extends HTMLElement {
     }
 
     /**
-     * 
-     * @param {[{
-     *  text: string,
-     *  enabled?: boolean,
-     *  visible?: boolean,
-     *  cssClass?: string
-     * }]} options 
+     * @param {[ChoiceListChoice]} options 
      * @returns {Promise<{ index: number, text: string }>}
      */
     async choicesListSetChoices(options) {
         /**
-         * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
          * @type {[ChoiceListOption]}
         */
         this._displayedOptions = [];
@@ -353,7 +359,7 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * 
-     * @param {string} top css value
+     * @param {ListState} state
      * @returns {Promise<void>}
      */
     async _choicesListChangeState(state) {
