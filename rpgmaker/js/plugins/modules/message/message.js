@@ -181,7 +181,7 @@ export function registerComponentsForRpgMaker() {
             } else if (input.isTriggered('down')) {
                 choicesList.choicesListSelectNextOption();
             } else if (input.isTriggered('ok')) {
-                choicesList.choicesListConfirmCurrent();
+                choicesList.choicesListConfirmCurrentOption();
             } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
                 switch (choicesCancelType) {
                     case -1: // Disallow
