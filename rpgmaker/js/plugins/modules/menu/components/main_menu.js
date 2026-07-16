@@ -39,10 +39,6 @@ export class MainMenu extends HTMLElement {
         ChoicesList.register();
         this._choicesList = new ChoicesList();
         this._choicesList.part = this._choicesList.id = 'choices-list';;
-        
-        for (const eventName of [ CHOICES_LIST_EVENTS.CHOICES_CANCEL, CHOICES_LIST_EVENTS.OPTION_CONFIRM ]) {
-            this._choicesList.addEventListener(eventName, () => this._resolveMenuPromise());
-        }
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
@@ -98,14 +94,9 @@ export class MainMenu extends HTMLElement {
      * @param {[ChoiceListChoice]} options 
      */
     async mainMenuSetOptions(options) {
-        return new Promise(async (resolve) => {
-            this._menuResolve = resolve;
-
-            await Promise.all([
-                this.mainMenuShow(),
-                this._choicesList.choicesListSetChoices(options)
-            ]);
-        });
+        const choiceResultPromise = this._choicesList.choicesListSetChoices(options);
+        await this.mainMenuShow();
+        return await choiceResultPromise;
     }
 
     async mainMenuShow() {
@@ -135,14 +126,8 @@ export class MainMenu extends HTMLElement {
     }
 
     mainMenuCancel() {
-        this._choicesList.choicesListDeselect();
-        this._choicesList.choicesListCancel();
-    }
-
-    _resolveMenuPromise() {
-        if (this._menuResolve) {
-            this._menuResolve();
-            delete this._menuResolve;
+        if (this._choicesList.choicesListCancel()) {
+            this._choicesList.choicesListDeselect();
         }
     }
 

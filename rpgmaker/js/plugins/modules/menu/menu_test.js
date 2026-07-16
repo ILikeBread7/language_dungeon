@@ -13,7 +13,7 @@ setTimeout(async () => {
         { text: 'Test5' },
     ]);
     menu.mainMenuSelectNextOption();
-    await promise;
+    console.log(await promise);
     menu.mainMenuHide();
 }, 100)
 

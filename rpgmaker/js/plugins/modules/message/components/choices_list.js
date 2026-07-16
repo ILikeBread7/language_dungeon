@@ -361,12 +361,11 @@ export class ChoicesList extends HTMLElement {
     }
 
     choicesListDeselect() {
-        if (!this._displayedOptions) {
-            return;
-        }
+        const optionElements = this._choicesList.children;
+        console.log(optionElements)
 
-        for (const displayedOption of this._displayedOptions) {
-            displayedOption.element.removeAttribute('data-selected');
+        for (const optionElement of optionElements) {
+            optionElement.removeAttribute('data-selected');
         }
     }
 
