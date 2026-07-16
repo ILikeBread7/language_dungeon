@@ -135,6 +135,7 @@ export class MainMenu extends HTMLElement {
     }
 
     mainMenuCancel() {
+        this._choicesList.choicesListDeselect();
         this._choicesList.choicesListCancel();
     }
 

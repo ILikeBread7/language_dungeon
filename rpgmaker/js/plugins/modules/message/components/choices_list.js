@@ -360,6 +360,16 @@ export class ChoicesList extends HTMLElement {
         return true;
     }
 
+    choicesListDeselect() {
+        if (!this._displayedOptions) {
+            return;
+        }
+
+        for (const displayedOption of this._displayedOptions) {
+            displayedOption.element.removeAttribute('data-selected');
+        }
+    }
+
     /**
      * 
      * @param {ListState} state
