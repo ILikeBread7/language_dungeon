@@ -1,3 +1,5 @@
+import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
+
 /**
  * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
  * @typedef { { 
@@ -8,16 +10,6 @@
  *  } } ChoiceListChoice
  */
 
-export const LIST_STATE = /** @type {const} */ Object.freeze({
-    OPENING: 1,
-    OPEN: 2,
-    CLOSING: 3,
-    CLOSED: 4
-});
-/**
- * @typedef { Enum<LIST_STATE> } ListState
- */
-
 export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
     OPTION_SELECT: 'optionselect',
     OPTION_CONFIRM: 'optionconfirm',
@@ -26,11 +18,6 @@ export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
 /**
  * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoiceListEvent
  */
-
-const VISIBILITY_STATE = /** @type {const} */ Object.freeze({
-    HIDDEN: 'hidden',
-    SHOWN: 'shown'
-});
 
 export class ChoicesList extends HTMLElement {
 
@@ -131,23 +118,23 @@ export class ChoicesList extends HTMLElement {
         `;
         this.shadowRoot.append(style, choicesList);
 
-        this._listState = LIST_STATE.CLOSED;
+        this._listState = OPEN_STATE.CLOSED;
 
         this._choicesList = choicesList;
     }
 
     async choicesListShow() {
-        this._listState = LIST_STATE.OPENING;
+        this._listState = OPEN_STATE.OPENING;
         this.style.setProperty('visibility', 'visible');
         await this._choicesListChangeState(VISIBILITY_STATE.SHOWN);
-        this._listState = LIST_STATE.OPEN;
+        this._listState = OPEN_STATE.OPEN;
     }
 
     async choicesListHide() {
-        this._listState = LIST_STATE.CLOSING;
+        this._listState = OPEN_STATE.CLOSING;
         await this._choicesListChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
-        this._listState = LIST_STATE.CLOSED;
+        this._listState = OPEN_STATE.CLOSED;
     }
 
     /**
@@ -370,8 +357,8 @@ export class ChoicesList extends HTMLElement {
     }
 
     /**
-     * 
-     * @param {ListState} state
+     * @typedef {import('../../common/enums.js').OpenState} OpenState
+     * @param {OpenState} state
      * @returns {Promise<void>}
      */
     async _choicesListChangeState(state) {

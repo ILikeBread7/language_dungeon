@@ -1,23 +1,20 @@
-export const BOX_STATE = Object.freeze({
-    OPENING: 1,
-    WRITING: 2,
-    CLOSING: 3,
-    CLOSED: 4,
+import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
 
-    WAITING_FOR_SCROLL: 5,
-    WAITING_FOR_CLOSE: 6
+const startIndex = Object.entries(OPEN_STATE).length;
+export const MESSAGE_BOX_OPEN_STATE = /** @type {const} */ Object.freeze({
+    ...OPEN_STATE,
+    WAITING_FOR_SCROLL: startIndex + 1,
+    WAITING_FOR_CLOSE: startIndex + 2
 });
+/**
+ * @typedef { Enum<MESSAGE_BOX_OPEN_STATE> } MessageBoxOpenState
+ */
 
 export const EVENTS = Object.freeze({
     CHAR_SHOWN: 'charshown'
 });
 
 const LINES_CSS_VAR = '--lines';
-
-const VISIBILITY_STATE = Object.freeze({
-    HIDDEN: 'hidden',
-    SHOWN: 'shown'
-});
 
 const VOID_TAGS = [
     'area',
@@ -177,7 +174,7 @@ export class MessageBox extends HTMLElement {
         this._messageTextDisplayImmediately = false;
         this._preventScroll = false;
         this._forceFinish = false;
-        this._boxState = BOX_STATE.CLOSED;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSED;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
@@ -186,17 +183,17 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        this._boxState = BOX_STATE.OPENING;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.OPENING;
         this.style.setProperty('visibility', 'visible');
         await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
-        this._boxState = BOX_STATE.WRITING;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
     }
 
     async messageBoxHide() {
-        this._boxState = BOX_STATE.CLOSING;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSING;
         await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
-        this._boxState = BOX_STATE.CLOSED;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSED;
     }
 
     /**
@@ -230,7 +227,7 @@ export class MessageBox extends HTMLElement {
         if (!this.messageBoxIsVisible()) {
             await this.messageBoxShow();
         }
-        this._boxState = BOX_STATE.WRITING;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
         if (displayImmediately) {
@@ -263,10 +260,10 @@ export class MessageBox extends HTMLElement {
                     for (const char of token) {
                         const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
                         if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
-                            this._boxState = BOX_STATE.WAITING_FOR_SCROLL;
+                            this._boxState = MESSAGE_BOX_OPEN_STATE.WAITING_FOR_SCROLL;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
-                            this._boxState = BOX_STATE.WRITING;
+                            this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                             if (this._preventScroll) {
                                 this._preventScroll = false;
@@ -298,7 +295,7 @@ export class MessageBox extends HTMLElement {
             this._messageTextHtmlTagStack.splice(1);
         }
 
-        this._boxState = BOX_STATE.WAITING_FOR_CLOSE;
+        this._boxState = MESSAGE_BOX_OPEN_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
     }
