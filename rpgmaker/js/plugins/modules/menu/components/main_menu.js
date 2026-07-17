@@ -24,7 +24,7 @@ export class MainMenu extends HTMLElement {
 
         ChoicesList.register();
         this._choicesList = new ChoicesList();
-        this._choicesList.part = this._choicesList.id = 'choices-list';;
+        this._choicesList.part = this._choicesList.id = 'choices-list';
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
