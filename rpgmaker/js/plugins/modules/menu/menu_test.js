@@ -5,16 +5,8 @@ const menu = new MainMenu();
 document.body.appendChild(menu);
 
 setTimeout(async () => {
-    const promise = menu.mainMenuSetOptions([
-        { text: 'Test1' },
-        { text: 'Test2' },
-        { text: 'Test3' },
-        { text: 'Test4' },
-        { text: 'Test5' },
-    ]);
-    menu.mainMenuSelectNextOption();
-    console.log(await promise);
-    menu.mainMenuHide();
+    await menu.mainMenuOpen();
+    await menu.mainMenuHide();
 }, 100)
 
 document.addEventListener('keydown', event => {

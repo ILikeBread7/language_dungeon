@@ -6,7 +6,8 @@ import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
      *  text: string,
      *  enabled?: boolean,
      *  visible?: boolean,
-     *  cssClass?: string
+     *  cssClass?: string,
+     *  id?: number,
  *  } } ChoiceListChoice
  */
 
@@ -139,7 +140,7 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * @param {[ChoiceListChoice]} options 
-     * @returns {Promise<{ index: number, text: string }>}
+     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number? }>}
      */
     async choicesListSetChoices(options) {
         /**
@@ -285,7 +286,7 @@ export class ChoicesList extends HTMLElement {
             return;
         }
         option.element.dataset.chosen = 'chosen';
-        this._choicesResolve({ index, text: option.text });
+        this._choicesResolve({ index, text: option.text, id: option.id });
         
         delete this._choicesResolve;
         delete this._selectedIndex;
@@ -349,7 +350,6 @@ export class ChoicesList extends HTMLElement {
 
     choicesListDeselect() {
         const optionElements = this._choicesList.children;
-        console.log(optionElements)
 
         for (const optionElement of optionElements) {
             optionElement.removeAttribute('data-selected');

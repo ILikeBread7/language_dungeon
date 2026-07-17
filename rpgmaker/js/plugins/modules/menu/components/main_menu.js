@@ -1,6 +1,18 @@
 import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
 import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
 
+/**
+ * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
+ */
+
+const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
+    ITEM: { text: 'Item', id: 1 },
+    FLOOR: { text: 'Floor', id: 2 },
+    OPTIONS: { text: 'Options', id: 3 },
+    SAVE: { text: 'Save', id: 4 },
+    EXIT: { text: 'Exit', id: 5 }
+});
+
 export class MainMenu extends HTMLElement {
 
     /**
@@ -23,8 +35,10 @@ export class MainMenu extends HTMLElement {
         this._dependencies = dependencies;
 
         ChoicesList.register();
-        this._choicesList = new ChoicesList();
-        this._choicesList.part = this._choicesList.id = 'choices-list';
+        this._mainMenuChoicesList = new ChoicesList(dependencies);
+        this._mainMenuChoicesList.part = this._mainMenuChoicesList.id = 'main-menu-choices-list';
+        this._areYouSureChoicesList = new ChoicesList(dependencies);
+        this._areYouSureChoicesList.part = this._areYouSureChoicesList.id = 'are-you-sure-choices-list';
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
@@ -56,7 +70,7 @@ export class MainMenu extends HTMLElement {
                 opacity: 0;
             }
 
-            #${this._choicesList.id}::part(choices-list) {
+            #${this._mainMenuChoicesList.id}::part(choices-list) {
                 top: 0px;
                 left: 0px;
                 margin: 0px;
@@ -65,24 +79,75 @@ export class MainMenu extends HTMLElement {
                 transition-duration: var(--choices-list-transition-time);
             }
 
-            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${this._choicesList.id}::part(choices-list) {
+            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${this._mainMenuChoicesList.id}::part(choices-list) {
                 transform: translate(0);
             }
         `;
 
         this._menuState = OPEN_STATE.CLOSED;
         this.dataset.state = VISIBILITY_STATE.HIDDEN;
-        this.shadowRoot.append(style, this._choicesList);
+        this.shadowRoot.append(
+            style,
+            this._mainMenuChoicesList,
+            this._areYouSureChoicesList
+        );
+    }
+
+    async mainMenuOpen() {
+        /**
+         * @type {[ChoiceListChoice]}
+         */
+        const options = [
+            MAIN_MENU_CHOICES.ITEM,
+            MAIN_MENU_CHOICES.FLOOR,
+            MAIN_MENU_CHOICES.OPTIONS,
+            MAIN_MENU_CHOICES.SAVE,
+            MAIN_MENU_CHOICES.EXIT
+        ];
+
+        const choicePromise = this._mainMenuSetOptions(options);
+        this.mainMenuSelectNextOption();
+        const choice = await choicePromise;
+
+        if (!choice.cancelled) {
+            switch(choice.id) {
+                case MAIN_MENU_CHOICES.EXIT.id:
+                    this._mainMenuChoicesList.choicesListHide();
+                    const shouldExit = await this._showExitAreYouSure();
+                    if (shouldExit) {
+                        return;
+                    }
+                    this._areYouSureChoicesList.choicesListHide();
+                    await this.mainMenuOpen();
+                break;
+                default:
+                    console.log(`Unimplemented choice: ${JSON.stringify(choice)}`);
+            }
+        }
     }
 
     /**
-     * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
      * @param {[ChoiceListChoice]} options 
      */
-    async mainMenuSetOptions(options) {
-        const choiceResultPromise = this._choicesList.choicesListSetChoices(options);
+    async _mainMenuSetOptions(options) {
+        const choiceResultPromise = this._mainMenuChoicesList.choicesListSetChoices(options);
         await this.mainMenuShow();
         return await choiceResultPromise;
+    }
+
+    /**
+     * 
+     * @returns {boolean} True if should exit, false if cancelled
+     */
+    async _showExitAreYouSure() {
+        const options = {
+            EXIT: { text: 'Exit', id: 1 },
+            CANCEL: { text: 'Cancel', id: 2 }
+        };
+        const choicePromise = this._areYouSureChoicesList.choicesListSetChoices(Object.values(options));
+        this._areYouSureChoicesList.choicesListSelectPreviousOption();
+        const choice = await choicePromise;
+        return choice.id === options.EXIT.id;
     }
 
     async mainMenuShow() {
@@ -100,20 +165,20 @@ export class MainMenu extends HTMLElement {
     }
 
     mainMenuSelectNextOption() {
-        this._choicesList.choicesListSelectNextOption();
+        this._mainMenuChoicesList.choicesListSelectNextOption();
     }
 
     mainMenuSelectPreviousOption() {
-        this._choicesList.choicesListSelectPreviousOption();
+        this._mainMenuChoicesList.choicesListSelectPreviousOption();
     }
 
     mainMenuConfirmCurrentOption() {
-        this._choicesList.choicesListConfirmCurrentOption();
+        this._mainMenuChoicesList.choicesListConfirmCurrentOption();
     }
 
     mainMenuCancel() {
-        if (this._choicesList.choicesListCancel()) {
-            this._choicesList.choicesListDeselect();
+        if (this._mainMenuChoicesList.choicesListCancel()) {
+            this._mainMenuChoicesList.choicesListDeselect();
         }
     }
 
