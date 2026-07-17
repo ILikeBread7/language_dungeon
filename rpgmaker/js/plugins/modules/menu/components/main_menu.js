@@ -1,19 +1,5 @@
+import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
 import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
-
-export const MENU_STATE = /** @type {const} */ Object.freeze({
-    OPENING: 1,
-    OPEN: 2,
-    CLOSING: 3,
-    CLOSED: 4
-});
-/**
- * @typedef { Enum<MENU_STATE> } MenuState
- */
-
-const VISIBILITY_STATE = /** @type {const} */ Object.freeze({
-    HIDDEN: 'hidden',
-    SHOWN: 'shown'
-});
 
 export class MainMenu extends HTMLElement {
 
@@ -84,7 +70,7 @@ export class MainMenu extends HTMLElement {
             }
         `;
 
-        this._menuState = MENU_STATE.CLOSED;
+        this._menuState = OPEN_STATE.CLOSED;
         this.dataset.state = VISIBILITY_STATE.HIDDEN;
         this.shadowRoot.append(style, this._choicesList);
     }
@@ -100,17 +86,17 @@ export class MainMenu extends HTMLElement {
     }
 
     async mainMenuShow() {
-        this._menuState = MENU_STATE.OPENING;
+        this._menuState = OPEN_STATE.OPENING;
         this.style.setProperty('visibility', 'visible');
         await this._mainMenuChangeState(VISIBILITY_STATE.SHOWN);
-        this._menuState = MENU_STATE.OPEN;
+        this._menuState = OPEN_STATE.OPEN;
     }
 
     async mainMenuHide() {
-        this._menuState = MENU_STATE.CLOSING;
+        this._menuState = OPEN_STATE.CLOSING;
         await this._mainMenuChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
-        this._menuState = MENU_STATE.CLOSED;
+        this._menuState = OPEN_STATE.CLOSED;
     }
 
     mainMenuSelectNextOption() {
