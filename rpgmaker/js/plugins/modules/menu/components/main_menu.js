@@ -1,5 +1,6 @@
 import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
 import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
+import { AreYouSure } from './are_you_sure.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
@@ -37,8 +38,8 @@ export class MainMenu extends HTMLElement {
         ChoicesList.register();
         this._mainMenuChoicesList = new ChoicesList(dependencies);
         this._mainMenuChoicesList.part = this._mainMenuChoicesList.id = 'main-menu-choices-list';
-        this._areYouSureChoicesList = new ChoicesList(dependencies);
-        this._areYouSureChoicesList.part = this._areYouSureChoicesList.id = 'are-you-sure-choices-list';
+        AreYouSure.register();
+        this._areYouSure = new AreYouSure();
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
@@ -89,7 +90,7 @@ export class MainMenu extends HTMLElement {
         this.shadowRoot.append(
             style,
             this._mainMenuChoicesList,
-            this._areYouSureChoicesList
+            this._areYouSure
         );
 
         this._choicesListsStack = [ this._mainMenuChoicesList ];
@@ -120,14 +121,14 @@ export class MainMenu extends HTMLElement {
             switch(choice.id) {
                 case MAIN_MENU_CHOICES.EXIT.id:
                     this._mainMenuChoicesList.choicesListHide();
-                    this._choicesListsStack.push(this._areYouSureChoicesList);
+                    this._choicesListsStack.push(this._areYouSure.choicesList);
                     const shouldExit = await this._showExitAreYouSure();
                     this._choicesListsStack.pop();
+                    this._areYouSure.areYouSureHide();
                     if (shouldExit) {
                         await this.mainMenuHide();
                         return;
                     }
-                    this._areYouSureChoicesList.choicesListHide();
                     await this._mainMenuChoicesList.choicesListShow();
                 break;
                 default:
@@ -152,14 +153,13 @@ export class MainMenu extends HTMLElement {
      * @returns {boolean} True if should exit, false if cancelled
      */
     async _showExitAreYouSure() {
-        const options = {
+        const choices = {
             EXIT: { text: 'Exit', id: 1 },
             CANCEL: { text: 'Cancel', id: 2 }
         };
-        const choices = Object.values(options);
-        const defaultIndex = choices.findLastIndex(option => option === options.CANCEL);
-        const choice = await this._areYouSureChoicesList.choicesListTakeOneChoice(choices, defaultIndex);
-        return choice.id === options.EXIT.id;
+        const text = 'Are you sure you want to exit?';
+        const choice = await this._areYouSure.areYouSureShow({ choices: Object.values(choices), text });
+        return choice.id === choices.EXIT.id;
     }
 
     async mainMenuShow() {
