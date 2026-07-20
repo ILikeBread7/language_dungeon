@@ -91,6 +91,8 @@ export class MainMenu extends HTMLElement {
             this._mainMenuChoicesList,
             this._areYouSureChoicesList
         );
+
+        this._choicesListsStack = [ this._mainMenuChoicesList ];
     }
 
     async mainMenuOpen() {
@@ -118,7 +120,9 @@ export class MainMenu extends HTMLElement {
             switch(choice.id) {
                 case MAIN_MENU_CHOICES.EXIT.id:
                     this._mainMenuChoicesList.choicesListHide();
+                    this._choicesListsStack.push(this._areYouSureChoicesList);
                     const shouldExit = await this._showExitAreYouSure();
+                    this._choicesListsStack.pop();
                     if (shouldExit) {
                         await this.mainMenuHide();
                         return;
@@ -152,7 +156,9 @@ export class MainMenu extends HTMLElement {
             EXIT: { text: 'Exit', id: 1 },
             CANCEL: { text: 'Cancel', id: 2 }
         };
-        const choice = await this._areYouSureChoicesList.choicesListTakeOneChoice(Object.values(options), options.CANCEL.id);
+        const choices = Object.values(options);
+        const defaultIndex = choices.findLastIndex(option => option === options.CANCEL);
+        const choice = await this._areYouSureChoicesList.choicesListTakeOneChoice(choices, defaultIndex);
         return choice.id === options.EXIT.id;
     }
 
@@ -171,21 +177,26 @@ export class MainMenu extends HTMLElement {
     }
 
     mainMenuSelectNextOption() {
-        this._mainMenuChoicesList.choicesListSelectNextOption();
+        this.currentChoicesList.choicesListSelectNextOption();
     }
 
     mainMenuSelectPreviousOption() {
-        this._mainMenuChoicesList.choicesListSelectPreviousOption();
+        this.currentChoicesList.choicesListSelectPreviousOption();
     }
 
     mainMenuConfirmCurrentOption() {
-        this._mainMenuChoicesList.choicesListConfirmCurrentOption();
+        this.currentChoicesList.choicesListConfirmCurrentOption();
     }
 
     mainMenuCancel() {
-        if (this._mainMenuChoicesList.choicesListCancel()) {
-            this._mainMenuChoicesList.choicesListDeselect();
+        const currentChoicesList = this.currentChoicesList;
+        if (currentChoicesList.choicesListCancel()) {
+            currentChoicesList.choicesListDeselect();
         }
+    }
+
+    get currentChoicesList() {
+        return this._choicesListsStack[this._choicesListsStack.length - 1];
     }
 
     /**
