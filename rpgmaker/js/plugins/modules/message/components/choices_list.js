@@ -365,6 +365,22 @@ export class ChoicesList extends HTMLElement {
     }
 
     /**
+     * 
+     * @param {[ChoiceListChoice]} options 
+     * @param {number} [defaultIndex] 
+     */
+    async choicesListTakeOneChoice(options, defaultIndex) {
+        this.choicesListSetChoices(options);
+        this.choicesListSelectOptionNoEvent(defaultIndex);
+        this.choicesListShow();
+        await this.choicesListOpen();
+        const playerChoice = await this.choicesListTakeChoice();
+        await this.choicesListClose();
+        this.choicesListHide();
+        return playerChoice;
+    }
+
+    /**
      * @typedef {import('../../common/enums.js').OpenState} OpenState
      * @param {OpenState} state
      * @returns {Promise<void>}

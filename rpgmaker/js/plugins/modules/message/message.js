@@ -308,14 +308,7 @@ export function registerComponentsForRpgMaker() {
             const { choices, defaultType, cancelType } = extractChoiceParams(params);
             choicesCancelType = cancelType;
 
-            choicesList.choicesListSetChoices(choices);
-            choicesList.choicesListSelectOptionNoEvent(defaultType);
-            choicesList.choicesListShow();
-            await choicesList.choicesListOpen();
-            const playerChoice = await choicesList.choicesListTakeChoice();
-            await choicesList.choicesListClose();
-            choicesList.choicesListHide();
-            return playerChoice;
+            return choicesList.choicesListTakeOneChoice(choices, defaultType);
         }
     }
 

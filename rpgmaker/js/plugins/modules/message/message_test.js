@@ -45,6 +45,10 @@ setTimeout(async () => {
     } while (!choice.cancelled);
     await choicesList.choicesListClose();
     choicesList.choicesListHide();
+
+    setTimeout(async () => {
+        console.log(await choicesList.choicesListTakeOneChoice(options, 3));
+    }, 500);
 }, 200);
 
 document.addEventListener('keydown', event => {
