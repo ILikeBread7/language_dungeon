@@ -1,4 +1,4 @@
-import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
+import { OPEN_STATE } from '../../common/enums.js';
 
 /**
  * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
