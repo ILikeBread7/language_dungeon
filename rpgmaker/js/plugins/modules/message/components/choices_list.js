@@ -133,9 +133,9 @@ export class ChoicesList extends HTMLElement {
     }
 
     async choicesListOpen() {
+        this._active = true;
         this._listState = OPEN_STATE.OPENING;
         await this._choicesListChangeState(OPEN_STATE.OPEN);
-        this._active = true;
     }
 
     async choicesListClose() {
@@ -146,7 +146,7 @@ export class ChoicesList extends HTMLElement {
 
     /**
      * 
-     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number? }>}
+     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number?, element?: HTMLElement }>}
      */
     async choicesListTakeChoice() {
         return new Promise(resolve => {
@@ -173,6 +173,7 @@ export class ChoicesList extends HTMLElement {
                 continue;
             }
             const optionElement = document.createElement('li');
+            optionElement.part = 'choice-item';
             optionElement.innerHTML = option.text;
             optionElement.dataset.index = i;
             if (!option.enabled && option.enabled !== undefined) {
@@ -236,6 +237,9 @@ export class ChoicesList extends HTMLElement {
      * @returns Option if selected successfully, undefined if couldn't select
      */
     choicesListSelectOption(index) {
+        if (!this._active) {
+            return;
+        }
         const option = this.choicesListSelectOptionNoEvent(index);
         if (option) {
             this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
@@ -298,7 +302,7 @@ export class ChoicesList extends HTMLElement {
             return;
         }
         option.element.dataset.chosen = 'chosen';
-        this._choicesResolve({ index, text: option.text, id: option.id });
+        this._choicesResolve({ index, text: option.text, id: option.id, element: option.element });
         
         delete this._choicesResolve;
         return option;

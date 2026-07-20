@@ -105,34 +105,42 @@ export class MainMenu extends HTMLElement {
             MAIN_MENU_CHOICES.EXIT
         ];
 
-        const choicePromise = this._mainMenuSetOptions(options);
-        this.mainMenuSelectNextOption();
-        const choice = await choicePromise;
+        this._mainMenuSetOptions(options);
+        await this.mainMenuShow();
 
-        if (!choice.cancelled) {
+        let choice;
+        do {
+            choice = await this._mainMenuChoicesList.choicesListTakeChoice();
+            if (choice.element) {
+                choice.element.removeAttribute('data-chosen');
+            }
+
             switch(choice.id) {
                 case MAIN_MENU_CHOICES.EXIT.id:
                     this._mainMenuChoicesList.choicesListHide();
                     const shouldExit = await this._showExitAreYouSure();
                     if (shouldExit) {
+                        await this.mainMenuHide();
                         return;
                     }
                     this._areYouSureChoicesList.choicesListHide();
-                    await this.mainMenuOpen();
+                    await this._mainMenuChoicesList.choicesListShow();
                 break;
                 default:
                     console.log(`Unimplemented choice: ${JSON.stringify(choice)}`);
             }
-        }
+        } while (!choice.cancelled);
+
     }
 
     /**
      * @param {[ChoiceListChoice]} options 
      */
     async _mainMenuSetOptions(options) {
-        const choiceResultPromise = this._mainMenuChoicesList.choicesListSetChoices(options);
-        await this.mainMenuShow();
-        return await choiceResultPromise;
+        this._mainMenuChoicesList.choicesListSetChoices(options);
+        this._mainMenuChoicesList.choicesListSelectOptionNoEvent(0);
+        this._mainMenuChoicesList.choicesListShow();
+        await this._mainMenuChoicesList.choicesListOpen();
     }
 
     /**
@@ -144,9 +152,7 @@ export class MainMenu extends HTMLElement {
             EXIT: { text: 'Exit', id: 1 },
             CANCEL: { text: 'Cancel', id: 2 }
         };
-        const choicePromise = this._areYouSureChoicesList.choicesListSetChoices(Object.values(options));
-        this._areYouSureChoicesList.choicesListSelectPreviousOption();
-        const choice = await choicePromise;
+        const choice = await this._areYouSureChoicesList.choicesListTakeOneChoice(Object.values(options), options.CANCEL.id);
         return choice.id === options.EXIT.id;
     }
 
@@ -184,7 +190,7 @@ export class MainMenu extends HTMLElement {
 
     /**
      * 
-     * @param {MenuState} state
+     * @param {import('../../common/enums.js').VisibilityState} state
      * @returns {Promise<void>}
      */
     async _mainMenuChangeState(state) {

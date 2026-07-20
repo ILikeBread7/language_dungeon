@@ -6,7 +6,6 @@ document.body.appendChild(menu);
 
 setTimeout(async () => {
     await menu.mainMenuOpen();
-    await menu.mainMenuHide();
 }, 100)
 
 document.addEventListener('keydown', event => {
