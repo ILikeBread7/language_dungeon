@@ -43,7 +43,6 @@ export class ChoicesList extends HTMLElement {
 
         const choicesList = document.createElement('ul');
         choicesList.part = choicesList.id = 'choices-list';
-        this.dataset.state = VISIBILITY_STATE.HIDDEN;
 
         choicesList.addEventListener('pointerover', event => {
             const element = event.target;
@@ -68,14 +67,14 @@ export class ChoicesList extends HTMLElement {
             :host {
                 --transition-time: 0.5s;
                 --message-box-height: calc(1em * 4 * 1.2);
-                visibility: hidden;
+                display: none;
             }
 
-            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${choicesList.id} {
+            :host([data-state="${OPEN_STATE.OPEN}"]) #${choicesList.id} {
                 opacity: 1;
             }
 
-            :host([data-state="${VISIBILITY_STATE.HIDDEN}"]) #${choicesList.id} {
+            :host([data-state="${OPEN_STATE.CLOSED}"]) #${choicesList.id} {
                 opacity: 0;
             }
 
@@ -108,41 +107,57 @@ export class ChoicesList extends HTMLElement {
                 opacity: 0.6;
             }
 
+            #${choicesList.id} > li[data-chosen="chosen"] {
+                background: aqua;
+            }
+
             #${choicesList.id} > li[data-selected="selected"] {
                 background: blue;
                 color: white;
             }
-
-            #${choicesList.id} > li[data-chosen="chosen"] {
-                background: aqua;
-            }
         `;
+
+        this._active = false;
+        this.dataset.state = this._listState = OPEN_STATE.CLOSED;
         this.shadowRoot.append(style, choicesList);
-
-        this._listState = OPEN_STATE.CLOSED;
-
         this._choicesList = choicesList;
     }
 
-    async choicesListShow() {
-        this._listState = OPEN_STATE.OPENING;
-        this.style.setProperty('visibility', 'visible');
-        await this._choicesListChangeState(VISIBILITY_STATE.SHOWN);
-        this._listState = OPEN_STATE.OPEN;
+    choicesListShow() {
+        this.style.setProperty('display', 'unset');
+        void this.clientWidth;
     }
 
-    async choicesListHide() {
+    choicesListHide() {
+        this.style.removeProperty('display');
+    }
+
+    async choicesListOpen() {
+        this._listState = OPEN_STATE.OPENING;
+        await this._choicesListChangeState(OPEN_STATE.OPEN);
+        this._active = true;
+    }
+
+    async choicesListClose() {
+        this._active = false;
         this._listState = OPEN_STATE.CLOSING;
-        await this._choicesListChangeState(VISIBILITY_STATE.HIDDEN);
-        this.style.removeProperty('visibility');
-        this._listState = OPEN_STATE.CLOSED;
+        await this._choicesListChangeState(OPEN_STATE.CLOSED);
+    }
+
+    /**
+     * 
+     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number? }>}
+     */
+    async choicesListTakeChoice() {
+        return new Promise(resolve => {
+            this._choicesResolve = resolve;
+        });
     }
 
     /**
      * @param {[ChoiceListChoice]} options 
-     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number? }>}
      */
-    async choicesListSetChoices(options) {
+    choicesListSetChoices(options) {
         /**
          * @type {[ChoiceListOption]}
         */
@@ -169,13 +184,6 @@ export class ChoicesList extends HTMLElement {
             this._choicesList.appendChild(optionElement);
             this._displayedOptions.push({ ...option, element: optionElement });
         }
-        if (!this.choicesListIsVisible()) {
-            await this.choicesListShow();
-        }
-        
-        return new Promise(resolve => {
-            this._choicesResolve = resolve;
-        });
     }
 
     choicesListIsVisible() {
@@ -183,7 +191,7 @@ export class ChoicesList extends HTMLElement {
     }
 
     choicesListSelectNextOption() {
-        if (!this._displayedOptions) {
+        if (!this._active || !this._displayedOptions) {
             return;
         }
         
@@ -203,7 +211,7 @@ export class ChoicesList extends HTMLElement {
     }
 
     choicesListSelectPreviousOption() {
-        if (!this._displayedOptions) {
+        if (!this._active || !this._displayedOptions) {
             return;
         }
         
@@ -289,8 +297,6 @@ export class ChoicesList extends HTMLElement {
         this._choicesResolve({ index, text: option.text, id: option.id });
         
         delete this._choicesResolve;
-        delete this._selectedIndex;
-        delete this._displayedOptions;
         return option;
     }
 
@@ -308,7 +314,7 @@ export class ChoicesList extends HTMLElement {
      * @returns Option if found, undefined otherwise
      */
     _findEligibleOption(index) {
-        if (!this._displayedOptions) {
+        if (!this._active || !this._displayedOptions) {
             return;
         }
 
@@ -343,8 +349,6 @@ export class ChoicesList extends HTMLElement {
         this._choicesResolve({ index: -1, cancelled: true });
         
         delete this._choicesResolve;
-        delete this._selectedIndex;
-        delete this._displayedOptions;
         return true;
     }
 
@@ -371,6 +375,7 @@ export class ChoicesList extends HTMLElement {
                 }
     
                 this._choicesList.removeEventListener('transitionend', listener);
+                this._listState = state;
                 resolve();
             };
             this._choicesList.addEventListener('transitionend', listener);

@@ -34,11 +34,18 @@ for (let i = 1; i <= 5; i++) {
     options.push({ text: `Option: ${i}`, enabled: i % 2 === 0, visible: i % 3 !== 0, cssClass: ' test  qqqq '  });
 }
 
-(async () => {
-    const result = await choicesList.choicesListSetChoices(options);
-    console.log(result);
-    await choicesList.choicesListHide();
-})();
+setTimeout(async () => {
+    choicesList.choicesListShow();
+    choicesList.choicesListSetChoices(options);
+    await choicesList.choicesListOpen();
+    let choice;
+    do {
+        choice = await choicesList.choicesListTakeChoice();
+        console.log(choice);
+    } while (!choice.cancelled);
+    await choicesList.choicesListClose();
+    choicesList.choicesListHide();
+}, 200);
 
 document.addEventListener('keydown', event => {
     switch (event.key) {
