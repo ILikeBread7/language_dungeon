@@ -1,5 +1,6 @@
-import { CHOICES_LIST_EVENTS, ChoicesList, LIST_STATE } from './components/choices_list.js';
-import { BOX_STATE, EVENTS as MESSAGE_BOX_EVENTS, MessageBox } from './components/message_box.js';
+import { OPEN_STATE } from '../common/enums.js';
+import { CHOICES_LIST_EVENTS, ChoicesList } from './components/choices_list.js';
+import { EVENTS as MESSAGE_BOX_EVENTS, MessageBox } from './components/message_box.js';
 
 const style = document.createElement('style');
 style.innerHTML = /*css*/`
@@ -175,7 +176,7 @@ export function registerComponentsForRpgMaker() {
     _Scene_Base_prototype.update = function() {
         _Scene_Base_prototype_update.call(this);
 
-        if (choicesList.choicesListState === LIST_STATE.OPEN) {
+        if (choicesList.choicesListState === OPEN_STATE.OPEN) {
             if (input.isTriggered('up')) {
                 choicesList.choicesListSelectPreviousOption();
             } else if (input.isTriggered('down')) {
@@ -198,7 +199,7 @@ export function registerComponentsForRpgMaker() {
                         break;
                 }
             }
-        } else if (messageBox.messageBoxState !== BOX_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
+        } else if (messageBox.messageBoxState !== OPEN_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
             messageBox.messageBoxInput();
         }
     }
@@ -206,8 +207,8 @@ export function registerComponentsForRpgMaker() {
     const _Game_Message_isBusy = _Game_Message_prototype.isBusy;
     _Game_Message_prototype.isBusy = function() {
         return _Game_Message_isBusy.call(this)
-            || messageBox.messageBoxState !== BOX_STATE.CLOSED
-            || choicesList.choicesListState !== LIST_STATE.CLOSED;
+            || messageBox.messageBoxState !== OPEN_STATE.CLOSED
+            || choicesList.choicesListState !== OPEN_STATE.CLOSED;
     }
 
     let asyncCommand101Promise = null;
@@ -244,11 +245,14 @@ export function registerComponentsForRpgMaker() {
                         const { choices, defaultType, cancelType } = extractChoiceParams(params);
                         choicesCancelType = cancelType;
 
-                        const playerChoicePromise = choicesList.choicesListSetChoices(choices);
+                        choicesList.choicesListSetChoices(choices);
                         choicesList.choicesListSelectOptionNoEvent(defaultType);
-                        playerChoicePromise.then(async playerChoice => {
+                        choicesList.choicesListShow();
+                        await choicesList.choicesListOpen();
+                        choicesList.choicesListTakeChoice().then(async playerChoice => {
                             messageBox.messageBoxForceFinish();
-                            await choicesList.choicesListHide();
+                            await choicesList.choicesListClose();
+                            choicesList.choicesListHide();
                             const index = playerChoice.cancelled ? -2 : playerChoice.index;
                             gameInterpreter._branch[gameInterpreter._indent] = index;
                         });
@@ -304,11 +308,13 @@ export function registerComponentsForRpgMaker() {
             const { choices, defaultType, cancelType } = extractChoiceParams(params);
             choicesCancelType = cancelType;
 
-            const choiceListPromise = choicesList.choicesListSetChoices(choices);
+            choicesList.choicesListSetChoices(choices);
             choicesList.choicesListSelectOptionNoEvent(defaultType);
-
-            const playerChoice =  await choiceListPromise;
-            await choicesList.choicesListHide();
+            choicesList.choicesListShow();
+            await choicesList.choicesListOpen();
+            const playerChoice = await choicesList.choicesListTakeChoice();
+            await choicesList.choicesListClose();
+            choicesList.choicesListHide();
             return playerChoice;
         }
     }

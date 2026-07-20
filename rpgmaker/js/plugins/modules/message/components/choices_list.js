@@ -285,6 +285,10 @@ export class ChoicesList extends HTMLElement {
      * @returns Option if confirm succeeded, undefined if couldn't confirm (invalid option etc.)
      */
     choicesListConfirmOptionNoEvent(index) {
+        if (!this._active) {
+            return;
+        }
+
         const option = this._findEligibleOption(index);
         if (!option) {
             return;
@@ -314,7 +318,7 @@ export class ChoicesList extends HTMLElement {
      * @returns Option if found, undefined otherwise
      */
     _findEligibleOption(index) {
-        if (!this._active || !this._displayedOptions) {
+        if (!this._displayedOptions) {
             return;
         }
 
