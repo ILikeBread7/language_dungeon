@@ -96,6 +96,10 @@ export class MainMenu extends HTMLElement {
         this._choicesListsStack = [ this._mainMenuChoicesList ];
     }
 
+    /**
+     * 
+     * @returns {Promise<boolean>} True if exit was picked, false if cancel
+     */
     async mainMenuOpen() {
         /**
          * @type {[ChoiceListChoice]}
@@ -126,8 +130,7 @@ export class MainMenu extends HTMLElement {
                     this._choicesListsStack.pop();
                     this._areYouSure.areYouSureHide();
                     if (shouldExit) {
-                        await this.mainMenuHide();
-                        return;
+                        return true;
                     }
                     await this._mainMenuChoicesList.choicesListShow();
                 break;
@@ -136,6 +139,7 @@ export class MainMenu extends HTMLElement {
             }
         } while (!choice.cancelled);
 
+        return false;
     }
 
     /**

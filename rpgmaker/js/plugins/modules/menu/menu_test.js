@@ -5,7 +5,11 @@ const menu = new MainMenu();
 document.body.appendChild(menu);
 
 setTimeout(async () => {
-    menu.mainMenuOpen();
+    menu.mainMenuOpen().then(shouldExit => {
+        if (shouldExit) {
+            menu.mainMenuHide();
+        }
+    });
     setTimeout(() => menu.currentChoicesList.choicesListConfirmOption(2), 200);
 }, 100)
 
