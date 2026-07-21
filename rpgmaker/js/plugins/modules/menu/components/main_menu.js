@@ -1,6 +1,7 @@
 import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
 import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
 import { AreYouSure } from './are_you_sure.js';
+import { OptionsMenu } from './options_menu.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
@@ -39,7 +40,9 @@ export class MainMenu extends HTMLElement {
         this._mainMenuChoicesList = new ChoicesList(dependencies);
         this._mainMenuChoicesList.part = this._mainMenuChoicesList.id = 'main-menu-choices-list';
         AreYouSure.register();
-        this._areYouSure = new AreYouSure();
+        this._areYouSure = new AreYouSure(dependencies);
+        OptionsMenu.register();
+        this._optionsMenu = new OptionsMenu(dependencies);
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
@@ -90,7 +93,8 @@ export class MainMenu extends HTMLElement {
         this.shadowRoot.append(
             style,
             this._mainMenuChoicesList,
-            this._areYouSure
+            this._areYouSure,
+            this._optionsMenu
         );
 
         this._choicesListsStack = [ this._mainMenuChoicesList ];
@@ -123,6 +127,14 @@ export class MainMenu extends HTMLElement {
             }
 
             switch(choice.id) {
+                case MAIN_MENU_CHOICES.OPTIONS.id:
+                    this._mainMenuChoicesList.choicesListHide();
+                    this._choicesListsStack.push(this._optionsMenu.choicesList);
+                    await this._optionsMenu.optionsMenuShow();
+                    this._choicesListsStack.pop();
+                    this._optionsMenu.optionsMenuHide();
+                    await this._mainMenuChoicesList.choicesListShow();
+                break;
                 case MAIN_MENU_CHOICES.EXIT.id:
                     this._mainMenuChoicesList.choicesListHide();
                     this._choicesListsStack.push(this._areYouSure.choicesList);
