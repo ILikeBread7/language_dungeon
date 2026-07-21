@@ -6,10 +6,10 @@ export function initializeMainMenu() {
     document.body.appendChild(mainMenu);
 }
 
-Scene_Menu.prototype.start = function() {
-    Scene_MenuBase.prototype.start.call(this);
-}
+// Scene_Menu.prototype.start = function() {
+//     Scene_MenuBase.prototype.start.call(this);
+// }
 
-Scene_Menu.prototype.create = function() {
-    Scene_MenuBase.prototype.create.call(this);
-}
+// Scene_Menu.prototype.create = function() {
+//     Scene_MenuBase.prototype.create.call(this);
+// }

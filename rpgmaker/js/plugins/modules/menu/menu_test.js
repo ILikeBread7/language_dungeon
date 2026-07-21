@@ -5,7 +5,8 @@ const menu = new MainMenu();
 document.body.appendChild(menu);
 
 setTimeout(async () => {
-    await menu.mainMenuOpen();
+    menu.mainMenuOpen();
+    setTimeout(() => menu.currentChoicesList.choicesListConfirmOption(2), 200);
 }, 100)
 
 document.addEventListener('keydown', event => {

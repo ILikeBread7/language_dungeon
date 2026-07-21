@@ -1,0 +1,10 @@
+Item -> Show items in a list, use on selecting, no target
+Floor -> Run the common event? for now at least?
+Options
+    - Always Dash
+    - BGM Volume
+    - BGS Volume
+    - ME Volume
+    - SE Volume
+Save?
+Exit -> Are you sure you want to exit? Exit / Cancel* (*default)
