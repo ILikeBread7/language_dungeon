@@ -1,11 +1,11 @@
-import { ChoicesList } from '../../message/components/choices_list.js';
+import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
  */
 
 /**
- * @typedef  { ChoiceListChoice & { value: string, setNextValue: () => void, setPreviousValue: () => void } } OptionsListEntry
+ * @typedef  { ChoiceListChoice & { explanation:string, value: string, setNextValue: () => void, setPreviousValue: () => void } } OptionsListEntry
 */
 
 const TestConfigManager = {
@@ -88,6 +88,7 @@ export class OptionsMenu extends HTMLElement {
             {
                 id: 1,
                 text: 'Always Dash',
+                explanation: 'Makes the character always run, without holding the run button.',
                 get value() { return mapToOnOff(TestConfigManager.alwaysDash); },
                 setValue() {
                     TestConfigManager.alwaysDash = !TestConfigManager.alwaysDash;
@@ -96,6 +97,7 @@ export class OptionsMenu extends HTMLElement {
             {
                 id: 2,
                 text: 'BGM Volume',
+                explanation: 'Volume of the background music.',
                 get value() { return mapToPercentage(TestConfigManager.bgmVolume) },
                 setNextValue() {
                     TestConfigManager.bgmVolume = (TestConfigManager.bgmVolume + step + mod) % mod;
@@ -107,6 +109,7 @@ export class OptionsMenu extends HTMLElement {
             {
                 id: 3,
                 text: 'BGS Volume',
+                explanation: 'Volume of the background sounds.',
                 get value() { return mapToPercentage(TestConfigManager.bgsVolume); },
                 setNextValue() {
                     TestConfigManager.bgsVolume = (TestConfigManager.bgsVolume + step + mod) % mod;
@@ -118,6 +121,7 @@ export class OptionsMenu extends HTMLElement {
             {
                 id: 4,
                 text: 'ME Volume',
+                explanation: 'Volume of the musical effects.',
                 get value() { return mapToPercentage(TestConfigManager.meVolume); },
                 setNextValue() {
                     TestConfigManager.meVolume = (TestConfigManager.meVolume + step + mod) % mod;
@@ -129,6 +133,7 @@ export class OptionsMenu extends HTMLElement {
             {
                 id: 5,
                 text: 'SE Volume',
+                explanation: 'Volume of the sound effects.',
                 get value() { return mapToPercentage(TestConfigManager.seVolume); },
                 setNextValue() {
                     TestConfigManager.seVolume = (TestConfigManager.seVolume + step + mod) % mod;
@@ -144,6 +149,13 @@ export class OptionsMenu extends HTMLElement {
             }
             option.text += /* html */` <span class="value">${option.value}</span>`;
         }
+
+        this._optionsMenuOptionExplanationDiv.innerHTML = this._options[0].explanation;
+        this._optionsMenuChoicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
+            const index = event.detail.index;
+            const option = this._options[index];
+            this._optionsMenuOptionExplanationDiv.innerHTML = option.explanation;
+        });
     }
 
     async optionsMenuShow() {
