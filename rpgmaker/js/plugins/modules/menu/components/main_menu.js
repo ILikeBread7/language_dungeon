@@ -204,6 +204,14 @@ export class MainMenu extends HTMLElement {
         this.currentChoicesList.choicesListConfirmCurrentOption();
     }
 
+    mainMenuSetNextValue() {
+        this._optionsMenu.optionsMenuSetNextValue();
+    }
+
+    mainMenuSetPreviousValue() {
+        this._optionsMenu.optionsMenuSetPreviousValue();
+    }
+
     mainMenuCancel() {
         const currentChoicesList = this.currentChoicesList;
         if (currentChoicesList.choicesListCancel()) {

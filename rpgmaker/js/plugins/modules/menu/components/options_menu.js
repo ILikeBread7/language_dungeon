@@ -1,5 +1,13 @@
 import { ChoicesList } from '../../message/components/choices_list.js';
 
+/**
+ * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
+ */
+
+/**
+ * @typedef  { ChoiceListChoice & { value: string, setNextValue: () => void, setPreviousValue: () => void } } OptionsListEntry
+*/
+
 const TestConfigManager = {
     alwaysDash: false,
     bgmVolume: 0,
@@ -70,15 +78,13 @@ export class OptionsMenu extends HTMLElement {
             this._optionsMenuChoicesList,
             this._optionsMenuOptionExplanationDiv
         )
-    }
 
-    async optionsMenuShow() {
-        this.style.setProperty('display', 'unset');
-        
+        const step = 10;
+        const mod = 100 + step;
         /**
-         * @type {import('../../message/components/choices_list.js').ChoiceListChoice}
+         * @type {[OptionsListEntry]}
          */
-        const options = [
+        this._options = [
             {
                 id: 1,
                 text: 'Always Dash',
@@ -92,10 +98,10 @@ export class OptionsMenu extends HTMLElement {
                 text: 'BGM Volume',
                 get value() { return mapToPercentage(TestConfigManager.bgmVolume) },
                 setNextValue() {
-                    TestConfigManager.bgmVolume = Math.min(100, TestConfigManager.bgmVolume + 10);
+                    TestConfigManager.bgmVolume = (TestConfigManager.bgmVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.bgmVolume = Math.min(100, TestConfigManager.bgmVolume - 10);
+                    TestConfigManager.bgmVolume = (TestConfigManager.bgmVolume - step + mod) % mod;
                 }
             },
             {
@@ -103,10 +109,10 @@ export class OptionsMenu extends HTMLElement {
                 text: 'BGS Volume',
                 get value() { return mapToPercentage(TestConfigManager.bgsVolume); },
                 setNextValue() {
-                    TestConfigManager.bgsVolume = Math.min(100, TestConfigManager.bgsVolume + 10);
+                    TestConfigManager.bgsVolume = (TestConfigManager.bgsVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.bgsVolume = Math.min(100, TestConfigManager.bgsVolume - 10);
+                    TestConfigManager.bgsVolume = (TestConfigManager.bgsVolume - step + mod) % mod;
                 }
             },
             {
@@ -114,10 +120,10 @@ export class OptionsMenu extends HTMLElement {
                 text: 'ME Volume',
                 get value() { return mapToPercentage(TestConfigManager.meVolume); },
                 setNextValue() {
-                    TestConfigManager.meVolume = Math.min(100, TestConfigManager.meVolume + 10);
+                    TestConfigManager.meVolume = (TestConfigManager.meVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.meVolume = Math.min(100, TestConfigManager.meVolume - 10);
+                    TestConfigManager.meVolume = (TestConfigManager.meVolume - step + mod) % mod;
                 }
             },
             {
@@ -125,21 +131,25 @@ export class OptionsMenu extends HTMLElement {
                 text: 'SE Volume',
                 get value() { return mapToPercentage(TestConfigManager.seVolume); },
                 setNextValue() {
-                    TestConfigManager.seVolume = Math.min(100, TestConfigManager.seVolume + 10);
+                    TestConfigManager.seVolume = (TestConfigManager.seVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.seVolume = Math.min(100, TestConfigManager.seVolume - 10);
+                    TestConfigManager.seVolume = (TestConfigManager.seVolume - step + mod ) % mod;
                 }
             },
         ];
-        for (const option of options) {
+        for (const option of this._options) {
             if (option.setValue) {
                 option.setNextValue = option.setPreviousValue = option.setValue;
             }
             option.text += /* html */` <span class="value">${option.value}</span>`;
         }
+    }
 
-        this._optionsMenuChoicesList.choicesListSetChoices(options);
+    async optionsMenuShow() {
+        this.style.setProperty('display', 'unset');
+
+        this._optionsMenuChoicesList.choicesListSetChoices(this._options);
         this._optionsMenuChoicesList.choicesListSelectOptionNoEvent(0);
         this._optionsMenuChoicesList.choicesListShow();
         await this._optionsMenuChoicesList.choicesListOpen();
@@ -151,10 +161,9 @@ export class OptionsMenu extends HTMLElement {
             const element = choice.element;
             element.removeAttribute('data-chosen');
 
-            const option = options[choice.index];
+            const option = this._options[choice.index];
             option.setNextValue();
-            const valueElement = element.getElementsByClassName('value')[0];
-            valueElement.innerHTML = option.value;
+            this._updateOptionValue(option, element);
         }
         await this._optionsMenuChoicesList.choicesListClose();
         this._optionsMenuChoicesList.choicesListHide();
@@ -167,8 +176,31 @@ export class OptionsMenu extends HTMLElement {
     optionsMenuSetNextValue() {
         const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
         if (currentlySelectedOption) {
-            
+            const option = this._options[currentlySelectedOption.index];
+            option.setNextValue();
+            const element = currentlySelectedOption.option.element;
+            this._updateOptionValue(option, element);
         }
+    }
+
+    optionsMenuSetPreviousValue() {
+        const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
+        if (currentlySelectedOption) {
+            const option = this._options[currentlySelectedOption.index];
+            option.setPreviousValue();
+            const element = currentlySelectedOption.option.element;
+            this._updateOptionValue(option, element);
+        }
+    }
+
+    /**
+     * 
+     * @param {OptionsListEntry} option 
+     * @param {HTMLElement} element 
+     */
+    _updateOptionValue(option, element) {
+        const valueElement = element.getElementsByClassName('value')[0];
+        valueElement.innerHTML = option.value;
     }
 
     get choicesList() {

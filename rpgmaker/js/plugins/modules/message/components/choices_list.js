@@ -410,9 +410,15 @@ export class ChoicesList extends HTMLElement {
         return this._listState;
     }
 
+    /**
+     * @returns {{ index: number, option: ChoiceListOption } | undefined}
+     */
     get currentlySelectedOption() {
-        if (this._active && this._displayedOptions && this._selectedIndex) {
+        if (this._active && this._displayedOptions) {
             const option = this._displayedOptions[this._selectedIndex];
+            if (!option) {
+                return;
+            }
             return { index: this._selectedIndex, option };
         }
     }

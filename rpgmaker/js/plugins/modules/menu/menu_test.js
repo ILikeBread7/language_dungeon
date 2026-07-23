@@ -26,5 +26,11 @@ document.addEventListener('keydown', event => {
             break;
         case 'Escape':
             menu.mainMenuCancel();
+        case 'ArrowRight':
+            menu.mainMenuSetNextValue();
+        break;
+        case 'ArrowLeft':
+            menu.mainMenuSetPreviousValue();
+        break;
     }
 })
