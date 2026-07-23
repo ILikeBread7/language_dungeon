@@ -48,5 +48,9 @@ Scene_Menu.prototype.update = function() {
         mainMenu.mainMenuConfirmCurrentOption();
     } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
         mainMenu.mainMenuCancel();
+    } else if (input.isTriggered('right')) {
+        mainMenu.mainMenuSetNextValue();
+    } else if (input.isTriggered('left')) {
+        mainMenu.mainMenuSetPreviousValue();
     }
 }

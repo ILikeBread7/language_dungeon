@@ -8,12 +8,14 @@ import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choic
  * @typedef  { ChoiceListChoice & { explanation:string, value: string, setNextValue: () => void, setPreviousValue: () => void } } OptionsListEntry
 */
 
-const TestConfigManager = {
+const ConfigManager = globalThis.ConfigManager || {
     alwaysDash: false,
     bgmVolume: 0,
     bgsVolume: 100,
     meVolume: 100,
-    seVolume: 100
+    seVolume: 100,
+
+    save() { console.log('Config manager saved!') }
 };
 
 const GO_BACK_ID = 999;
@@ -91,57 +93,57 @@ export class OptionsMenu extends HTMLElement {
                 id: 1,
                 text: 'Always Dash',
                 explanation: 'Makes the character always run, without holding the run button.',
-                get value() { return mapToOnOff(TestConfigManager.alwaysDash); },
+                get value() { return mapToOnOff(ConfigManager.alwaysDash); },
                 setValue() {
-                    TestConfigManager.alwaysDash = !TestConfigManager.alwaysDash;
+                    ConfigManager.alwaysDash = !ConfigManager.alwaysDash;
                 }
             },
             {
                 id: 2,
                 text: 'BGM Volume',
                 explanation: 'Volume of the background music.',
-                get value() { return mapToPercentage(TestConfigManager.bgmVolume) },
+                get value() { return mapToPercentage(ConfigManager.bgmVolume) },
                 setNextValue() {
-                    TestConfigManager.bgmVolume = (TestConfigManager.bgmVolume + step + mod) % mod;
+                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.bgmVolume = (TestConfigManager.bgmVolume - step + mod) % mod;
+                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume - step + mod) % mod;
                 }
             },
             {
                 id: 3,
                 text: 'BGS Volume',
                 explanation: 'Volume of the background sounds.',
-                get value() { return mapToPercentage(TestConfigManager.bgsVolume); },
+                get value() { return mapToPercentage(ConfigManager.bgsVolume); },
                 setNextValue() {
-                    TestConfigManager.bgsVolume = (TestConfigManager.bgsVolume + step + mod) % mod;
+                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.bgsVolume = (TestConfigManager.bgsVolume - step + mod) % mod;
+                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume - step + mod) % mod;
                 }
             },
             {
                 id: 4,
                 text: 'ME Volume',
                 explanation: 'Volume of the musical effects.',
-                get value() { return mapToPercentage(TestConfigManager.meVolume); },
+                get value() { return mapToPercentage(ConfigManager.meVolume); },
                 setNextValue() {
-                    TestConfigManager.meVolume = (TestConfigManager.meVolume + step + mod) % mod;
+                    ConfigManager.meVolume = (ConfigManager.meVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.meVolume = (TestConfigManager.meVolume - step + mod) % mod;
+                    ConfigManager.meVolume = (ConfigManager.meVolume - step + mod) % mod;
                 }
             },
             {
                 id: 5,
                 text: 'SE Volume',
                 explanation: 'Volume of the sound effects.',
-                get value() { return mapToPercentage(TestConfigManager.seVolume); },
+                get value() { return mapToPercentage(ConfigManager.seVolume); },
                 setNextValue() {
-                    TestConfigManager.seVolume = (TestConfigManager.seVolume + step + mod) % mod;
+                    ConfigManager.seVolume = (ConfigManager.seVolume + step + mod) % mod;
                 },
                 setPreviousValue() {
-                    TestConfigManager.seVolume = (TestConfigManager.seVolume - step + mod ) % mod;
+                    ConfigManager.seVolume = (ConfigManager.seVolume - step + mod ) % mod;
                 }
             },
             {
@@ -157,7 +159,7 @@ export class OptionsMenu extends HTMLElement {
             if (option.setValue) {
                 option.setNextValue = option.setPreviousValue = option.setValue;
             }
-            option.text += /* html */` <span class="value">${option.value}</span>`;
+            option.text += /* html */` <span class="value"></span>`;
         }
 
         this._optionsMenuChoicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
@@ -172,6 +174,14 @@ export class OptionsMenu extends HTMLElement {
         this.style.setProperty('display', 'unset');
 
         this._optionsMenuChoicesList.choicesListSetChoices(this._options);
+        
+        const displayedOptions = this._optionsMenuChoicesList.displayedOptions;
+        for (let i = 0; i < this._options.length - 1; i++) { // -1 to skip "go back" option
+            const option = this._options[i];
+            const element = displayedOptions[i].element;
+            this._updateOptionValue(option, element);
+        }
+
         this._optionsMenuChoicesList.choicesListSelectOptionNoEvent(0);
         this._optionsMenuChoicesList.choicesListShow();
         await this._optionsMenuChoicesList.choicesListOpen();
@@ -192,6 +202,7 @@ export class OptionsMenu extends HTMLElement {
     }
 
     optionsMenuHide() {
+        ConfigManager.save();
         this.style.setProperty('display', 'none');
     }
 

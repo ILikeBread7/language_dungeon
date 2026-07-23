@@ -423,6 +423,10 @@ export class ChoicesList extends HTMLElement {
         }
     }
 
+    get displayedOptions() {
+        return this._displayedOptions;
+    }
+
 }
 
 /**
