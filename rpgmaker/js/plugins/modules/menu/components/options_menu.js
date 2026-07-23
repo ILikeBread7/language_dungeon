@@ -16,6 +16,8 @@ const TestConfigManager = {
     seVolume: 100
 };
 
+const GO_BACK_ID = 999;
+
 export class OptionsMenu extends HTMLElement {
 
     /**
@@ -142,15 +144,22 @@ export class OptionsMenu extends HTMLElement {
                     TestConfigManager.seVolume = (TestConfigManager.seVolume - step + mod ) % mod;
                 }
             },
+            {
+                id: GO_BACK_ID,
+                text: 'Go back',
+                explanation: 'Save changes and go back to the game.',
+            }
         ];
         for (const option of this._options) {
+            if (option.id === GO_BACK_ID) {
+                continue;
+            }
             if (option.setValue) {
                 option.setNextValue = option.setPreviousValue = option.setValue;
             }
             option.text += /* html */` <span class="value">${option.value}</span>`;
         }
 
-        this._optionsMenuOptionExplanationDiv.innerHTML = this._options[0].explanation;
         this._optionsMenuChoicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
             const index = event.detail.index;
             const option = this._options[index];
@@ -159,6 +168,7 @@ export class OptionsMenu extends HTMLElement {
     }
 
     async optionsMenuShow() {
+        this._optionsMenuOptionExplanationDiv.innerHTML = this._options[0].explanation;
         this.style.setProperty('display', 'unset');
 
         this._optionsMenuChoicesList.choicesListSetChoices(this._options);
@@ -167,7 +177,7 @@ export class OptionsMenu extends HTMLElement {
         await this._optionsMenuChoicesList.choicesListOpen();
         for (let choice;;) {
             choice = await this._optionsMenuChoicesList.choicesListTakeChoice();
-            if (choice.cancelled) {
+            if (choice.cancelled || choice.id === GO_BACK_ID) {
                 break;
             }
             const element = choice.element;
@@ -189,6 +199,9 @@ export class OptionsMenu extends HTMLElement {
         const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
+            if (!option.setNextValue) {
+                return;
+            }
             option.setNextValue();
             const element = currentlySelectedOption.option.element;
             this._updateOptionValue(option, element);
@@ -199,6 +212,9 @@ export class OptionsMenu extends HTMLElement {
         const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
+            if (!option.setPreviousValue) {
+                return;
+            }
             option.setPreviousValue();
             const element = currentlySelectedOption.option.element;
             this._updateOptionValue(option, element);
