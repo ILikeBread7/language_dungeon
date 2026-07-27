@@ -1,10 +1,17 @@
+import { HideableComponent } from './components/hideable_component.js';
 import { OpenableComponent } from './components/openable_component.js';
 
 OpenableComponent.register();
 const openable = new OpenableComponent();
-document.body.appendChild(openable);
+HideableComponent.register();
+const hideable = new HideableComponent();
+hideable.appendChild(openable);
 
-setTimeout(async () => {
+document.body.appendChild(hideable);
+
+(async () => {
+    hideable.hideableShow();
     await openable.openableOpen();
     await openable.openableClose();
-}, 100);
+    hideable.hideableHide();
+})();
