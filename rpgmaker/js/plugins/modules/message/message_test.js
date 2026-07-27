@@ -1,7 +1,14 @@
-import { ChoicesList } from './components/choices_list.js';
+import { HideableComponent } from '../common/components/hideable_component.js';
+import { HideableOpenable } from '../common/components/hideable_openable.js';
+import { OpenableComponent } from '../common/components/openable_component.js';
+import { ChoicesListComponent } from './components/choices_list.js';
 import { MessageBox } from './components/message_box.js';
+import { takeOneChoice } from './components/utils.js';
+
 MessageBox.register();
-ChoicesList.register();
+ChoicesListComponent.register();
+OpenableComponent.register();
+HideableComponent.register();
 
 console.log('messagw!');
 const box = new MessageBox();
@@ -27,42 +34,47 @@ document.addEventListener('click', () => {
     box.messageBoxInput();
 });
 
-const choicesList = new ChoicesList();
-document.body.appendChild(choicesList);
 const options = [];
 for (let i = 1; i <= 5; i++) {
     options.push({ text: `Option: ${i}`, enabled: i % 2 === 0, visible: i % 3 !== 0, cssClass: ' test  qqqq '  });
 }
 
-setTimeout(async () => {
-    choicesList.choicesListShow();
-    choicesList.choicesListSetChoices(options);
-    await choicesList.choicesListOpen();
+const choicesList = new HideableOpenable(new ChoicesListComponent());
+choicesList.topComponent.classList.add('centered', 'with-message-box', 'half-screen');
+document.body.appendChild(choicesList.topComponent);
+
+(async () => {
+    choicesList.hideable.hideableShow();
+    choicesList.element.choicesListSetChoices(options);
+    choicesList.element.choicesListActivate();
+    choicesList.element.choicesListSelectNextOption();
+    choicesList.openable.openableOpen();
     let choice;
     do {
-        choice = await choicesList.choicesListTakeChoice();
+        choice = await choicesList.element.choicesListTakeChoice();
         console.log(choice);
     } while (!choice.cancelled);
-    await choicesList.choicesListClose();
-    choicesList.choicesListHide();
+    choicesList.element.choicesListDeactivate();
+    await choicesList.openable.openableClose();
+    choicesList.hideable.hideableHide();
 
     setTimeout(async () => {
-        console.log(await choicesList.choicesListTakeOneChoice(options, 3));
+        console.log(await takeOneChoice(choicesList, options, 3));
     }, 500);
-}, 200);
+})();
 
 document.addEventListener('keydown', event => {
     switch (event.key) {
         case 'ArrowDown':
-            choicesList.choicesListSelectNextOption();
+            choicesList.element.choicesListSelectNextOption();
             break;
         case 'ArrowUp':
-            choicesList.choicesListSelectPreviousOption();
+            choicesList.element.choicesListSelectPreviousOption();
             break;
         case 'Enter':
-            choicesList.choicesListConfirmCurrentOption();
+            choicesList.element.choicesListConfirmCurrentOption();
             break;
         case 'Escape':
-            choicesList.choicesListCancel();
+            choicesList.element.choicesListCancel();
     }
 })

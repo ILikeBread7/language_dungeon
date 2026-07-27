@@ -1,4 +1,4 @@
-import { OPEN_STATE } from '../../common/enums.js';
+import { BaseComponent } from '../../common/components/base_component.js';
 
 /**
  * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
@@ -20,31 +20,19 @@ export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
  * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoiceListEvent
  */
 
-export class ChoicesList extends HTMLElement {
+export class ChoicesListComponent extends BaseComponent {
 
-    /**
-     * 
-     * @param {string} [tagName] 
-     */
-    static register(tagName) {
-        registerChoicesList(tagName);
+    static get componentDefaultTagName() {
+        return 'choices-list-component';
     }
 
-    /**
-     * 
-     * @param { {
-     *  wait: (time: number) => Promise<void>
-     * } } dependencies 
-     */
-    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
+    constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
-        this._dependencies = dependencies;
 
-        const choicesList = document.createElement('ul');
-        choicesList.part = choicesList.id = 'choices-list';
+        const list = document.createElement('ul');
+        list.part = list.id = 'list';
 
-        choicesList.addEventListener('pointerover', event => {
+        list.addEventListener('pointerover', event => {
             const element = event.target;
             if (element.nodeName !== 'LI') {
                 return;
@@ -53,7 +41,7 @@ export class ChoicesList extends HTMLElement {
             this.choicesListSelectOption(index);
         });
 
-        choicesList.addEventListener('click', event => {
+        list.addEventListener('click', event => {
             const element = event.target;
             if (element.nodeName !== 'LI') {
                 return;
@@ -64,84 +52,52 @@ export class ChoicesList extends HTMLElement {
 
         const style = document.createElement('style');
         style.innerHTML = /*css*/`
-            :host {
-                --transition-time: 0.5s;
-                --message-box-height: calc(1em * 4 * 1.2);
-                display: none;
-            }
-
-            :host([data-state="${OPEN_STATE.OPEN}"]) #${choicesList.id} {
-                opacity: 1;
-            }
-
-            :host([data-state="${OPEN_STATE.CLOSED}"]) #${choicesList.id} {
-                opacity: 0;
-            }
-
-            #${choicesList.id} {
-                transition-property: opacity;
-                transition-duration: var(--transition-time);
-                
-                position: absolute;
-                left: 50%;
-                top: calc((100vh - var(--message-box-height)) / 2);
-                width: 50%;
-                transform: translate(-50%, -50%);
+            #${list.id} {
                 list-style-type: none;
                 padding: 0px;
                 background: green;
             }
 
-            #${choicesList.id} > li {
+            #${list.id} > li {
                 background: yellow;
                 text-align: center;
                 cursor: pointer;
             }
 
-            #${choicesList.id} > li:not(:first-of-type) {
+            #${list.id} > li:not(:first-of-type) {
                 margin-top: 10px;
             }
 
-            #${choicesList.id} > li[data-disabled="disabled"] {
+            #${list.id} > li[data-disabled="disabled"] {
                 pointer-events: none;
                 opacity: 0.6;
             }
 
-            #${choicesList.id} > li[data-chosen="chosen"] {
+            #${list.id} > li[data-chosen="chosen"] {
                 background: aqua;
             }
 
-            #${choicesList.id} > li[data-selected="selected"] {
+            #${list.id} > li[data-selected="selected"] {
                 background: blue;
                 color: white;
             }
         `;
 
         this._active = false;
-        this.dataset.state = this._listState = OPEN_STATE.CLOSED;
-        this.shadowRoot.append(style, choicesList);
-        this._choicesList = choicesList;
+        this._list = list;
+        this.append(style, list);
     }
 
-    choicesListShow() {
-        this.style.setProperty('display', 'unset');
-        void this.clientWidth;
-    }
-
-    choicesListHide() {
-        this.style.removeProperty('display');
-    }
-
-    async choicesListOpen() {
+    choicesListActivate() {
         this._active = true;
-        this._listState = OPEN_STATE.OPENING;
-        await this._choicesListChangeState(OPEN_STATE.OPEN);
     }
 
-    async choicesListClose() {
+    choicesListDeactivate() {
         this._active = false;
-        this._listState = OPEN_STATE.CLOSING;
-        await this._choicesListChangeState(OPEN_STATE.CLOSED);
+    }
+
+    get choicesListActive() {
+        return this._active;
     }
 
     /**
@@ -163,7 +119,7 @@ export class ChoicesList extends HTMLElement {
         */
         this._displayedOptions = [];
 
-        this._choicesList.innerHTML = '';
+        this._list.innerHTML = '';
         delete this._selectedIndex;
 
         for (let i = 0; i < options.length; i++) {
@@ -182,13 +138,9 @@ export class ChoicesList extends HTMLElement {
             if (option.cssClass) {
                 optionElement.className = option.cssClass;
             }
-            this._choicesList.appendChild(optionElement);
+            this._list.appendChild(optionElement);
             this._displayedOptions.push({ ...option, element: optionElement });
         }
-    }
-
-    choicesListIsVisible() {
-        return this._choicesList.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true });
     }
 
     choicesListSelectNextOption() {
@@ -361,7 +313,7 @@ export class ChoicesList extends HTMLElement {
     }
 
     choicesListDeselect() {
-        const optionElements = this._choicesList.children;
+        const optionElements = this._list.children;
 
         for (const optionElement of optionElements) {
             optionElement.removeAttribute('data-selected');
@@ -369,51 +321,9 @@ export class ChoicesList extends HTMLElement {
     }
 
     /**
-     * 
-     * @param {[ChoiceListChoice]} options 
-     * @param {number} [defaultIndex] 
-     */
-    async choicesListTakeOneChoice(options, defaultIndex) {
-        this.choicesListSetChoices(options);
-        this.choicesListSelectOptionNoEvent(defaultIndex);
-        this.choicesListShow();
-        await this.choicesListOpen();
-        const playerChoice = await this.choicesListTakeChoice();
-        await this.choicesListClose();
-        this.choicesListHide();
-        return playerChoice;
-    }
-
-    /**
-     * @typedef {import('../../common/enums.js').OpenState} OpenState
-     * @param {OpenState} state
-     * @returns {Promise<void>}
-     */
-    async _choicesListChangeState(state) {
-        return new Promise((resolve) => {
-            this.dataset.state = state;
-    
-            const listener = element => {
-                if (element.target !== this._choicesList) {
-                    return;
-                }
-    
-                this._choicesList.removeEventListener('transitionend', listener);
-                this._listState = state;
-                resolve();
-            };
-            this._choicesList.addEventListener('transitionend', listener);
-        });
-    }
-
-    get choicesListState() {
-        return this._listState;
-    }
-
-    /**
      * @returns {{ index: number, option: ChoiceListOption } | undefined}
      */
-    get currentlySelectedOption() {
+    get choicesListCurrentlySelectedOption() {
         if (this._active && this._displayedOptions) {
             const option = this._displayedOptions[this._selectedIndex];
             if (!option) {
@@ -423,18 +333,8 @@ export class ChoicesList extends HTMLElement {
         }
     }
 
-    get displayedOptions() {
+    get choicesListDisplayedOptions() {
         return this._displayedOptions;
     }
 
-}
-
-/**
- * 
- * @param {string} [tagName] 
- */
-export function registerChoicesList(tagName = 'choices-list') {
-    if (!customElements.get(tagName)) {
-        customElements.define(tagName, ChoicesList);
-    }
 }

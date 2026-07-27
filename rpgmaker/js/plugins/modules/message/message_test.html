@@ -7,5 +7,21 @@
     message-box::part(message-box) {
         bottom: 0px;
     }
+
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .with-message-box {
+        --message-box-height: calc(1em * 4 * 1.2);
+        top: calc((100vh - var(--message-box-height)) / 2);
+    }
+
+    .half-screen {
+        width: 50%;
+    }
 </style>
 <script type="module" src="message_test.js"></script>
