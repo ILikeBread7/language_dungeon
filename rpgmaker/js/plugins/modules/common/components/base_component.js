@@ -1,10 +1,14 @@
 export class BaseComponent extends HTMLElement {
 
-    static get tagName() {
+    static get componentDefaultTagName() {
         return 'base-component';
     }
 
-    get componentTag() {
+    get componentCssStyle() {
+        return '';
+    }
+
+    get componentTagName() {
         return this.tagName.toLowerCase();
     }
 
@@ -12,7 +16,7 @@ export class BaseComponent extends HTMLElement {
      * 
      * @param {string} [tagName] 
      */
-    static register(tagName = this.tagName) {
+    static register(tagName = this.componentDefaultTagName) {
         if (!customElements.get(tagName)) {
             customElements.define(tagName, this);
         }
@@ -28,7 +32,7 @@ export class BaseComponent extends HTMLElement {
         super();
         this._dependencies = dependencies;
 
-        const style = this.cssStyle;
+        const style = this.componentCssStyle;
         if (style) {
             this._style = document.createElement('style');
             this._style.innerHTML = style;

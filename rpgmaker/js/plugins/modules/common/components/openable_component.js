@@ -18,21 +18,21 @@ const FINAL_OPEN_STATE = /** @type {const} */ Object.freeze({
 
 export class OpenableComponent extends BaseComponent {
 
-    static get tagName() {
+    static get componentDefaultTagName() {
         return 'openable-component';
     }
 
-    get cssStyle() {
+    get componentCssStyle() {
         return /*css*/`
-            ${this.componentTag} {
+            ${this.componentTagName} {
                 transition: opacity 2s;
             }
 
-            ${this.componentTag}[data-target-state="${FINAL_OPEN_STATE.OPEN}"] {
+            ${this.componentTagName}[data-target-state="${FINAL_OPEN_STATE.OPEN}"] {
                 opacity: 1;
             }
 
-            ${this.componentTag}[data-target-state="${FINAL_OPEN_STATE.CLOSED}"] {
+            ${this.componentTagName}[data-target-state="${FINAL_OPEN_STATE.CLOSED}"] {
                 opacity: 0;
             }
         `;
