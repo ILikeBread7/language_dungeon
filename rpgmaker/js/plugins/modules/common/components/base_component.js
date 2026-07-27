@@ -8,10 +8,6 @@ export class BaseComponent extends HTMLElement {
         return '';
     }
 
-    get componentTagName() {
-        return this.tagName.toLowerCase();
-    }
-
     /**
      * 
      * @param {string} [tagName] 
@@ -38,6 +34,10 @@ export class BaseComponent extends HTMLElement {
             this._style.innerHTML = style;
             this.appendChild(this._style);
         }
+    }
+
+    get componentTagName() {
+        return this.tagName.toLowerCase();
     }
 
 }
