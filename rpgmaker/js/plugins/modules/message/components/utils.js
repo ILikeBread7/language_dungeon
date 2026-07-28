@@ -1,6 +1,6 @@
 /**
  * 
- * @param {import('./../../common/components/hideable_openable.js').HideableOpenable<import('./choices_list.js').ChoicesListComponent>} choicesList
+ * @param {import('../../common/helpers/hideable_openable.js').HideableOpenable<import('./choices_list.js').ChoicesListComponent>} choicesList
  * @param {[import('./choices_list.js').ChoiceListChoice]} options 
  * @param {number} [defaultIndex] 
  * 

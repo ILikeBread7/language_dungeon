@@ -1,5 +1,5 @@
 import { HideableComponent } from '../common/components/hideable_component.js';
-import { HideableOpenable } from '../common/components/hideable_openable.js';
+import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { OpenableComponent } from '../common/components/openable_component.js';
 import { ChoicesListComponent } from './components/choices_list.js';
 import { MessageBox } from './components/message_box.js';
