@@ -7,7 +7,9 @@ export class ElementStack {
      * @param {Object<string,HTMLElement>} elementsObject 
      */
     constructor(elementsObject) {
-        Object.assign(this, elementsObject);
+        for (const [ name, element ] of Object.entries(elementsObject)) {
+            Object.defineProperty(this, name, { get: () => element });
+        }
 
         const elements = Object.values(elementsObject);
         for (let i = 0; i < elements.length - 1; i++) {
