@@ -1,5 +1,6 @@
 import { HideableComponent } from '../components/hideable_component.js';
 import { OpenableComponent } from '../components/openable_component.js';
+import { ElementStack } from './element_stack.js';
 
 HideableComponent.register();
 OpenableComponent.register();
@@ -8,15 +9,6 @@ OpenableComponent.register();
  * @template {HTMLElement} T
  */
 export class HideableOpenable extends ElementStack {
-
-    /** @type {HideableComponent} */
-    hideable;
-
-    /** @type {OpenableComponent} */
-    openable;
-
-    /** @type {T} */
-    element;
 
     /**
      * @param {T} element 
@@ -27,6 +19,15 @@ export class HideableOpenable extends ElementStack {
             openable: new OpenableComponent(),
             element
         });
+
+        /** @type {HideableComponent} */
+        this.hideable;
+
+        /** @type {OpenableComponent} */
+        this.openable;
+
+        /** @type {T} */
+        this.element;
     }
 
 }

@@ -40,8 +40,8 @@ for (let i = 1; i <= 5; i++) {
 }
 
 const choicesList = new HideableOpenable(new ChoicesListComponent());
-choicesList.topComponent.classList.add('centered', 'with-message-box', 'half-screen');
-document.body.appendChild(choicesList.topComponent);
+choicesList.topElement.classList.add('centered', 'with-message-box', 'half-screen');
+document.body.appendChild(choicesList.topElement);
 
 (async () => {
     choicesList.hideable.hideableShow();
