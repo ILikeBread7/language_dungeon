@@ -3,7 +3,7 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { OpenableComponent } from '../common/components/openable_component.js';
 import { ChoicesListComponent } from './components/choices_list.js';
 import { MessageBoxComponent } from './components/message_box.js';
-import { takeOneChoice } from './components/utils.js';
+import { displaySingleMessage, takeOneChoice } from './components/utils.js';
 
 MessageBoxComponent.register();
 ChoicesListComponent.register();
@@ -11,8 +11,10 @@ OpenableComponent.register();
 HideableComponent.register();
 
 console.log('messagw!');
-const box = new MessageBoxComponent();
-document.body.appendChild(box);
+
+const messageBox = new HideableOpenable(new MessageBoxComponent());
+const box = messageBox.element;
+document.body.appendChild(messageBox.topElement);
 
 async function displayText(text) {
     // await box.messageBoxShow();
@@ -22,10 +24,13 @@ async function displayText(text) {
         repeatedText.push(text);
     }
     const fullText = repeatedText.join('\n');
-    await box.messageBoxDisplaySingleMessage(fullText);
+
+    await displaySingleMessage(messageBox, fullText);
+
+    messageBox.showAndOpen();
     await box.messageBoxDisplayText(fullText);
     await box.messageBoxDisplayText(fullText);
-    await box.messageBoxHide();
+    await messageBox.closeAndHide();
 }
 
 displayText(/*html*/`Test123!!! <span style="color:green">GREEN</span> Text!!!`);
@@ -44,19 +49,17 @@ choicesList.topElement.classList.add('centered', 'with-message-box', 'half-scree
 document.body.appendChild(choicesList.topElement);
 
 (async () => {
-    choicesList.hideable.hideableShow();
     choicesList.element.choicesListSetChoices(options);
     choicesList.element.choicesListActivate();
     choicesList.element.choicesListSelectNextOption();
-    choicesList.openable.openableOpen();
+    choicesList.showAndOpen();
     let choice;
     do {
         choice = await choicesList.element.choicesListTakeChoice();
         console.log(choice);
     } while (!choice.cancelled);
     choicesList.element.choicesListDeactivate();
-    await choicesList.openable.openableClose();
-    choicesList.hideable.hideableHide();
+    await choicesList.closeAndHide();
 
     setTimeout(async () => {
         console.log(await takeOneChoice(choicesList, options, 3));

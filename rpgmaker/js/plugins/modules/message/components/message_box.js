@@ -55,15 +55,6 @@ export class MessageBoxComponent extends BaseComponent {
                 --transition-time: 0.5s;
                 --char-write-wait-ms: 50;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
-                visibility: hidden;
-            }
-
-            ${this.componentTagName}[data-state="${VISIBILITY_STATE.SHOWN}"] .${messageBoxClassName} {
-                opacity: 1;
-            }
-
-            ${this.componentTagName}[data-state="${VISIBILITY_STATE.HIDDEN}"] .${messageBoxClassName} {
-                opacity: 0;
             }
 
             ${this.componentTagName} .${messageBoxClassName} {
@@ -140,7 +131,6 @@ export class MessageBoxComponent extends BaseComponent {
         this._waitForInputResolve = null;
 
         const messageBox = document.createElement('div');
-        this.dataset.state = VISIBILITY_STATE.HIDDEN;
         messageBox.classList.add(messageBoxClassName);
 
         const messageContainer = document.createElement('div');
@@ -186,41 +176,6 @@ export class MessageBoxComponent extends BaseComponent {
         new MutationObserver(() => this._saveCssVariables()).observe(this, { attributes: true });
     }
 
-    async messageBoxShow() {
-        this._boxState = MESSAGE_BOX_STATE.ACTIVATING;
-        this.style.setProperty('visibility', 'visible');
-        await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
-        this._boxState = MESSAGE_BOX_STATE.ACTIVE;
-    }
-
-    async messageBoxHide() {
-        this._boxState = MESSAGE_BOX_STATE.DEACTIVATING;
-        await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
-        this.style.removeProperty('visibility');
-        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
-    }
-
-    /**
-     * 
-     * @param {string} top css value
-     * @returns {Promise<void>}
-     */
-    async _messageBoxChangeState(state) {
-        return new Promise((resolve) => {
-            this.dataset.state = state;
-    
-            const listener = element => {
-                if (element.target !== this._messageBox) {
-                    return;
-                }
-    
-                this._messageBox.removeEventListener('transitionend', listener);
-                resolve();
-            };
-            this._messageBox.addEventListener('transitionend', listener);
-        });
-    }
-
     /**
      * 
      * @param {string} text May include html
@@ -228,9 +183,8 @@ export class MessageBoxComponent extends BaseComponent {
      * @description Displays the text one character at a time
      */
     async messageBoxDisplayText(text, displayImmediately = false) {
-        if (!this.messageBoxIsVisible()) {
-            await this.messageBoxShow();
-        }
+        this._saveCssVariables();
+
         this._boxState = MESSAGE_BOX_STATE.ACTIVE;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
@@ -302,15 +256,6 @@ export class MessageBoxComponent extends BaseComponent {
         this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
-    }
-
-    /**
-     * 
-     * @param {string} text 
-     */
-    async messageBoxDisplaySingleMessage(text) {
-        await this.messageBoxDisplayText(text);
-        await this.messageBoxHide();
     }
 
     messageBoxDisplayImmediately() {
@@ -499,10 +444,6 @@ export class MessageBoxComponent extends BaseComponent {
 
     messageBoxForceUpdateAfterCssChange() {
         this._saveCssVariables();
-    }
-
-    messageBoxIsVisible() {
-        return this._messageBox.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true, contentVisibilityAuto: true });
     }
 
     messageBoxIsWaiting() {

@@ -30,4 +30,14 @@ export class HideableOpenable extends ElementStack {
         this.element;
     }
 
+    async showAndOpen() {
+        this.hideable.hideableShow();
+        await this.openable.openableOpen();
+    }
+
+    async closeAndHide() {
+        await this.openable.openableClose();
+        this.hideable.hideableHide();
+    }
+
 }
