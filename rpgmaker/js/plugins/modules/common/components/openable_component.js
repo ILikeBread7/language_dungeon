@@ -71,8 +71,8 @@ export class OpenableComponent extends BaseComponent {
             this.dataset.currentState = currentState;
             this.dataset.targetState = targetState;
     
-            const listener = element => {
-                if (element.target !== this) {
+            const listener = event => {
+                if (event.target !== this) {
                     return;
                 }
     
