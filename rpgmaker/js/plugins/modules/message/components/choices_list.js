@@ -20,10 +20,46 @@ export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
  * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoiceListEvent
  */
 
+const CHOICES_LIST_CSS_CLASS_NAME = 'choices-list';
+
 export class ChoicesListComponent extends BaseComponent {
 
     static get componentDefaultTagName() {
         return 'choices-list-component';
+    }
+
+    get componentCssStyle() {
+        return /*css*/`
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} {
+                list-style-type: none;
+                padding: 0px;
+                background: green;
+            }
+
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li {
+                background: yellow;
+                text-align: center;
+                cursor: pointer;
+            }
+
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li:not(:first-of-type) {
+                margin-top: 10px;
+            }
+
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-disabled="disabled"] {
+                pointer-events: none;
+                opacity: 0.6;
+            }
+
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-chosen="chosen"] {
+                background: aqua;
+            }
+
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-selected="selected"] {
+                background: blue;
+                color: white;
+            }
+        `;
     }
 
     constructor() {
@@ -31,6 +67,7 @@ export class ChoicesListComponent extends BaseComponent {
 
         const list = document.createElement('ul');
         list.part = list.id = 'list';
+        list.classList.add(CHOICES_LIST_CSS_CLASS_NAME);
 
         list.addEventListener('pointerover', event => {
             const element = event.target;
@@ -50,42 +87,9 @@ export class ChoicesListComponent extends BaseComponent {
             this.choicesListConfirmOption(index);
         });
 
-        const style = document.createElement('style');
-        style.innerHTML = /*css*/`
-            #${list.id} {
-                list-style-type: none;
-                padding: 0px;
-                background: green;
-            }
-
-            #${list.id} > li {
-                background: yellow;
-                text-align: center;
-                cursor: pointer;
-            }
-
-            #${list.id} > li:not(:first-of-type) {
-                margin-top: 10px;
-            }
-
-            #${list.id} > li[data-disabled="disabled"] {
-                pointer-events: none;
-                opacity: 0.6;
-            }
-
-            #${list.id} > li[data-chosen="chosen"] {
-                background: aqua;
-            }
-
-            #${list.id} > li[data-selected="selected"] {
-                background: blue;
-                color: white;
-            }
-        `;
-
         this._active = false;
         this._list = list;
-        this.append(style, list);
+        this.appendChild(list);
     }
 
     choicesListActivate() {
