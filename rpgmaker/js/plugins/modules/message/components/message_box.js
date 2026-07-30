@@ -1,13 +1,16 @@
-import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
+import { BaseComponent } from '../../common/components/base_component.js';
+import { VISIBILITY_STATE } from '../../common/enums.js';
 
-const startIndex = Object.entries(OPEN_STATE).length;
-export const MESSAGE_BOX_OPEN_STATE = /** @type {const} */ Object.freeze({
-    ...OPEN_STATE,
-    WAITING_FOR_SCROLL: startIndex + 1,
-    WAITING_FOR_CLOSE: startIndex + 2
+export const MESSAGE_BOX_STATE = /** @type {const} */ Object.freeze({
+    INACTIVE: 'inactive',
+    ACTIVATING: 'activating',
+    ACTIVE: 'active',
+    DEACTIVATING: 'deactivating',
+    WAITING_FOR_SCROLL: 'waiting-for-scroll',
+    WAITING_FOR_CLOSE: 'waiting-for-close'
 });
 /**
- * @typedef { Enum<MESSAGE_BOX_OPEN_STATE> } MessageBoxOpenState
+ * @typedef { Enum<MESSAGE_BOX_STATE> } MessageBoxState
  */
 
 export const EVENTS = Object.freeze({
@@ -33,52 +36,20 @@ const VOID_TAGS = [
     'wbr'
 ];
 
-export class MessageBox extends HTMLElement {
+const messageBoxClassName = 'message-box';
+const messageContainerClassName = 'message-container';
+const hiddenWholeTextSpanClassName = 'hidden-whole-text-span';
+const nextPageIndicatorClassName = 'next-page-indicator';
 
-    /**
-     * 
-     * @param {string} [tagName] 
-     */
-    static register(tagName) {
-        registerMessageBox(tagName);
+export class MessageBoxComponent extends BaseComponent {
+
+    static get componentDefaultTagName() {
+        return 'message-box-component';
     }
 
-    /**
-     * 
-     * @param { {
-     *  wait: (time: number) => Promise<void>
-     * } } dependencies 
-     */
-    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._dependencies = dependencies;
-        this._waitForInputResolve = null;
-
-        const messageBox = document.createElement('div');
-        this.dataset.state = VISIBILITY_STATE.HIDDEN;
-        messageBox.part = messageBox.id = 'message-box';
-
-        const messageContainer = document.createElement('div');
-        messageContainer.part = messageContainer.id = 'message-container';
-        messageContainer.style.setProperty(LINES_CSS_VAR, 4);
-
-        const hiddenWholeTextSpan = document.createElement('span');
-        hiddenWholeTextSpan.id = 'whole-text-span';
-
-        const displayedTextSpan = document.createElement('span');
-
-        messageContainer.append(hiddenWholeTextSpan, displayedTextSpan);
-        messageBox.appendChild(messageContainer);
-
-        const nextPageIndicator = document.createElement('div');
-        nextPageIndicator.part = nextPageIndicator.id = 'next-page-indicator';
-        nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
-        messageBox.appendChild(nextPageIndicator);
-
-        const style = document.createElement('style');
-        style.innerHTML = /*css*/`
-            :host {
+    get componentCssStyle() {
+        return /*css*/`
+            ${this.componentTagName} {
                 --lines-per-screen: 4;
                 --line-height: 1.2;
                 --transition-time: 0.5s;
@@ -87,15 +58,15 @@ export class MessageBox extends HTMLElement {
                 visibility: hidden;
             }
 
-            :host([data-state="${VISIBILITY_STATE.SHOWN}"]) #${messageBox.id} {
+            ${this.componentTagName}[data-state="${VISIBILITY_STATE.SHOWN}"] .${messageBoxClassName} {
                 opacity: 1;
             }
 
-            :host([data-state="${VISIBILITY_STATE.HIDDEN}"]) #${messageBox.id} {
+            ${this.componentTagName}[data-state="${VISIBILITY_STATE.HIDDEN}"] .${messageBoxClassName} {
                 opacity: 0;
             }
 
-            #${messageBox.id} {
+            ${this.componentTagName} .${messageBoxClassName} {
                 width: 100%;
                 height: var(--box-height);
                 background: #000000;
@@ -108,7 +79,7 @@ export class MessageBox extends HTMLElement {
                 overflow: hidden;
             }
 
-            #${messageContainer.id} {
+            ${this.componentTagName} .${messageContainerClassName} {
                 --container-height: calc(1em * var(--line-height) * var(${LINES_CSS_VAR}));
 
                 width: 100%;
@@ -118,13 +89,13 @@ export class MessageBox extends HTMLElement {
                 transition: top var(--transition-time);
             }
 
-            #${hiddenWholeTextSpan.id} {
+            ${this.componentTagName} .${hiddenWholeTextSpanClassName} {
                 position: absolute;
                 visibility: hidden;
                 z-index: -1;
             }
 
-            #${nextPageIndicator.id} {
+            ${this.componentTagName} .${nextPageIndicatorClassName} {
                 --triangle-side-length: 0.325em;
                 --triangle-height: calc(var(--triangle-side-length) * 0.87);
                 position: absolute;
@@ -136,14 +107,14 @@ export class MessageBox extends HTMLElement {
                 background: #ffffff;
             }
 
-            #${nextPageIndicator.id}[data-state="${VISIBILITY_STATE.SHOWN}"] {
+            ${this.componentTagName} .${nextPageIndicatorClassName}[data-state="${VISIBILITY_STATE.SHOWN}"] {
                 animation-name: floating;
                 animation-duration: 1s;
                 animation-iteration-count: infinite;
                 visibility: visible;
             }
 
-            #${nextPageIndicator.id}[data-state="${VISIBILITY_STATE.HIDDEN}"] {
+            ${this.componentTagName} .${nextPageIndicatorClassName}[data-state="${VISIBILITY_STATE.HIDDEN}"] {
                 visibility: hidden;
             }
 
@@ -156,7 +127,40 @@ export class MessageBox extends HTMLElement {
                 }
             }
         `;
-        this.shadowRoot.append(style, messageBox);
+    }
+
+    /**
+     * 
+     * @param { {
+     *  wait: (time: number) => Promise<void>
+     * } } dependencies 
+     */
+    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
+        super(dependencies);
+        this._waitForInputResolve = null;
+
+        const messageBox = document.createElement('div');
+        this.dataset.state = VISIBILITY_STATE.HIDDEN;
+        messageBox.classList.add(messageBoxClassName);
+
+        const messageContainer = document.createElement('div');
+        messageContainer.classList.add(messageContainerClassName);
+        messageContainer.style.setProperty(LINES_CSS_VAR, 4);
+
+        const hiddenWholeTextSpan = document.createElement('span');
+        hiddenWholeTextSpan.classList.add(hiddenWholeTextSpanClassName);
+
+        const displayedTextSpan = document.createElement('span');
+
+        messageContainer.append(hiddenWholeTextSpan, displayedTextSpan);
+        messageBox.appendChild(messageContainer);
+
+        const nextPageIndicator = document.createElement('div');
+        nextPageIndicator.classList.add(nextPageIndicatorClassName);
+        nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
+        messageBox.appendChild(nextPageIndicator);
+
+        this.appendChild(messageBox);
 
         this._wordSpan = document.createElement('span');
         this._wordShownPartSpan = document.createElement('span');
@@ -174,7 +178,7 @@ export class MessageBox extends HTMLElement {
         this._messageTextDisplayImmediately = false;
         this._preventScroll = false;
         this._forceFinish = false;
-        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSED;
+        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
@@ -183,17 +187,17 @@ export class MessageBox extends HTMLElement {
     }
 
     async messageBoxShow() {
-        this._boxState = MESSAGE_BOX_OPEN_STATE.OPENING;
+        this._boxState = MESSAGE_BOX_STATE.ACTIVATING;
         this.style.setProperty('visibility', 'visible');
         await this._messageBoxChangeState(VISIBILITY_STATE.SHOWN);
-        this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
+        this._boxState = MESSAGE_BOX_STATE.ACTIVE;
     }
 
     async messageBoxHide() {
-        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSING;
+        this._boxState = MESSAGE_BOX_STATE.DEACTIVATING;
         await this._messageBoxChangeState(VISIBILITY_STATE.HIDDEN);
         this.style.removeProperty('visibility');
-        this._boxState = MESSAGE_BOX_OPEN_STATE.CLOSED;
+        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
     }
 
     /**
@@ -227,7 +231,7 @@ export class MessageBox extends HTMLElement {
         if (!this.messageBoxIsVisible()) {
             await this.messageBoxShow();
         }
-        this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
+        this._boxState = MESSAGE_BOX_STATE.ACTIVE;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
         if (displayImmediately) {
@@ -260,10 +264,10 @@ export class MessageBox extends HTMLElement {
                     for (const char of token) {
                         const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
                         if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
-                            this._boxState = MESSAGE_BOX_OPEN_STATE.WAITING_FOR_SCROLL;
+                            this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_SCROLL;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
-                            this._boxState = MESSAGE_BOX_OPEN_STATE.OPEN;
+                            this._boxState = MESSAGE_BOX_STATE.ACTIVE;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                             if (this._preventScroll) {
                                 this._preventScroll = false;
@@ -295,7 +299,7 @@ export class MessageBox extends HTMLElement {
             this._messageTextHtmlTagStack.splice(1);
         }
 
-        this._boxState = MESSAGE_BOX_OPEN_STATE.WAITING_FOR_CLOSE;
+        this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
     }
@@ -505,18 +509,15 @@ export class MessageBox extends HTMLElement {
         return !!this._waitForInputResolve;
     }
 
+    /**
+     * @type {MessageBoxState}
+     */
     get messageBoxState() {
         return this._boxState;
     }
 
-}
-
-/**
- * 
- * @param {string} [tagName] 
- */
-export function registerMessageBox(tagName = 'message-box') {
-    if (!customElements.get(tagName)) {
-        customElements.define(tagName, MessageBox);
+    get messageBoxInactive() {
+        return this._boxState === MESSAGE_BOX_STATE.INACTIVE;
     }
+
 }

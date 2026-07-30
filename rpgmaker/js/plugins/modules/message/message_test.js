@@ -2,16 +2,16 @@ import { HideableComponent } from '../common/components/hideable_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { OpenableComponent } from '../common/components/openable_component.js';
 import { ChoicesListComponent } from './components/choices_list.js';
-import { MessageBox } from './components/message_box.js';
+import { MessageBoxComponent } from './components/message_box.js';
 import { takeOneChoice } from './components/utils.js';
 
-MessageBox.register();
+MessageBoxComponent.register();
 ChoicesListComponent.register();
 OpenableComponent.register();
 HideableComponent.register();
 
 console.log('messagw!');
-const box = new MessageBox();
+const box = new MessageBoxComponent();
 document.body.appendChild(box);
 
 async function displayText(text) {

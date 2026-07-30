@@ -1,6 +1,6 @@
 import { OPEN_STATE } from '../common/enums.js';
 import { CHOICES_LIST_EVENTS, ChoicesList } from './components/choices_list.js';
-import { EVENTS as MESSAGE_BOX_EVENTS, MessageBox } from './components/message_box.js';
+import { EVENTS as MESSAGE_BOX_EVENTS, MessageBoxComponent } from './components/message_box.js';
 
 const style = document.createElement('style');
 style.innerHTML = /*css*/`
@@ -27,7 +27,7 @@ document.body.appendChild(style);
 const messageBoxStyle = document.createElement('style');
 const choicesListStyle = document.createElement('style');
 /**
- * @type {MessageBox}
+ * @type {MessageBoxComponent}
  */
 let messageBox = null;
 
@@ -48,8 +48,8 @@ export function initializeAll() {
 }
 
 export function addMessageBox() {
-    MessageBox.register();
-    messageBox = new MessageBox();
+    MessageBoxComponent.register();
+    messageBox = new MessageBoxComponent();
     const boxInlineStyle = messageBox.shadowRoot.getElementById('message-box').style;
     boxInlineStyle.setProperty('z-index', 999);
     boxInlineStyle.setProperty('bottom', '0px');
@@ -199,7 +199,7 @@ export function registerComponentsForRpgMaker() {
                         break;
                 }
             }
-        } else if (messageBox.messageBoxState !== OPEN_STATE.CLOSED && (input.isTriggered('ok') || touchInput.isTriggered())) {
+        } else if (!messageBox.messageBoxInactive() && (input.isTriggered('ok') || touchInput.isTriggered())) {
             messageBox.messageBoxInput();
         }
     }
@@ -207,7 +207,7 @@ export function registerComponentsForRpgMaker() {
     const _Game_Message_isBusy = _Game_Message_prototype.isBusy;
     _Game_Message_prototype.isBusy = function() {
         return _Game_Message_isBusy.call(this)
-            || messageBox.messageBoxState !== OPEN_STATE.CLOSED
+            || !messageBox.messageBoxInactive()
             || choicesList.choicesListState !== OPEN_STATE.CLOSED;
     }
 
