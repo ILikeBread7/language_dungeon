@@ -235,13 +235,18 @@ export function registerComponentsForRpgMaker() {
                         const { choices, defaultType, cancelType } = extractChoiceParams(params);
                         choicesCancelType = cancelType;
 
-                        takeOneChoice(choicesList, choices, defaultType).then(async playerChoice => {
+                        choicesList.element.choicesListSetChoices(choices);
+                        choicesList.element.choicesListSelectOptionNoEvent(defaultType);
+                        choicesList.element.choicesListActivate();
+                        choicesList.showAndOpen();
+                        choicesList.element.choicesListTakeChoice().then(playerChoice => {
+                            choicesList.element.choicesListDeactivate();
                             box.messageBoxForceFinish();
                             const index = playerChoice.cancelled ? -2 : playerChoice.index;
                             gameInterpreter._branch[gameInterpreter._indent] = index;
+                            choicesList.closeAndHide();
                         });
 
-                        
                         // choicesList.choicesListSetChoices(choices);
                         // choicesList.choicesListSelectOptionNoEvent(defaultType);
                         // choicesList.choicesListShow();
@@ -310,7 +315,7 @@ export function registerComponentsForRpgMaker() {
             choicesList.element.choicesListSetChoices(choices);
             choicesList.element.choicesListSelectOptionNoEvent(defaultType);
             choicesList.element.choicesListActivate();
-            choicesList.showAndOpen();
+            await choicesList.showAndOpen();
             return choicesList.element.choicesListTakeChoice();
         }
     }
