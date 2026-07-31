@@ -4,10 +4,6 @@
         overflow: hidden;
     }
 
-    message-box::part(message-box) {
-        bottom: 0px;
-    }
-
     .centered {
         position: absolute;
         top: 50%;
@@ -22,6 +18,21 @@
 
     .half-screen {
         width: 50%;
+    }
+
+    hideable-component.bottom-slide-in {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    hideable-component.bottom-slide-in > openable-component {
+        transition-property: transform;
+    }
+
+    hideable-component.bottom-slide-in > openable-component[data-target-state="closed"] {
+        transform: translateY(100%);
+        opacity: initial;
     }
 </style>
 <script type="module" src="message_test.js"></script>

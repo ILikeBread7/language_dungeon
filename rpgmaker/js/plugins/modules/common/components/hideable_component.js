@@ -16,6 +16,10 @@ export class HideableComponent extends BaseComponent {
 
     get componentCssStyle() {
         return /*css*/`
+            ${this.componentTagName} {
+                display: block;
+            }
+
             ${this.componentTagName}[data-state="${SHOWN_STATE.HIDDEN}"] {
                 display: none;
             }

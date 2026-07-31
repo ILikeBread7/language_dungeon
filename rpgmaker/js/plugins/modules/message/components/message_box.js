@@ -55,6 +55,9 @@ export class MessageBoxComponent extends BaseComponent {
                 --transition-time: 0.5s;
                 --char-write-wait-ms: 50;
                 --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
+
+                display: block;
+                height: var(--box-height);
             }
 
             ${this.componentTagName} .${messageBoxClassName} {

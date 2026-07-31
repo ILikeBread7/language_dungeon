@@ -13,6 +13,7 @@ HideableComponent.register();
 console.log('messagw!');
 
 const messageBox = new HideableOpenable(new MessageBoxComponent());
+messageBox.topElement.classList.add('bottom-slide-in');
 const box = messageBox.element;
 document.body.appendChild(messageBox.topElement);
 

@@ -25,6 +25,7 @@ export class OpenableComponent extends BaseComponent {
     get componentCssStyle() {
         return /*css*/`
             ${this.componentTagName} {
+                display: block;
                 transition: opacity 2s;
             }
 
