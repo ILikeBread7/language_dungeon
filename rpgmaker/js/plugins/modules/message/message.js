@@ -1,6 +1,10 @@
+import { HideableComponent } from '../common/components/hideable_component.js';
+import { OpenableComponent } from '../common/components/openable_component.js';
 import { OPEN_STATE } from '../common/enums.js';
-import { CHOICES_LIST_EVENTS, ChoicesList } from './components/choices_list.js';
+import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { CHOICES_LIST_EVENTS, ChoicesListComponent } from './components/choices_list.js';
 import { EVENTS as MESSAGE_BOX_EVENTS, MessageBoxComponent } from './components/message_box.js';
+import { takeOneChoice } from './components/utils.js';
 
 const style = document.createElement('style');
 style.innerHTML = /*css*/`
@@ -8,31 +12,65 @@ style.innerHTML = /*css*/`
         --mesage-choice-transition-time: 0.1s;
     }
 
-    choices-list {
+    hideable-component {
+        position: relative;
+        z-index: 999;
+    }
+
+    openable-component {
         --transition-time: var(--mesage-choice-transition-time);
     }
 
-    message-box {
+    message-box-component {
         --transition-time: var(--mesage-choice-transition-time);
         --char-write-wait-ms: 25;
     }
 
-    message-box.whole-screen {
+    message-box-component.whole-screen {
         --box-height: 100vh;
         --lines-per-screen: 32;
+    }
+
+    .centered {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .with-message-box {
+        --message-box-height: calc(1em * 4 * 1.2);
+        top: calc((100vh - var(--message-box-height)) / 2);
+    }
+
+    .half-screen {
+        width: 50%;
+    }
+
+    hideable-component.bottom-slide-in {
+        position: absolute;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    hideable-component.bottom-slide-in > openable-component {
+        transition-property: transform;
+    }
+
+    hideable-component.bottom-slide-in > openable-component[data-target-state="closed"] {
+        transform: translateY(100%);
+        opacity: initial;
     }
 `;
 document.body.appendChild(style);
 
-const messageBoxStyle = document.createElement('style');
-const choicesListStyle = document.createElement('style');
 /**
- * @type {MessageBoxComponent}
+ * @type {HideableOpenable<MessageBoxComponent>}
  */
 let messageBox = null;
 
 /**
- * @type {ChoicesList}
+ * @type {HideableOpenable<ChoicesListComponent>}
  */
 let choicesList = null;
 
@@ -42,6 +80,7 @@ let choicesList = null;
 let choicesCancelType;
 
 export function initializeAll() {
+    registerCommonComponents();
     void addMessageBox();
     void addChoicesList();
     setTimeout(registerComponentsForRpgMaker, 1000);
@@ -49,25 +88,24 @@ export function initializeAll() {
 
 export function addMessageBox() {
     MessageBoxComponent.register();
-    messageBox = new MessageBoxComponent();
-    const boxInlineStyle = messageBox.shadowRoot.getElementById('message-box').style;
-    boxInlineStyle.setProperty('z-index', 999);
-    boxInlineStyle.setProperty('bottom', '0px');
 
-    messageBox.shadowRoot.appendChild(messageBoxStyle);
+    messageBox = new HideableOpenable(new MessageBoxComponent());
+    const box = messageBox.element;
+    messageBox.topElement.classList.add('bottom-slide-in');
+
     document.body.style.setProperty('overflow', 'hidden');
     document.body.style.setProperty('margin', '0px');
-    document.body.appendChild(messageBox);
+    document.body.appendChild(messageBox.topElement);
 
-    window.$messageBox = {
-        messageBox,
-        setMessageBoxCss,
-        appendMessageBoxCss
-    };
+    window.$messageBox = messageBox;
+    box.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => SoundManager.playCursor());
 
-    messageBox.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => SoundManager.playCursor());
+    return box;
+}
 
-    return messageBox;
+function registerCommonComponents() {
+    HideableComponent.register();
+    OpenableComponent.register();
 }
 
 function playSelectSe() {
@@ -83,75 +121,20 @@ function playCancelSe() {
 }
 
 export function addChoicesList() {
-    ChoicesList.register();
-    choicesList = new ChoicesList();
-    document.body.appendChild(choicesList);
-    const listInlineStyle = choicesList.shadowRoot.getElementById('choices-list').style;
-    listInlineStyle.setProperty('z-index', 999);
+    registerCommonComponents();
+    ChoicesListComponent.register();
 
-    choicesList.shadowRoot.appendChild(choicesListStyle);
+    choicesList = new HideableOpenable(new ChoicesListComponent());
+    const list = choicesList.element;
+    document.body.appendChild(choicesList.topElement);
+    choicesList.topElement.classList.add('centered', 'half-screen');
 
-    window.$choicesList = {
-        choicesList,
-        setChoicesListCss,
-        appendChoicesListCss
-    };
+    window.$choicesList = choicesList;
+    list.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, playSelectSe);
+    list.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, playConfirmSe);
+    list.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, playCancelSe);
 
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, playSelectSe);
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, playConfirmSe);
-    choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, playCancelSe);
-
-    return choicesList;
-}
-
-/**
- * 
- * @param {string} css 
- */
-export function setMessageBoxCss(css) {
-    if (!messageBox) {
-        console.warn('Message Box not added');
-        return;
-    }
-    messageBoxStyle.innerHTML = css;
-    messageBox.messageBoxForceUpdateAfterCssChange();
-}
-
-/**
- * 
- * @param {string} css 
- */
-export function appendMessageBoxCss(css) {
-    if (!messageBox) {
-        console.warn('Message Box not added');
-        return;
-    }
-    messageBoxStyle.innerHTML += '\n' + css;
-    messageBox.messageBoxForceUpdateAfterCssChange();
-}
-
-/**
- * 
- * @param {string} css 
- */
-export function setChoicesListCss(css) {
-    if (!choicesList) {
-        console.warn('Choices List not added');
-        return;
-    }
-    choicesListStyle.innerHTML = css;
-}
-
-/**
- * 
- * @param {string} css 
- */
-export function appendChoicesListCss(css) {
-    if (!choicesList) {
-        console.warn('Choices List not added');
-        return;
-    }
-    choicesListStyle.innerHTML += '\n' + css;
+    return list;
 }
 
 // polyfill for RPG Maker MV's older nw.js version
@@ -172,43 +155,49 @@ export function registerComponentsForRpgMaker() {
     const _Scene_Base_prototype = window.Scene_Base.prototype;
     const convertEscapeCharacters = window.Window_Base.prototype.convertEscapeCharacters;
 
+    for (const hideable of document.getElementsByTagName(messageBox.topElement.componentTagName)) {
+        hideable.style.removeProperty('z-index');
+    }
+    const list = choicesList.element;
+    const box = messageBox.element;
+
     const _Scene_Base_prototype_update = _Scene_Base_prototype.update;
     _Scene_Base_prototype.update = function() {
         _Scene_Base_prototype_update.call(this);
 
-        if (choicesList.choicesListState === OPEN_STATE.OPEN) {
+        if (list.choicesListActive) {
             if (input.isTriggered('up')) {
-                choicesList.choicesListSelectPreviousOption();
+                list.choicesListSelectPreviousOption();
             } else if (input.isTriggered('down')) {
-                choicesList.choicesListSelectNextOption();
+                list.choicesListSelectNextOption();
             } else if (input.isTriggered('ok')) {
-                choicesList.choicesListConfirmCurrentOption();
+                list.choicesListConfirmCurrentOption();
             } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
                 switch (choicesCancelType) {
                     case -1: // Disallow
                         SoundManager.playBuzzer();
                         break;
                     case -2:    // Branch
-                        choicesList.choicesListCancelNoEvent();
+                        list.choicesListCancelNoEvent();
                         playCancelSe();
                         break;
                     default:
-                        choicesList.choicesListSelectOptionNoEvent(choicesCancelType);
-                        choicesList.choicesListConfirmOptionNoEvent(choicesCancelType);
+                        list.choicesListSelectOptionNoEvent(choicesCancelType);
+                        list.choicesListConfirmOptionNoEvent(choicesCancelType);
                         playCancelSe();
                         break;
                 }
             }
-        } else if (!messageBox.messageBoxInactive() && (input.isTriggered('ok') || touchInput.isTriggered())) {
-            messageBox.messageBoxInput();
+        } else if (box.messageBoxBusy && (input.isTriggered('ok') || touchInput.isTriggered())) {
+            box.messageBoxInput();
         }
     }
 
     const _Game_Message_isBusy = _Game_Message_prototype.isBusy;
     _Game_Message_prototype.isBusy = function() {
         return _Game_Message_isBusy.call(this)
-            || !messageBox.messageBoxInactive()
-            || choicesList.choicesListState !== OPEN_STATE.CLOSED;
+            || box.messageBoxBusy
+            || list.choicesListActive;
     }
 
     let asyncCommand101Promise = null;
@@ -226,6 +215,7 @@ export function registerComponentsForRpgMaker() {
             let index = gameInterpreter._index;
             let showImmediately = false;
 
+            messageBox.showAndOpen();
             do {
                 const texts = [];
                 while (nextCommand(gameInterpreter, index).code === 401) {  // Text data
@@ -245,17 +235,24 @@ export function registerComponentsForRpgMaker() {
                         const { choices, defaultType, cancelType } = extractChoiceParams(params);
                         choicesCancelType = cancelType;
 
-                        choicesList.choicesListSetChoices(choices);
-                        choicesList.choicesListSelectOptionNoEvent(defaultType);
-                        choicesList.choicesListShow();
-                        await choicesList.choicesListOpen();
-                        choicesList.choicesListTakeChoice().then(async playerChoice => {
-                            messageBox.messageBoxForceFinish();
-                            await choicesList.choicesListClose();
-                            choicesList.choicesListHide();
+                        takeOneChoice(choicesList, choices, defaultType).then(async playerChoice => {
+                            box.messageBoxForceFinish();
                             const index = playerChoice.cancelled ? -2 : playerChoice.index;
                             gameInterpreter._branch[gameInterpreter._indent] = index;
                         });
+
+                        
+                        // choicesList.choicesListSetChoices(choices);
+                        // choicesList.choicesListSelectOptionNoEvent(defaultType);
+                        // choicesList.choicesListShow();
+                        // await choicesList.choicesListOpen();
+                        // choicesList.choicesListTakeChoice().then(async playerChoice => {
+                        //     messageBox.messageBoxForceFinish();
+                        //     await choicesList.choicesListClose();
+                        //     choicesList.choicesListHide();
+                        //     const index = playerChoice.cancelled ? -2 : playerChoice.index;
+                        //     gameInterpreter._branch[gameInterpreter._indent] = index;
+                        // });
                         break;
                     // case 103:  // Input Number
                     //     index++;
@@ -269,10 +266,10 @@ export function registerComponentsForRpgMaker() {
 
                 index++;
                 gameInterpreter.setWaitMode('message');
-                await messageBox.messageBoxDisplayText(convertEscapeCharacters(texts.join('\n')), showImmediately);
+                await box.messageBoxDisplayText(convertEscapeCharacters(texts.join('\n')), showImmediately);
             } while(currentCommand(gameInterpreter, index).code === 101);    // Show message
 
-            await messageBox.messageBoxHide();
+            await messageBox.closeAndHide();
             gameInterpreter._index = index;
         }
     }
@@ -293,6 +290,8 @@ export function registerComponentsForRpgMaker() {
                 asyncCommand102Promise = null;
                 const index = playerChoice.cancelled ? -2 : playerChoice.index;
                 this._branch[this._indent] = index;
+                choicesList.element.choicesListDeactivate();
+                choicesList.closeAndHide();
             });
         }
 
@@ -308,7 +307,11 @@ export function registerComponentsForRpgMaker() {
             const { choices, defaultType, cancelType } = extractChoiceParams(params);
             choicesCancelType = cancelType;
 
-            return choicesList.choicesListTakeOneChoice(choices, defaultType);
+            choicesList.element.choicesListSetChoices(choices);
+            choicesList.element.choicesListSelectOptionNoEvent(defaultType);
+            choicesList.element.choicesListActivate();
+            choicesList.showAndOpen();
+            return choicesList.element.choicesListTakeChoice();
         }
     }
 

@@ -259,6 +259,7 @@ export class MessageBoxComponent extends BaseComponent {
         this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
+        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
     }
 
     messageBoxDisplayImmediately() {
@@ -460,8 +461,8 @@ export class MessageBoxComponent extends BaseComponent {
         return this._boxState;
     }
 
-    get messageBoxInactive() {
-        return this._boxState === MESSAGE_BOX_STATE.INACTIVE;
+    get messageBoxBusy() {
+        return this._boxState !== MESSAGE_BOX_STATE.INACTIVE;
     }
 
 }

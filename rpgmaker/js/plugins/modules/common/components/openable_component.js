@@ -26,7 +26,7 @@ export class OpenableComponent extends BaseComponent {
         return /*css*/`
             ${this.componentTagName} {
                 display: block;
-                transition: opacity 2s;
+                transition: opacity var(--transition-time, 2s);
             }
 
             ${this.componentTagName}[data-target-state="${FINAL_OPEN_STATE.OPEN}"] {
