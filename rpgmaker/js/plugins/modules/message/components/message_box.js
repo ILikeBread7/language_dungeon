@@ -362,7 +362,7 @@ export class MessageBoxComponent extends BaseComponent {
     _findLinesNumber(element) {
         const style = getComputedStyle(element);
         const lineHeight = this._getNumberFromCssPxString(style.lineHeight);
-        return Math.ceil(element.getBoundingClientRect().height / lineHeight);
+        return Math.ceil((element.getBoundingClientRect().height - this._textUnderScreenTolerance) / lineHeight);
     }
 
     /**
@@ -391,7 +391,7 @@ export class MessageBoxComponent extends BaseComponent {
                 resolve();
             };
             this._messageContainer.addEventListener('transitionend', listener);
-        })
+        });
     }
 
     _adjustContainerScrollAfterResize() {
