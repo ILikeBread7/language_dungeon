@@ -226,7 +226,9 @@ export class MessageBoxComponent extends BaseComponent {
                             await this._waitForInput();
                             this._boxState = MESSAGE_BOX_STATE.ACTIVE;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
-                            if (this._preventScroll) {
+                            if (this._forceFinish) {
+                                break;
+                            } else if (this._preventScroll) {
                                 this._preventScroll = false;
                             } else {
                                 await this._messageContainerScroll();
