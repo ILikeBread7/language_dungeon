@@ -26,7 +26,7 @@ async function displayText(text) {
     }
     const fullText = repeatedText.join('\n');
 
-    setTimeout(() => box.messageBoxForceFinish(), 3000);
+    // setTimeout(() => box.messageBoxForceFinish(), 3000);
     await displaySingleMessage(messageBox, fullText);
 
     messageBox.showAndOpen();

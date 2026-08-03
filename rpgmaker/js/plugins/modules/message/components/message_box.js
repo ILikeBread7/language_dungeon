@@ -195,6 +195,7 @@ export class MessageBoxComponent extends BaseComponent {
             this.messageBoxDisplayImmediately();
         }
 
+        let lastPreventedScrollContent = '';
         const tokens = this._splitTextWithHtmlForDisplay(text);
         for (const token of tokens) {
             if (this._isHtmlOpeningTag(token)) {
@@ -223,14 +224,20 @@ export class MessageBoxComponent extends BaseComponent {
                         if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
                             this.dataset.boxState = MESSAGE_BOX_STATE.WAITING_FOR_SCROLL;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
-                            await this._waitForInput();
+                            if (lastPreventedScrollContent === this._wordShownPartSpan.innerHTML.trim()) {
+                                this._preventScroll = false;
+                            } else {
+                                await this._waitForInput();
+                            }
                             this.dataset.boxState = MESSAGE_BOX_STATE.ACTIVE;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                             if (this._forceFinish) {
                                 break;
                             } else if (this._preventScroll) {
                                 this._preventScroll = false;
+                                lastPreventedScrollContent = this._wordShownPartSpan.innerHTML.trim();
                             } else {
+                                lastPreventedScrollContent = '';
                                 await this._messageContainerScroll();
                             }
                             this._messageTextDisplayImmediately = false;
