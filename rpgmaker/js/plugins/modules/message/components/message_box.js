@@ -171,12 +171,12 @@ export class MessageBoxComponent extends BaseComponent {
         this._messageTextDisplayImmediately = false;
         this._preventScroll = false;
         this._forceFinish = false;
-        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
+        this.dataset.boxState = MESSAGE_BOX_STATE.INACTIVE;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
         // Take some property values from css variables
-        new MutationObserver(() => this._saveCssVariables()).observe(this, { attributes: true });
+        new MutationObserver(() => this._saveCssVariables()).observe(this, { characterData: true });
     }
 
     /**
@@ -188,7 +188,7 @@ export class MessageBoxComponent extends BaseComponent {
     async messageBoxDisplayText(text, displayImmediately = false) {
         this._saveCssVariables();
 
-        this._boxState = MESSAGE_BOX_STATE.ACTIVE;
+        this.dataset.boxState = MESSAGE_BOX_STATE.ACTIVE;
         this._messageContainerReset();
         this._hiddenWholeTextSpan.innerHTML = text;
         if (displayImmediately) {
@@ -221,10 +221,10 @@ export class MessageBoxComponent extends BaseComponent {
                     for (const char of token) {
                         const messageBoxBottom = this._messageContainer.getBoundingClientRect().bottom;
                         if (this._wordHiddenPartSpan.getBoundingClientRect().top >= messageBoxBottom - this._textUnderScreenTolerance) {
-                            this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_SCROLL;
+                            this.dataset.boxState = MESSAGE_BOX_STATE.WAITING_FOR_SCROLL;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.SHOWN;
                             await this._waitForInput();
-                            this._boxState = MESSAGE_BOX_STATE.ACTIVE;
+                            this.dataset.boxState = MESSAGE_BOX_STATE.ACTIVE;
                             this._nextPageIndicator.dataset.state = VISIBILITY_STATE.HIDDEN;
                             if (this._forceFinish) {
                                 break;
@@ -258,10 +258,10 @@ export class MessageBoxComponent extends BaseComponent {
             this._messageTextHtmlTagStack.splice(1);
         }
 
-        this._boxState = MESSAGE_BOX_STATE.WAITING_FOR_CLOSE;
+        this.dataset.boxState = MESSAGE_BOX_STATE.WAITING_FOR_CLOSE;
         await this._waitForInput();
         this._messageContainerReset();
-        this._boxState = MESSAGE_BOX_STATE.INACTIVE;
+        this.dataset.boxState = MESSAGE_BOX_STATE.INACTIVE;
     }
 
     messageBoxDisplayImmediately() {
@@ -460,11 +460,11 @@ export class MessageBoxComponent extends BaseComponent {
      * @type {MessageBoxState}
      */
     get messageBoxState() {
-        return this._boxState;
+        return this.dataset.boxState;
     }
 
     get messageBoxBusy() {
-        return this._boxState !== MESSAGE_BOX_STATE.INACTIVE;
+        return this.dataset.boxState !== MESSAGE_BOX_STATE.INACTIVE;
     }
 
 }
