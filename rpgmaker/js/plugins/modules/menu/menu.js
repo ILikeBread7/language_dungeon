@@ -1,13 +1,13 @@
-import { MainMenu } from './components/main_menu.js';
+import { MainMenuComponent } from './components/main_menu.js';
 
 /**
- * @type {MainMenu}
+ * @type {MainMenuComponent}
  */
 let mainMenu;
 
 export function initializeMainMenu() {
-    MainMenu.register();
-    mainMenu = new MainMenu();
+    MainMenuComponent.register();
+    mainMenu = new MainMenuComponent();
     Object.assign(mainMenu.style, {
         position: 'absolute',
         width: '100%',

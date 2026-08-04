@@ -66,7 +66,6 @@ export class ChoicesListComponent extends BaseComponent {
         super();
 
         const list = document.createElement('ul');
-        list.part = list.id = 'list';
         list.classList.add(CHOICES_LIST_CSS_CLASS_NAME);
 
         list.addEventListener('pointerover', event => {

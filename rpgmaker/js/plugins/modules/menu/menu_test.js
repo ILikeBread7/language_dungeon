@@ -1,36 +1,60 @@
-import { MainMenu } from './components/main_menu.js';
+import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { MainMenuComponent } from './components/main_menu.js';
 
-MainMenu.register();
-const menu = new MainMenu();
-document.body.appendChild(menu);
+/**
+ * @typedef {import('../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
+ */
+
+/**
+ * @type {Object<string,ChoiceListChoice>}
+ */
+const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
+    ITEM: { text: 'Item', id: 1 },
+    FLOOR: { text: 'Floor', id: 2 },
+    OPTIONS: { text: 'Options', id: 3 },
+    SAVE: { text: 'Save', id: 4 },
+    EXIT: { text: 'Exit', id: 5 }
+});
+
+MainMenuComponent.register();
+
+const mainMenu = new HideableOpenable(new MainMenuComponent());
+const menu = mainMenu.element;
+document.body.appendChild(mainMenu.topElement);
 
 setTimeout(async () => {
-    menu.mainMenuOpen().then(shouldExit => {
-        if (shouldExit) {
-            menu.mainMenuHide();
+    menu.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
+    mainMenu.showAndOpen();
+
+    let playerChoice;
+    do {
+        playerChoice = await menu.mainMenuTakeChoice();
+        if (playerChoice.element) {
+            playerChoice.element.removeAttribute('data-chosen');
         }
-    });
-    setTimeout(() => menu.currentChoicesList.choicesListConfirmOption(2), 200);
+        console.log(playerChoice);
+    } while (!playerChoice.cancelled && playerChoice.id !== MAIN_MENU_CHOICES.EXIT.id);
 }, 100)
 
+let choicesList = menu.choicesList;
 document.addEventListener('keydown', event => {
     switch (event.key) {
         case 'ArrowDown':
-            menu.mainMenuSelectNextOption();
+            choicesList.choicesListSelectNextOption();
             break;
         case 'ArrowUp':
-            menu.mainMenuSelectPreviousOption();
+            choicesList.choicesListSelectPreviousOption();
             break;
         case 'Enter':
-            menu.mainMenuConfirmCurrentOption();
+            choicesList.choicesListConfirmCurrentOption();
             break;
         case 'Escape':
-            menu.mainMenuCancel();
-        case 'ArrowRight':
-            menu.mainMenuSetNextValue();
-        break;
-        case 'ArrowLeft':
-            menu.mainMenuSetPreviousValue();
-        break;
+            choicesList.choicesListCancel();
+        // case 'ArrowRight':
+        //     choicesList.choicesListSetNextValue();
+        // break;
+        // case 'ArrowLeft':
+        //     choicesList.choicesListSetPreviousValue();
+        // break;
     }
 })
