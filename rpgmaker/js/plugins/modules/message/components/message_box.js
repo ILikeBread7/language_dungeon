@@ -176,7 +176,7 @@ export class MessageBoxComponent extends BaseComponent {
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
 
         // Take some property values from css variables
-        new MutationObserver(() => this._saveCssVariables()).observe(this, { characterData: true });
+        new MutationObserver(() => this._saveCssVariables()).observe(this, { attributeFilter: [ 'style', 'class' ] });
     }
 
     /**
