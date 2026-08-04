@@ -2,18 +2,14 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { MainMenuComponent } from './components/main_menu.js';
 
 /**
- * @typedef {import('../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
- */
-
-/**
- * @type {Object<string,ChoiceListChoice>}
+ * @type {Object<string,import('./components/main_menu.js').MainMenuOption>}
  */
 const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
-    ITEM: { text: 'Item', id: 1 },
-    FLOOR: { text: 'Floor', id: 2 },
-    OPTIONS: { text: 'Options', id: 3 },
-    SAVE: { text: 'Save', id: 4 },
-    EXIT: { text: 'Exit', id: 5 }
+    ITEM: { text: 'Item', id: 1, explanation: 'Use and manage items' },
+    FLOOR: { text: 'Floor', id: 2, explanation: 'Pick up items from the floor' },
+    OPTIONS: { text: 'Options', id: 3, explanation: "Adjust the game's settings" },
+    SAVE: { text: 'Save', id: 4, explanation: 'Save your progress' },
+    EXIT: { text: 'Exit', id: 5, explanation: 'Close this menu, and return to the game' }
 });
 
 MainMenuComponent.register();
@@ -34,6 +30,7 @@ setTimeout(async () => {
         }
         console.log(playerChoice);
     } while (!playerChoice.cancelled && playerChoice.id !== MAIN_MENU_CHOICES.EXIT.id);
+    await mainMenu.closeAndHide();
 }, 100)
 
 let choicesList = menu.choicesList;

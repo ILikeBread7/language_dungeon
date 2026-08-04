@@ -14,8 +14,31 @@
         z-index: -1;
     }
 
+    openable-component {
+        --transition-time: 0.5s;
+    }
+
+    .explanation {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        background: hsla(59deg, 50%, 80%, 0.5);
+        height: 100%;
+    }
+
+    .explanation,
     .choices-list {
         margin: 0px;
+        transition: transform calc(var(--transition-time) / 2);
+        width: 50%;
+    }
+
+    openable-component[data-target-state="closed"] .choices-list {
+        transform: translateX(-100%);
+    }
+
+    openable-component[data-target-state="closed"] .explanation {
+        transform: translateX(100%);
     }
 </style>
 <script type="module" src="menu_test.js"></script>
