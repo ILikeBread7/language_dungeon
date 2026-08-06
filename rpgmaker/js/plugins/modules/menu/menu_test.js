@@ -18,20 +18,28 @@ const mainMenu = new HideableOpenable(new MainMenuComponent());
 const menu = mainMenu.element;
 document.body.appendChild(mainMenu.topElement);
 
-(async () => {
-    menu.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
-    mainMenu.showAndOpen();
+const tests = {
+    async menu() {
+        menu.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
+        mainMenu.showAndOpen();
 
-    let playerChoice;
-    do {
-        playerChoice = await menu.mainMenuTakeChoice();
-        if (playerChoice.element) {
-            playerChoice.element.removeAttribute('data-chosen');
-        }
-        console.log(playerChoice);
-    } while (!playerChoice.cancelled && playerChoice.id !== MAIN_MENU_CHOICES.EXIT.id);
-    await mainMenu.closeAndHide();
-})();
+        let playerChoice;
+        do {
+            playerChoice = await menu.mainMenuTakeChoice();
+            if (playerChoice.element) {
+                playerChoice.element.removeAttribute('data-chosen');
+            }
+            console.log(playerChoice);
+        } while (!playerChoice.cancelled && playerChoice.id !== MAIN_MENU_CHOICES.EXIT.id);
+        await mainMenu.closeAndHide();
+    },
+
+    async options() {
+        
+    }
+};
+tests.options();
+
 
 let choicesList = menu.choicesList;
 document.addEventListener('keydown', event => {

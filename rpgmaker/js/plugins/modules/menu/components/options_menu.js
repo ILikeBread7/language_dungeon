@@ -1,4 +1,5 @@
-import { CHOICES_LIST_EVENTS, ChoicesList } from '../../message/components/choices_list.js';
+import { BaseComponent } from '../../common/components/base_component.js';
+import { CHOICES_LIST_EVENTS, ChoicesList, ChoicesListComponent } from '../../message/components/choices_list.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
@@ -20,55 +21,19 @@ const ConfigManager = globalThis.ConfigManager || {
 
 const GO_BACK_ID = 999;
 
-export class OptionsMenu extends HTMLElement {
+export class OptionsMenu extends BaseComponent {
 
-    /**
-     * 
-     * @param {string} [tagName] 
-     */
-    static register(tagName) {
-        registerOptionsMenu(tagName);
+    static get componentDefaultTagName() {
+        return 'options-menu-component';
     }
 
-    /**
-     * 
-     * @param { {
-     *  wait: (time: number) => Promise<void>
-     * } } dependencies 
-     */
-    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._dependencies = dependencies;
-
-        ChoicesList.register();
-        this._optionsMenuChoicesList = new ChoicesList(dependencies);
-        this._optionsMenuChoicesList.part = this._optionsMenuChoicesList.id = 'options-menu-choices-list';
-        this._optionsMenuOptionExplanationDiv = document.createElement('div');
-        this._optionsMenuOptionExplanationDiv.part = this._optionsMenuOptionExplanationDiv.id = 'options-menu-option-explanation-div';
-
-        const style = document.createElement('style');
-        style.innerHTML = /*css*/`
-            :host {
-                --transition-time: 0.1s;
-                --choices-list-transition-time: var(--transition-time);
-                display: none;
-
-                transition-property: opacity;
-                transition-duration: var(--transition-time);
-                opacity: 1;
-
-                @starting-style {
-                    opacity: 0;
-                }
-            }
-
-            #${this._optionsMenuChoicesList.id}::part(choices-list) {
+    get componentCssStyle() {
+        return /*css*/`
+           ${this.componentTagName} .choices-list {
                 anchor-name: --choices-list;
-                --transition-time: var(--choices-list-transition-time);
             }
 
-            #${this._optionsMenuOptionExplanationDiv.id} {
+           ${this.componentTagName} .explanation {
                 text-align: center;
                 width: 100%;
                 height: 100%;
@@ -76,12 +41,19 @@ export class OptionsMenu extends HTMLElement {
                 top: anchor(--choices-list bottom);
             }
         `;
+    }
 
-        this.shadowRoot.append(
-            style,
-            this._optionsMenuChoicesList,
-            this._optionsMenuOptionExplanationDiv
-        )
+    constructor() {
+        super();
+        ChoicesListComponent.register();
+
+        this._choicesList = new ChoicesListComponent();
+        this._choicesList.classList.add('choices-list');
+
+        this._explanationDiv = document.createElement('div');
+        this._explanationDiv.classList.add('explanation');
+
+        this.append(this._choicesList, this._explanationDiv);
 
         const step = 10;
         const mod = 100 + step;
@@ -162,31 +134,31 @@ export class OptionsMenu extends HTMLElement {
             option.text += /* html */` <span class="value"></span>`;
         }
 
-        this._optionsMenuChoicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
+        this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
             const index = event.detail.index;
             const option = this._options[index];
-            this._optionsMenuOptionExplanationDiv.innerHTML = option.explanation;
+            this._explanationDiv.innerHTML = option.explanation;
         });
     }
 
     async optionsMenuShow() {
-        this._optionsMenuOptionExplanationDiv.innerHTML = this._options[0].explanation;
+        this._explanationDiv.innerHTML = this._options[0].explanation;
         this.style.setProperty('display', 'unset');
 
-        this._optionsMenuChoicesList.choicesListSetChoices(this._options);
+        this._choicesList.choicesListSetChoices(this._options);
         
-        const displayedOptions = this._optionsMenuChoicesList.displayedOptions;
+        const displayedOptions = this._choicesList.displayedOptions;
         for (let i = 0; i < this._options.length - 1; i++) { // -1 to skip "go back" option
             const option = this._options[i];
             const element = displayedOptions[i].element;
             this._updateOptionValue(option, element);
         }
 
-        this._optionsMenuChoicesList.choicesListSelectOptionNoEvent(0);
-        this._optionsMenuChoicesList.choicesListShow();
-        await this._optionsMenuChoicesList.choicesListOpen();
+        this._choicesList.choicesListSelectOptionNoEvent(0);
+        this._choicesList.choicesListShow();
+        await this._choicesList.choicesListOpen();
         for (let choice;;) {
-            choice = await this._optionsMenuChoicesList.choicesListTakeChoice();
+            choice = await this._choicesList.choicesListTakeChoice();
             if (choice.cancelled || choice.id === GO_BACK_ID) {
                 break;
             }
@@ -197,8 +169,8 @@ export class OptionsMenu extends HTMLElement {
             option.setNextValue();
             this._updateOptionValue(option, element);
         }
-        await this._optionsMenuChoicesList.choicesListClose();
-        this._optionsMenuChoicesList.choicesListHide();
+        await this._choicesList.choicesListClose();
+        this._choicesList.choicesListHide();
     }
 
     optionsMenuHide() {
@@ -207,7 +179,7 @@ export class OptionsMenu extends HTMLElement {
     }
 
     optionsMenuSetNextValue() {
-        const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
+        const currentlySelectedOption = this._choicesList.currentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
             if (!option.setNextValue) {
@@ -220,7 +192,7 @@ export class OptionsMenu extends HTMLElement {
     }
 
     optionsMenuSetPreviousValue() {
-        const currentlySelectedOption = this._optionsMenuChoicesList.currentlySelectedOption;
+        const currentlySelectedOption = this._choicesList.currentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
             if (!option.setPreviousValue) {
@@ -243,7 +215,7 @@ export class OptionsMenu extends HTMLElement {
     }
 
     get choicesList() {
-        return this._optionsMenuChoicesList;
+        return this._choicesList;
     }
 
 }
@@ -254,14 +226,4 @@ function mapToOnOff(boolValue) {
 
 function mapToPercentage(value) {
     return `${value}%`;
-}
-
-/**
- * 
- * @param {string} [tagName] 
- */
-export function registerOptionsMenu(tagName = 'options-menu') {
-    if (!customElements.get(tagName)) {
-        customElements.define(tagName, OptionsMenu);
-    }
 }

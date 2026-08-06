@@ -18,26 +18,16 @@
         --transition-time: 0.5s;
     }
 
-    .explanation {
-        position: absolute;
-        right: 0px;
-        top: 0px;
-        background: hsla(59deg, 50%, 80%, 0.5);
-        height: 100%;
-    }
-
-    .explanation,
-    .choices-list {
-        margin: 0px;
+    main-menu-component .explanation,
+    main-menu-component .choices-list {
         transition: transform calc(var(--transition-time) / 2);
-        width: 50%;
     }
 
-    openable-component[data-target-state="closed"] .choices-list {
+    openable-component[data-target-state="closed"] main-menu-component .choices-list {
         transform: translateX(-100%);
     }
 
-    openable-component[data-target-state="closed"] .explanation {
+    openable-component[data-target-state="closed"] main-menu-component .explanation {
         transform: translateX(100%);
     }
 </style>

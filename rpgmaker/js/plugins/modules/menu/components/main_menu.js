@@ -15,6 +15,24 @@ export class MainMenuComponent extends BaseComponent {
         return 'main-menu-component';
     }
 
+    get componentCssStyle() {
+        return /*css*/`
+            ${this.componentTagName} .explanation {
+                position: absolute;
+                right: 0px;
+                top: 0px;
+                background: hsla(59deg, 50%, 80%, 0.5);
+                height: 100%;
+            }
+
+            ${this.componentTagName} .explanation,
+            ${this.componentTagName} .choices-list {
+                margin: 0px;
+                width: 50%;
+            }
+        `;
+    }
+
     constructor() {
         super();
         ChoicesListComponent.register();
