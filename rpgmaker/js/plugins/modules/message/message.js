@@ -2,7 +2,7 @@ import { HideableComponent } from '../common/components/hideable_component.js';
 import { OpenableComponent } from '../common/components/openable_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from './components/choices_list.js';
-import { EVENTS as MESSAGE_BOX_EVENTS, MessageBoxComponent } from './components/message_box.js';
+import { MESSAGE_BOX_EVENTS, MessageBoxComponent } from './components/message_box.js';
 
 const style = document.createElement('style');
 style.innerHTML = /*css*/`

@@ -13,7 +13,7 @@ export const MESSAGE_BOX_STATE = /** @type {const} */ Object.freeze({
  * @typedef { Enum<MESSAGE_BOX_STATE> } MessageBoxState
  */
 
-export const EVENTS = Object.freeze({
+export const MESSAGE_BOX_EVENTS = Object.freeze({
     CHAR_SHOWN: 'charshown'
 });
 
@@ -245,7 +245,7 @@ export class MessageBoxComponent extends BaseComponent {
     
                         if (!this._messageTextDisplayImmediately && !this._isWhitespace(char)) {
                             await this._dependencies.wait(this._charWriteWaitMs);
-                            this.dispatchEvent(new CustomEvent(EVENTS.CHAR_SHOWN));
+                            this.dispatchEvent(new CustomEvent(MESSAGE_BOX_EVENTS.CHAR_SHOWN));
                         }
                         this._wordShownPartSpan.innerHTML += char;
                         this._wordHiddenPartSpan.innerHTML = this._wordHiddenPartSpan.innerHTML.substring(1);
