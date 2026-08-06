@@ -31,13 +31,21 @@ export class BaseComponent extends HTMLElement {
         const style = this.componentCssStyle;
         if (style) {
             this._style = document.createElement('style');
-            this._style.innerHTML = style;
+            this._style.innerHTML = /*css*/`
+                @layer ${this.componentCssLayerName} {
+                    ${style}
+                }
+            `;
             this.appendChild(this._style);
         }
     }
 
     get componentTagName() {
         return this.tagName.toLowerCase();
+    }
+
+    get componentCssLayerName() {
+        return 'component';
     }
 
 }
