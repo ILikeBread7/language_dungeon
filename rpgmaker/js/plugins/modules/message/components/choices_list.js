@@ -1,14 +1,26 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 
 /**
- * @typedef { { text: string, element: HTMLElement, visible?: boolean, enabled?: boolean } } ChoiceListOption
+ * @typedef { {
+ *  text: string,
+ *  element: HTMLElement,
+ *  visible?: boolean,
+ *  enabled?: boolean
+ * } } ChoiceListOption
  * @typedef { { 
-     *  text: string,
-     *  enabled?: boolean,
-     *  visible?: boolean,
-     *  cssClass?: string,
-     *  id?: number,
+ *  text: string,
+ *  enabled?: boolean,
+ *  visible?: boolean,
+ *  cssClass?: string,
+ *  id?: number,
  *  } } ChoiceListChoice
+ * @typedef { {
+ *  index: number,
+ *  text: string,
+ *  cancelled: boolean,
+ *  id?: number,
+ *  element?: HTMLElement
+ * } } ChoiceListPlayerChoice
  */
 
 export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
@@ -34,6 +46,7 @@ export class ChoicesListComponent extends BaseComponent {
                 list-style-type: none;
                 padding: 0px;
                 background: green;
+                margin: 0px;
             }
 
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li {
@@ -49,10 +62,6 @@ export class ChoicesListComponent extends BaseComponent {
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-disabled="disabled"] {
                 pointer-events: none;
                 opacity: 0.6;
-            }
-
-            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-chosen="chosen"] {
-                background: aqua;
             }
 
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-selected="selected"] {
@@ -105,7 +114,7 @@ export class ChoicesListComponent extends BaseComponent {
 
     /**
      * 
-     * @returns {Promise<{ index: number, text: string, cancelled: boolean, id: number?, element?: HTMLElement }>}
+     * @returns {Promise<ChoiceListPlayerChoice>}
      */
     async choicesListTakeChoice() {
         return new Promise(resolve => {

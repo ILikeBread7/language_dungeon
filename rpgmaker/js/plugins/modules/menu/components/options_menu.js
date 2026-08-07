@@ -1,27 +1,17 @@
 import { BaseComponent } from '../../common/components/base_component.js';
-import { CHOICES_LIST_EVENTS, ChoicesList, ChoicesListComponent } from '../../message/components/choices_list.js';
+import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
  */
 
 /**
- * @typedef  { ChoiceListChoice & { explanation:string, value: string, setNextValue: () => void, setPreviousValue: () => void } } OptionsListEntry
+ * @typedef { ChoiceListChoice & { explanation: string, value: string, goBack?: boolean, setValue?: () => void, setNextValue?: () => void, setPreviousValue?: () => void } } OptionsListEntry
 */
 
-const ConfigManager = globalThis.ConfigManager || {
-    alwaysDash: false,
-    bgmVolume: 0,
-    bgsVolume: 100,
-    meVolume: 100,
-    seVolume: 100,
+const VALUE_SPAN_CSS_CLASS = 'value';
 
-    save() { console.log('Config manager saved!') }
-};
-
-const GO_BACK_ID = 999;
-
-export class OptionsMenu extends BaseComponent {
+export class OptionsMenuComponent extends BaseComponent {
 
     static get componentDefaultTagName() {
         return 'options-menu-component';
@@ -40,6 +30,10 @@ export class OptionsMenu extends BaseComponent {
                 position: absolute;
                 top: anchor(--choices-list bottom);
             }
+
+            ${this.componentTagName} .${VALUE_SPAN_CSS_CLASS} {
+                pointer-events: none;
+            }
         `;
     }
 
@@ -55,85 +49,6 @@ export class OptionsMenu extends BaseComponent {
 
         this.append(this._choicesList, this._explanationDiv);
 
-        const step = 10;
-        const mod = 100 + step;
-        /**
-         * @type {[OptionsListEntry]}
-         */
-        this._options = [
-            {
-                id: 1,
-                text: 'Always Dash',
-                explanation: 'Makes the character always run, without holding the run button.',
-                get value() { return mapToOnOff(ConfigManager.alwaysDash); },
-                setValue() {
-                    ConfigManager.alwaysDash = !ConfigManager.alwaysDash;
-                }
-            },
-            {
-                id: 2,
-                text: 'BGM Volume',
-                explanation: 'Volume of the background music.',
-                get value() { return mapToPercentage(ConfigManager.bgmVolume) },
-                setNextValue() {
-                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume - step + mod) % mod;
-                }
-            },
-            {
-                id: 3,
-                text: 'BGS Volume',
-                explanation: 'Volume of the background sounds.',
-                get value() { return mapToPercentage(ConfigManager.bgsVolume); },
-                setNextValue() {
-                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume - step + mod) % mod;
-                }
-            },
-            {
-                id: 4,
-                text: 'ME Volume',
-                explanation: 'Volume of the musical effects.',
-                get value() { return mapToPercentage(ConfigManager.meVolume); },
-                setNextValue() {
-                    ConfigManager.meVolume = (ConfigManager.meVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.meVolume = (ConfigManager.meVolume - step + mod) % mod;
-                }
-            },
-            {
-                id: 5,
-                text: 'SE Volume',
-                explanation: 'Volume of the sound effects.',
-                get value() { return mapToPercentage(ConfigManager.seVolume); },
-                setNextValue() {
-                    ConfigManager.seVolume = (ConfigManager.seVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.seVolume = (ConfigManager.seVolume - step + mod ) % mod;
-                }
-            },
-            {
-                id: GO_BACK_ID,
-                text: 'Go back',
-                explanation: 'Save changes and go back to the game.',
-            }
-        ];
-        for (const option of this._options) {
-            if (option.id === GO_BACK_ID) {
-                continue;
-            }
-            if (option.setValue) {
-                option.setNextValue = option.setPreviousValue = option.setValue;
-            }
-            option.text += /* html */` <span class="value"></span>`;
-        }
-
         this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
             const index = event.detail.index;
             const option = this._options[index];
@@ -141,45 +56,72 @@ export class OptionsMenu extends BaseComponent {
         });
     }
 
-    async optionsMenuShow() {
+    /**
+     * @param {[OptionsListEntry]} options 
+     */
+    optionsMenuSetOptions(options) {
+        this._options = options;
         this._explanationDiv.innerHTML = this._options[0].explanation;
-        this.style.setProperty('display', 'unset');
+
+        for (const option of this._options) {
+            if (option.goBack) {
+                continue;
+            }
+            if (option.setValue) {
+                option.setNextValue = option.setPreviousValue = option.setValue;
+            }
+            option.text += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
+        }
 
         this._choicesList.choicesListSetChoices(this._options);
-        
-        const displayedOptions = this._choicesList.displayedOptions;
-        for (let i = 0; i < this._options.length - 1; i++) { // -1 to skip "go back" option
+        this._choicesList.choicesListSelectOptionNoEvent(0);
+        this.optionsMenuUpdateOptionValues();
+    }
+
+    optionsMenuUpdateOptionValues() {
+        const displayedOptions = this._choicesList.choicesListDisplayedOptions;
+        for (let i = 0; i < this._options.length; i++) {
             const option = this._options[i];
+            if (option.goBack) {
+                continue;
+            }
+
             const element = displayedOptions[i].element;
             this._updateOptionValue(option, element);
         }
-
-        this._choicesList.choicesListSelectOptionNoEvent(0);
-        this._choicesList.choicesListShow();
-        await this._choicesList.choicesListOpen();
-        for (let choice;;) {
-            choice = await this._choicesList.choicesListTakeChoice();
-            if (choice.cancelled || choice.id === GO_BACK_ID) {
-                break;
-            }
-            const element = choice.element;
-            element.removeAttribute('data-chosen');
-
-            const option = this._options[choice.index];
-            option.setNextValue();
-            this._updateOptionValue(option, element);
-        }
-        await this._choicesList.choicesListClose();
-        this._choicesList.choicesListHide();
     }
 
-    optionsMenuHide() {
-        ConfigManager.save();
-        this.style.setProperty('display', 'none');
+    /**
+     * 
+     * @returns Last player choice, that resulted in exiting the menu
+     */
+    async optionsMenuStart() {
+        this._choicesList.choicesListActivate();
+
+        let choice;
+        do {
+            choice = await this._choicesList.choicesListTakeChoice();
+            if (choice.cancelled) {
+                break;
+            }
+
+            const option = this._options[choice.index];
+            if (option.goBack) {
+                break;
+            }
+
+            if (option.setNextValue) {
+                option.setNextValue();
+                this._updateOptionValue(option, choice.element);
+            }
+        } while(true);
+
+        this._choicesList.choicesListDeactivate();
+        return choice;
     }
 
     optionsMenuSetNextValue() {
-        const currentlySelectedOption = this._choicesList.currentlySelectedOption;
+        const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
             if (!option.setNextValue) {
@@ -192,7 +134,7 @@ export class OptionsMenu extends BaseComponent {
     }
 
     optionsMenuSetPreviousValue() {
-        const currentlySelectedOption = this._choicesList.currentlySelectedOption;
+        const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
             if (!option.setPreviousValue) {
@@ -210,7 +152,7 @@ export class OptionsMenu extends BaseComponent {
      * @param {HTMLElement} element 
      */
     _updateOptionValue(option, element) {
-        const valueElement = element.getElementsByClassName('value')[0];
+        const valueElement = element.getElementsByClassName(VALUE_SPAN_CSS_CLASS)[0];
         valueElement.innerHTML = option.value;
     }
 
@@ -218,12 +160,4 @@ export class OptionsMenu extends BaseComponent {
         return this._choicesList;
     }
 
-}
-
-function mapToOnOff(boolValue) {
-    return boolValue ? 'ON' : 'OFF';
-}
-
-function mapToPercentage(value) {
-    return `${value}%`;
 }

@@ -27,7 +27,6 @@ export class MainMenuComponent extends BaseComponent {
 
             ${this.componentTagName} .explanation,
             ${this.componentTagName} .choices-list {
-                margin: 0px;
                 width: 50%;
             }
         `;
