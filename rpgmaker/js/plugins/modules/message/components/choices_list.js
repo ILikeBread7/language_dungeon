@@ -213,10 +213,10 @@ export class ChoicesListComponent extends BaseComponent {
 
     /**
      * 
-     * @param {number} index 
+     * @param {number} [index] default 0
      * @returns Option if selected successfully, undefined if couldn't select
      */
-    choicesListSelectOptionNoEvent(index) {
+    choicesListSelectOptionNoEvent(index = 0) {
         const option = this._findEligibleOption(index);
         if (!option) {
             return;

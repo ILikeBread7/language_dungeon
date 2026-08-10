@@ -61,17 +61,18 @@ export class OptionsMenuComponent extends BaseComponent {
      */
     optionsMenuSetOptions(options) {
         this._options = options;
-        this._explanationDiv.innerHTML = this._options[0].explanation;
+        this._explanationDiv.innerHTML = options[0].explanation;
 
-        for (const option of this._options) {
+        this._choicesList.choicesListSetChoices(this._options);
+        for (let i = 0; i < this._options.length; i++) {
+            const option = options[i];
             if (option.goBack) {
                 continue;
             }
-            option.text += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
+            const displayedOption = this._choicesList.choicesListDisplayedOptions[i];
+            displayedOption.element.innerHTML += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
         }
-
-        this._choicesList.choicesListSetChoices(this._options);
-        this._choicesList.choicesListSelectOptionNoEvent(0);
+        this._choicesList.choicesListSelectOptionNoEvent();
         this.optionsMenuUpdateOptionValues();
     }
 
@@ -114,7 +115,7 @@ export class OptionsMenuComponent extends BaseComponent {
             } else {
                 continue;
             }
-            
+
             this._updateOptionValue(option, choice.element);
         } while(true);
 
