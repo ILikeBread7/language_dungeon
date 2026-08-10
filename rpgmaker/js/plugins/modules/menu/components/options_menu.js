@@ -67,9 +67,6 @@ export class OptionsMenuComponent extends BaseComponent {
             if (option.goBack) {
                 continue;
             }
-            if (option.setValue) {
-                option.setNextValue = option.setPreviousValue = option.setValue;
-            }
             option.text += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
         }
 
@@ -110,10 +107,15 @@ export class OptionsMenuComponent extends BaseComponent {
                 break;
             }
 
-            if (option.setNextValue) {
+            if (option.setValue) {
+                option.setValue();
+            } else if (option.setNextValue) {
                 option.setNextValue();
-                this._updateOptionValue(option, choice.element);
+            } else {
+                continue;
             }
+            
+            this._updateOptionValue(option, choice.element);
         } while(true);
 
         this._choicesList.choicesListDeactivate();
@@ -124,10 +126,15 @@ export class OptionsMenuComponent extends BaseComponent {
         const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
-            if (!option.setNextValue) {
+            
+            if (option.setNextValue) {
+                option.setNextValue();
+            } else if (option.setValue) {
+                option.setValue();
+            } else {
                 return;
             }
-            option.setNextValue();
+
             const element = currentlySelectedOption.option.element;
             this._updateOptionValue(option, element);
         }
@@ -137,10 +144,15 @@ export class OptionsMenuComponent extends BaseComponent {
         const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
-            if (!option.setPreviousValue) {
+
+            if (option.setPreviousValue) {
+                option.setPreviousValue();
+            } else if (option.setValue) {
+                option.setValue();
+            } else {
                 return;
             }
-            option.setPreviousValue();
+
             const element = currentlySelectedOption.option.element;
             this._updateOptionValue(option, element);
         }
