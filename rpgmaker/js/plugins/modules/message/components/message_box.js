@@ -51,12 +51,12 @@ export class MessageBoxComponent extends BaseComponent {
         return /*css*/`
             ${this.componentTagName} {
                 --lines-per-screen: 4;
-                --line-height: 1.2;
                 --transition-time: 0.5s;
                 --char-write-wait-ms: 50;
-                --box-height: calc(1em * var(--lines-per-screen) * var(--line-height));
+                --box-height: calc(1lh * var(--lines-per-screen));
 
                 display: block;
+                line-height: 1.2;
                 height: var(--box-height);
             }
 
@@ -69,17 +69,16 @@ export class MessageBoxComponent extends BaseComponent {
                 transition-property: opacity;
                 transition-duration: var(--transition-time);
                 white-space: pre-wrap;
-                line-height: var(--line-height);
                 overflow: hidden;
             }
 
             ${this.componentTagName} .${messageContainerClassName} {
-                --container-height: calc(1em * var(--line-height) * var(${LINES_CSS_VAR}));
+                --container-height: calc(1lh * var(${LINES_CSS_VAR}));
 
                 width: 100%;
                 height: var(--container-height);
                 position: relative;
-                top: calc(-1em * var(--line-height) * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
+                top: calc(-1lh * (var(${LINES_CSS_VAR}) - var(--lines-per-screen)));
                 transition: top var(--transition-time);
             }
 
