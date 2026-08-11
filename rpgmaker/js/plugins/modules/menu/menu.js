@@ -127,6 +127,10 @@ Scene_Menu.prototype.create = function() {
 const _Scene_Menu_update = Scene_Menu.prototype.update;
 Scene_Menu.prototype.update = function() {
     _Scene_Menu_update.call(this);
+    handleMenuInputs(Scene_Menu);
+}
+
+function handleMenuInputs(scene) {
     const input = window.Input;
     const touchInput = window.TouchInput;
 
@@ -138,9 +142,12 @@ Scene_Menu.prototype.update = function() {
         choicesList.choicesListConfirmCurrentOption();
     } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
         choicesList.choicesListCancel();
-    } else if (input.isTriggered('right')) {
-        // mainMenu.mainMenuSetNextValue();
-    } else if (input.isTriggered('left')) {
-        // mainMenu.mainMenuSetPreviousValue();
+    } else if (scene === Scene_Options) {
+        if (input.isTriggered('right')) {
+            // mainMenu.mainMenuSetNextValue();
+        } else if (input.isTriggered('left')) {
+            // mainMenu.mainMenuSetPreviousValue();
+        }
     }
+    
 }

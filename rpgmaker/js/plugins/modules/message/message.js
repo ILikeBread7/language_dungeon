@@ -59,6 +59,23 @@ style.innerHTML = /*css*/`
         transform: translateY(100%);
         opacity: initial;
     }
+
+    main-menu-component openable-component {
+        --transition-time: 0.5s;
+    }
+
+    main-menu-component .explanation,
+    main-menu-component .choices-list {
+        transition: transform calc(var(--transition-time) / 2);
+    }
+
+    openable-component[data-target-state="closed"] main-menu-component .choices-list {
+        transform: translateX(-100%);
+    }
+
+    openable-component[data-target-state="closed"] main-menu-component .explanation {
+        transform: translateX(100%);
+    }
 `;
 document.body.appendChild(style);
 
