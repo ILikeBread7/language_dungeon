@@ -262,13 +262,12 @@ export class ChoicesListComponent extends BaseComponent {
             return;
         }
 
-        if (!this._choicesResolve) {
-            return;
+        if (this._choicesResolve) {
+            this._choicesResolve({ index, text: option.text, id: option.id, element: option.element });
+            delete this._choicesResolve;
         }
         option.element.dataset.chosen = 'chosen';
-        this._choicesResolve({ index, text: option.text, id: option.id, element: option.element });
         
-        delete this._choicesResolve;
         return option;
     }
 
@@ -315,12 +314,15 @@ export class ChoicesListComponent extends BaseComponent {
      * @returns true if cancel succeeded, false if couldn't cancel
      */
     choicesListCancelNoEvent() {
-        if (!this._choicesResolve) {
+        if (!this._active) {
             return false;
         }
-        this._choicesResolve({ index: -1, cancelled: true });
+
+        if (this._choicesResolve) {
+            this._choicesResolve({ index: -1, cancelled: true });
+            delete this._choicesResolve;
+        }
         
-        delete this._choicesResolve;
         return true;
     }
 
