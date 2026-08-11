@@ -60,6 +60,12 @@ style.innerHTML = /*css*/`
         opacity: initial;
     }
 
+    hideable-component:has(main-menu-component) {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
     main-menu-component openable-component {
         --transition-time: 0.5s;
     }
@@ -94,23 +100,30 @@ let choicesList = null;
  */
 let choicesCancelType;
 
-export function initializeAll() {
+/**
+ * 
+ * @param {HTMLElement} [container] 
+ */
+export function initializeAll(container = document.body) {
     registerCommonComponents();
-    void addMessageBox();
-    void addChoicesList();
+    void addMessageBox(container);
+    void addChoicesList(container);
     setTimeout(registerComponentsForRpgMaker, 1000);
 }
 
-export function addMessageBox() {
+/**
+ * 
+ * @param {HTMLElement} container 
+ * @returns 
+ */
+export function addMessageBox(container) {
     MessageBoxComponent.register();
 
     messageBox = new HideableOpenable(new MessageBoxComponent());
     const box = messageBox.element;
     messageBox.topElement.classList.add('bottom-slide-in');
 
-    document.body.style.setProperty('overflow', 'hidden');
-    document.body.style.setProperty('margin', '0px');
-    document.body.appendChild(messageBox.topElement);
+    container.appendChild(messageBox.topElement);
 
     window.$messageBox = messageBox;
     box.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => SoundManager.playCursor());
@@ -135,13 +148,18 @@ function playCancelSe() {
     SoundManager.playCancel();
 }
 
-export function addChoicesList() {
+/**
+ * 
+ * @param {HTMLElement} container 
+ * @returns 
+ */
+export function addChoicesList(container) {
     registerCommonComponents();
     ChoicesListComponent.register();
 
     choicesList = new HideableOpenable(new ChoicesListComponent());
     const list = choicesList.element;
-    document.body.appendChild(choicesList.topElement);
+    container.appendChild(choicesList.topElement);
     choicesList.topElement.classList.add('centered', 'half-screen');
 
     window.$choicesList = choicesList;

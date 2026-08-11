@@ -31,7 +31,7 @@ const $characterLabels = { };
 
     const labelsContainer = document.createElement('div');
     labelsContainer.id = 'labels-container';
-    const baseTransform = 'translate(-50%, -50%)';
+    const baseTransform = /*css*/`translate(-50%, -50%)`;
 
     const style = document.createElement('style');
     style.innerHTML = /*css*/`
@@ -50,18 +50,16 @@ const $characterLabels = { };
             paint-order: stroke fill;
         }
     `;
-    document.body.appendChild(style);
-
-    document.body.appendChild(labelsContainer);
+    document.body.append(style, labelsContainer);
     window.addEventListener('resize', adjustLabelsDivDimensions);
     adjustLabelsDivDimensions();
 
     function adjustLabelsDivDimensions() {
         setTimeout(() => {
             labelsContainer.style.zIndex = 998;
-            labelsContainer.style.transform = `${baseTransform} scale(${Graphics._realScale})`;
-            labelsContainer.style.width = `${Graphics.boxWidth}px`;
-            labelsContainer.style.height = `${Graphics.boxHeight}px`;
+            labelsContainer.style.transform = /*css*/`${baseTransform} scale(${Graphics._realScale})`;
+            labelsContainer.style.width = /*css*/`${Graphics.boxWidth}px`;
+            labelsContainer.style.height = /*css*/`${Graphics.boxHeight}px`;
         }, 50);
     }
 

@@ -86,16 +86,15 @@ const options = [
     }
 ];
 
-export function initializeMainMenu() {
+/**
+ * 
+ * @param {HTMLElement} [container] 
+ */
+export function initializeMainMenu(container = document.body) {
     MainMenuComponent.register();
     mainMenu = new HideableOpenable(new MainMenuComponent());
-    Object.assign(mainMenu.topElement.style, {
-        position: 'absolute',
-        width: '100%',
-        height: '100%'
-    });
     mainMenu.element.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
-    document.body.appendChild(mainMenu.topElement);
+    container.appendChild(mainMenu.topElement);
 }
 
 Scene_Menu.prototype.start = function() {
