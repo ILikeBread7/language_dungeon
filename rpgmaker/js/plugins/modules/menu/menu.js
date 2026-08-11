@@ -15,13 +15,14 @@ let choicesList;
  * @type {Object<string,import('./components/main_menu.js').MainMenuOption>}
  */
 const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
-    ITEM: { text: 'Item', id: 1, explanation: 'Use and manage items' },
-    FLOOR: { text: 'Floor', id: 2, explanation: 'Pick up items from the floor' },
-    OPTIONS: { text: 'Options', id: 3, explanation: "Adjust the game's settings" },
-    SAVE: { text: 'Save', id: 4, explanation: 'Save your progress' },
-    BACK: { text: 'Go back', id: 5, explanation: 'Close this menu, and return to the game' },
-    EXIT: { text: 'Exit', id: 6, explanation: 'Exit the game, and return to the title screen' }
+    ITEM: { text: 'Item', explanation: 'Use and manage items' },
+    FLOOR: { text: 'Floor', explanation: 'Pick up items from the floor' },
+    OPTIONS: { text: 'Options', explanation: "Adjust the game's settings" },
+    SAVE: { text: 'Save', explanation: 'Save your progress' },
+    BACK: { text: 'Go back', explanation: 'Close this menu, and return to the game' },
+    EXIT: { text: 'Exit', explanation: 'Exit the game, and return to the title screen' }
 });
+Object.values(MAIN_MENU_CHOICES).forEach((choice, index) => choice.id = index + 1);
 
 const step = 10;
 const mod = 100 + step;
