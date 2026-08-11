@@ -39,6 +39,7 @@ const $characterLabels = { };
             position: absolute;
             left: 50%;
             top: 50%;
+            transform: translate(-50%, -50%) scale(var(--scale, 1));
             overflow: hidden;
         }
 
@@ -52,15 +53,12 @@ const $characterLabels = { };
     `;
     document.body.append(style, labelsContainer);
     window.addEventListener('resize', adjustLabelsDivDimensions);
-    adjustLabelsDivDimensions();
+    setTimeout(adjustLabelsDivDimensions, 100);
 
     function adjustLabelsDivDimensions() {
-        setTimeout(() => {
-            labelsContainer.style.zIndex = 998;
-            labelsContainer.style.transform = /*css*/`${baseTransform} scale(${Graphics._realScale})`;
-            labelsContainer.style.width = /*css*/`${Graphics.boxWidth}px`;
-            labelsContainer.style.height = /*css*/`${Graphics.boxHeight}px`;
-        }, 50);
+        labelsContainer.style.setProperty('--scale', Graphics._realScale);
+        labelsContainer.style.width = `${Graphics.boxWidth}px`;
+        labelsContainer.style.height = `${Graphics.boxHeight}px`;
     }
 
     function clearLabels() {
@@ -127,6 +125,12 @@ const $characterLabels = { };
                 this.textLabelElement.style.removeProperty('display');
             }
         }
+    }
+
+    const modifyFunction = Graphics._modifyExistingElements;
+    Graphics._modifyExistingElements = function() {
+        modifyFunction();
+        labelsContainer.style.zIndex = 998;
     }
 
 })();

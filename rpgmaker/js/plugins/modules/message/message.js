@@ -12,7 +12,6 @@ style.innerHTML = /*css*/`
 
     hideable-component {
         position: relative;
-        z-index: 999;
     }
 
     openable-component {
@@ -24,8 +23,12 @@ style.innerHTML = /*css*/`
         --char-write-wait-ms: 25;
     }
 
+    hideable-component:has(message-box-component.whole-screen) {
+        height: 100%;
+    }
+
     message-box-component.whole-screen {
-        --box-height: 100vh;
+        --box-height: 100%;
         --lines-per-screen: 32;
     }
 
@@ -188,9 +191,6 @@ export function registerComponentsForRpgMaker() {
     const _Scene_Base_prototype = window.Scene_Base.prototype;
     const convertEscapeCharacters = window.Window_Base.prototype.convertEscapeCharacters;
 
-    for (const hideable of document.getElementsByTagName(messageBox.topElement.componentTagName)) {
-        hideable.style.removeProperty('z-index');
-    }
     const list = choicesList.element;
     const box = messageBox.element;
 

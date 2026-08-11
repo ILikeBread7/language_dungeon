@@ -120,7 +120,6 @@ Scene_Menu.prototype.start = function() {
 
 Scene_Menu.prototype.create = function() {
     Scene_MenuBase.prototype.create.call(this);
-    mainMenu.topElement.style.zIndex = 1000;
 }
 
 const _Scene_Menu_update = Scene_Menu.prototype.update;
