@@ -41,6 +41,7 @@ const $characterLabels = { };
             top: 50%;
             transform: translate(-50%, -50%) scale(var(--scale, 1));
             overflow: hidden;
+            z-index: 97;
         }
 
         #labels-container > * {
@@ -130,7 +131,7 @@ const $characterLabels = { };
     const modifyFunction = Graphics._modifyExistingElements;
     Graphics._modifyExistingElements = function() {
         modifyFunction();
-        labelsContainer.style.zIndex = 998;
+        labelsContainer.style.removeProperty('z-index');
     }
 
 })();

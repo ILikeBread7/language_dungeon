@@ -18,6 +18,7 @@ style.innerHTML = /*css*/`
         top: 50%;
         transform: translate(-50%, -50%) scale(var(--scale, 1));
         overflow: hidden;
+        z-index: 98;
     }
 `;
 document.body.append(style, componentsContainer);
@@ -36,5 +37,5 @@ function adjustContainerDimensions() {
 const modifyFunction = Graphics._modifyExistingElements;
 Graphics._modifyExistingElements = function() {
     modifyFunction();
-    componentsContainer.style.zIndex = 999;
+    componentsContainer.style.removeProperty('z-index');
 }
