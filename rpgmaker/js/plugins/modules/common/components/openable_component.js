@@ -58,8 +58,8 @@ export class OpenableComponent extends BaseComponent {
         await this._openableChangeState(INTERMEDIATE_OPEN_STATE.CLOSING, FINAL_OPEN_STATE.CLOSED);
     }
 
-    openableIsOpen() {
-        return this.dataset.currentState !== FINAL_OPEN_STATE.CLOSED;
+    get openableIsOpen() {
+        return this.dataset.currentState === FINAL_OPEN_STATE.OPEN;
     }
 
     /**
