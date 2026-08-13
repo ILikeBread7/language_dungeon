@@ -1340,6 +1340,8 @@ var $f = $f || {};
             .some(event => event && !event._erased && event.event().meta && event.event().meta.item);
     }
 
+    $f.isFloorItem = isFloorItem;
+
     $f.getFloorItems = () => {
         const x = $gamePlayer.x;
         const y = $gamePlayer.y;

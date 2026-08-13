@@ -16,7 +16,14 @@ let choicesList;
  */
 const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
     ITEM: { text: 'Item', explanation: 'Use and manage items' },
-    FLOOR: { text: 'Floor', explanation: 'Pick up items from the floor' },
+    FLOOR: {
+        text: 'Floor',
+        explanation: 'Pick up items from the floor',
+        enabled() {
+            const f = window.$f;
+            return f.isFloorItem();
+        }
+    },
     OPTIONS: { text: 'Options', explanation: "Adjust the game's settings" },
     SAVE: { text: 'Save', explanation: 'Save your progress' },
     BACK: { text: 'Go back', explanation: 'Close this menu, and return to the game' },
@@ -99,6 +106,9 @@ export function initializeMainMenu(container = document.body) {
 
 Scene_Menu.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
+    const gameTemp = window.$gameTemp;
+    const f = window.$f;
+
     choicesList = mainMenu.element.choicesList;
     mainMenu.showAndOpen();
     mainMenu.element.mainMenuTakeChoice().then(choice => {
@@ -113,6 +123,19 @@ Scene_Menu.prototype.start = function() {
             case MAIN_MENU_CHOICES.EXIT.id:
                 this.fadeOutAll();
                 SceneManager.goto(Scene_Title);
+            break;
+            case MAIN_MENU_CHOICES.ITEM.id:
+                SceneManager.push(Scene_Item);
+            break;
+            case MAIN_MENU_CHOICES.FLOOR.id:
+                this.popScene();
+                f.triggerFloorItemEvents();
+            break;
+            case MAIN_MENU_CHOICES.OPTIONS.id:
+                SceneManager.push(Scene_Options);
+            break;
+            case MAIN_MENU_CHOICES.SAVE.id:
+                SceneManager.push(Scene_Save);
             break;
         }
     });

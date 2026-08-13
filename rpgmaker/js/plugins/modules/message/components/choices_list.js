@@ -108,6 +108,22 @@ export class ChoicesListComponent extends BaseComponent {
         this._active = false;
     }
 
+    choicesListRefreshEnabledOptions() {
+        for (const option of this._displayedOptions) {
+            const optionElement = option.element;
+            if (option.enabled && !option.enabled()) {
+                optionElement.dataset.disabled = 'disabled';
+            } else {
+                optionElement.removeAttribute('data-disabled');
+            }
+        }
+
+        const currentOption = this._displayedOptions[this._selectedIndex];
+        if (currentOption && currentOption.element.dataset.disabled) {
+            this.choicesListSelectOptionNoEvent();
+        }
+    }
+
     get choicesListActive() {
         return this._active;
     }
@@ -144,9 +160,6 @@ export class ChoicesListComponent extends BaseComponent {
             optionElement.part = 'choice-item';
             optionElement.innerHTML = option.text;
             optionElement.dataset.index = i;
-            if (!option.enabled && option.enabled !== undefined) {
-                optionElement.dataset.disabled = 'disabled';
-            }
             if (option.cssClass) {
                 optionElement.className = option.cssClass;
             }
