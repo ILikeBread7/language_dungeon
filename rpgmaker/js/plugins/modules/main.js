@@ -12,6 +12,10 @@ style.innerHTML = /*css*/`
         margin: 0px;
     }
 
+    #ErrorPrinter:empty {
+        pointer-events: none;
+    }
+
     #components-container {
         position: absolute;
         left: 50%;
