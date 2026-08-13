@@ -189,10 +189,10 @@ export function registerComponentsForRpgMaker() {
                         choicesList.element.choicesListActivate();
                         choicesList.showAndOpen();
                         choicesList.element.choicesListTakeChoice().then(playerChoice => {
-                            choicesList.element.choicesListDeactivate();
                             box.messageBoxForceFinish();
                             const index = playerChoice.cancelled ? -2 : playerChoice.index;
                             gameInterpreter._branch[gameInterpreter._indent] = index;
+                            choicesList.element.choicesListDeactivate();
                             choicesList.closeAndHide();
                         });
 
@@ -240,12 +240,12 @@ export function registerComponentsForRpgMaker() {
     _Game_Interpreter_prototype.command102 = function() {
         if (!asyncCommand102Promise) {
             asyncCommand102Promise = asyncCommand102(this);
-            asyncCommand102Promise.then(playerChoice => {
+            asyncCommand102Promise.then(async playerChoice => {
                 asyncCommand102Promise = null;
                 const index = playerChoice.cancelled ? -2 : playerChoice.index;
                 this._branch[this._indent] = index;
+                await choicesList.closeAndHide();
                 choicesList.element.choicesListDeactivate();
-                choicesList.closeAndHide();
             });
         }
 
@@ -265,7 +265,7 @@ export function registerComponentsForRpgMaker() {
             choicesList.element.choicesListSelectOptionNoEvent(defaultType);
             choicesList.element.choicesListActivate();
             await choicesList.showAndOpen();
-            return choicesList.element.choicesListTakeChoice();
+            return await choicesList.element.choicesListTakeChoice();
         }
     }
 
