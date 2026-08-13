@@ -145,8 +145,8 @@ export function registerComponentsForRpgMaker() {
     const _Game_Message_isBusy = _Game_Message_prototype.isBusy;
     _Game_Message_prototype.isBusy = function() {
         return _Game_Message_isBusy.call(this)
-            || box.messageBoxBusy
-            || list.choicesListActive;
+            || messageBox.hideable.hideableIsShown
+            || choicesList.hideable.hideableIsShown;
     }
 
     let asyncCommand101Promise = null;
@@ -240,12 +240,12 @@ export function registerComponentsForRpgMaker() {
     _Game_Interpreter_prototype.command102 = function() {
         if (!asyncCommand102Promise) {
             asyncCommand102Promise = asyncCommand102(this);
-            asyncCommand102Promise.then(async playerChoice => {
+            asyncCommand102Promise.then(playerChoice => {
                 asyncCommand102Promise = null;
                 const index = playerChoice.cancelled ? -2 : playerChoice.index;
                 this._branch[this._indent] = index;
-                await choicesList.closeAndHide();
                 choicesList.element.choicesListDeactivate();
+                choicesList.closeAndHide();
             });
         }
 

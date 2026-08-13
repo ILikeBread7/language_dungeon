@@ -40,4 +40,8 @@ export class HideableComponent extends BaseComponent {
         void this.clientWidth;
     }
 
+    get hideableIsShown() {
+        return this.dataset.state === SHOWN_STATE.SHOWN;
+    }
+
 }
