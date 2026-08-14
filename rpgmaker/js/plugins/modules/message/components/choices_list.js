@@ -358,6 +358,22 @@ export class ChoicesListComponent extends BaseComponent {
     }
 
     /**
+     * 
+     * @param {[ChoiceListChoice]} choices 
+     * @param {number} [defaultIndex] 
+     * @returns 
+     */
+    async choicesListTakeOneChoice(choices, defaultIndex) {
+        this.choicesListSetChoices(choices);
+        this.choicesListRefreshVisibleAndEnabledOptions();
+        this.choicesListActivate();
+        this.choicesListSelectOption(defaultIndex);
+        const choice = await this.choicesListTakeChoice();
+        this.choicesListDeactivate();
+        return choice;
+    }
+
+    /**
      * @returns {{ index: number, option: ChoiceListOption } | undefined}
      */
     get choicesListCurrentlySelectedOption() {

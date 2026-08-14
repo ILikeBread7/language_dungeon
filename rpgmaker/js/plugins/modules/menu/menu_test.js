@@ -1,4 +1,6 @@
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { takeAreYouSure } from '../message/components/utils.js';
+import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
 
@@ -14,15 +16,18 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
 });
 
 MainMenuComponent.register();
-
 const mainMenu = new HideableOpenable(new MainMenuComponent());
 const menu = mainMenu.element;
 
 OptionsMenuComponent.register();
-
 const optionsMenuHideableOpenable = new HideableOpenable(new OptionsMenuComponent());
 optionsMenuHideableOpenable.topElement.classList.add('centered', 'full-width');
 const optionsMenu = optionsMenuHideableOpenable.element;
+
+AreYouSureComponent.register();
+const areYouSure = new HideableOpenable(new AreYouSureComponent());
+areYouSure.topElement.classList.add('centered', 'full-width');
+const confirmMenu = areYouSure.element;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -42,6 +47,16 @@ const tests = {
             console.log(playerChoice);
         } while (!playerChoice.cancelled && playerChoice.id !== MAIN_MENU_CHOICES.EXIT.id);
         await mainMenu.closeAndHide();
+    },
+
+    async areYouSure() {
+        choicesList = areYouSure.element.choicesList;
+        document.body.appendChild(areYouSure.topElement);
+
+        let playerChoice;
+        do {
+            playerChoice = await takeAreYouSure(areYouSure);
+        } while(playerChoice.cancelled || playerChoice.id === ARE_YOU_SURE_IDS.NO);
     },
 
     async options() {
@@ -138,7 +153,7 @@ const tests = {
         } while (choice.cancelled || !options[choice.index].returnToTitle);
     }
 };
-tests.options();
+tests.areYouSure();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],

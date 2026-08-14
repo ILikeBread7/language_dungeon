@@ -1,101 +1,77 @@
-import { ChoicesList } from '../../message/components/choices_list.js';
+import { BaseComponent } from '../../common/components/base_component.js';
+import { ChoicesListComponent } from '../../message/components/choices_list.js';
+import { takeOneChoice } from '../../message/components/utils.js';
 
-export class AreYouSure extends HTMLElement {
+/**
+ * @typedef { {
+ *  choices?: [import('../../message/components/choices_list.js').ChoiceListChoice],
+ *  explanation?: string,
+ *  defaultIndex?: number }
+ * } AreYouSureOptions
+ */
 
-    /**
-     * 
-     * @param {string} [tagName] 
-     */
-    static register(tagName) {
-        registerAreYouSure(tagName);
+export const ARE_YOU_SURE_IDS = /** @type {const} */ Object.freeze({
+    YES: 1,
+    NO: 2
+});
+/**
+ * @typedef { Enum<ARE_YOU_SURE_IDS> } AreYouSureIds
+ */
+
+export class AreYouSureComponent extends BaseComponent {
+
+    static get componentDefaultTagName() {
+        return 'are-you-sure-component';
     }
 
-    /**
-     * 
-     * @param { {
-     *  wait: (time: number) => Promise<void>
-     * } } dependencies 
-     */
-    constructor(dependencies = { wait: time => new Promise(resolve => setTimeout(resolve, time)) }) {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this._dependencies = dependencies;
-
-        ChoicesList.register();
-        this._areYouSureChoicesList = new ChoicesList(dependencies);
-        this._areYouSureChoicesList.part = this._areYouSureChoicesList.id = this._areYouSureChoicesList.id = 'are-you-sure-choices-list';
-        this._areYouSureTextDiv = document.createElement('div');
-        this._areYouSureTextDiv.part = this._areYouSureTextDiv.id = 'are-you-sure-text-div';
-
-        const style = document.createElement('style');
-        style.innerHTML = /*css*/`
-            :host {
-                --transition-time: 0.1s;
-                --choices-list-transition-time: var(--transition-time);
-                display: none;
-
-                transition-property: opacity;
-                transition-duration: var(--transition-time);
-                opacity: 1;
-
-                @starting-style {
-                    opacity: 0;
-                }
-            }
-
-            #${this._areYouSureChoicesList.id}::part(choices-list) {
-                anchor-name: --choices-list;
-                --transition-time: var(--choices-list-transition-time);
-            }
-
-            #${this._areYouSureTextDiv.id} {
+    get componentCssStyle() {
+        return /*css*/`
+            ${this.componentTagName} .explanation {
                 text-align: center;
+                position: absolute;
                 width: 100%;
                 height: 100%;
-                position: absolute;
                 top: anchor(--choices-list bottom);
             }
-        `;
 
-        this.shadowRoot.append(
-            style,
-            this._areYouSureChoicesList,
-            this._areYouSureTextDiv
+            ${this.componentTagName} .choices-list {
+                anchor-name: --choices-list;
+            }
+        `;
+    }
+
+    constructor() {
+        super();
+        ChoicesListComponent.register();
+
+        this._choicesList = new ChoicesListComponent();
+        this._explanationDiv = document.createElement('div');
+        this._explanationDiv.classList.add('explanation');
+
+        this.append(
+            this._choicesList,
+            this._explanationDiv
         );
     }
 
     /**
-     * @param {{ choices?: [string], text?: { text: string, id?: number }, defaultIndex?: number }} options
+     * @param {AreYouSureOptions} [options]
      * @returns {boolean} True if should exit, false if cancelled
      */
-    async areYouSureShow(options) {
-        this.style.setProperty('display', 'unset');
-
+    async areYouSureTakeChoice(options) {
         const finalOptions = Object.assign({
-            choices: [ { text: 'Yes' }, { text: 'No' } ],
-            text: 'Are you sure?',
+            choices: [
+                { text: 'Yes', id: ARE_YOU_SURE_IDS.YES },
+                { text: 'No', id: ARE_YOU_SURE_IDS.NO } ],
+            explanation: 'Are you sure?',
             defaultIndex: 1
         }, options);
 
-        this._areYouSureTextDiv.innerHTML = finalOptions.text;
-        return await this._areYouSureChoicesList.choicesListTakeOneChoice(finalOptions.choices, finalOptions.defaultIndex);
-    }
-
-    areYouSureHide() {
-        this.style.setProperty('display', 'none');
+        this._explanationDiv.innerHTML = finalOptions.explanation;
+        return await this._choicesList.choicesListTakeOneChoice(finalOptions.choices, finalOptions.defaultIndex);
     }
 
     get choicesList() {
-        return this._areYouSureChoicesList;
-    }
-}
-
-/**
- * 
- * @param {string} [tagName] 
- */
-export function registerAreYouSure(tagName = 'are-you-sure') {
-    if (!customElements.get(tagName)) {
-        customElements.define(tagName, AreYouSure);
+        return this._choicesList;
     }
 }

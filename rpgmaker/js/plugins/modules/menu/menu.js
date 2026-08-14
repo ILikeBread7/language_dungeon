@@ -121,8 +121,9 @@ Scene_Menu.prototype.start = function() {
         
         switch(choice.id) {
             case MAIN_MENU_CHOICES.EXIT.id:
-                this.fadeOutAll();
-                SceneManager.goto(Scene_Title);
+                // this.fadeOutAll();
+                // SceneManager.goto(Scene_Title);
+                SceneManager.push(Scene_GameEnd);
             break;
             case MAIN_MENU_CHOICES.ITEM.id:
                 SceneManager.push(Scene_Item);
