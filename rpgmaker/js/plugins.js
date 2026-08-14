@@ -3,6 +3,8 @@
 var $plugins =
 [
 {"name":"ILB_NamedVariables","status":true,"description":"Exposes global objects $nv $ns $nc for named variables, switches and common events respectively","parameters":{}},
+{"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}},
+{"name":"ILB_CssFile","status":true,"description":"Allows you to load a custom css file.","parameters":{"Main css file path":"js/plugins/css/style.css"}},
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
 {"name":"EventFloatingText","status":false,"description":"Displays floating text above events on the map.","parameters":{}},
 {"name":"ILB_QuickTest","status":false,"description":"Auto starts the game","parameters":{}},
@@ -16,6 +18,5 @@ var $plugins =
 {"name":"PMD_HUD","status":true,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
 {"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}},
-{"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}},
-{"name":"ILB_CssFile","status":true,"description":"Allows you to load a custom css file.","parameters":{"Main css file path":"js/plugins/css/style.css"}}
+{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{}}
 ];
