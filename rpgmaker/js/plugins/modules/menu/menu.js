@@ -1,10 +1,17 @@
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { takeAreYouSure } from '../message/components/utils.js';
+import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { MainMenuComponent } from './components/main_menu.js';
 
 /**
  * @type {HideableOpenable<MainMenuComponent>}
  */
 let mainMenu;
+
+/**
+ * @type {HideableOpenable<AreYouSureComponent>}
+ */
+let gameEnd;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -101,15 +108,23 @@ export function initializeMainMenu(container = document.body) {
     MainMenuComponent.register();
     mainMenu = new HideableOpenable(new MainMenuComponent());
     mainMenu.element.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
-    container.appendChild(mainMenu.topElement);
+
+    AreYouSureComponent.register();
+    gameEnd = new HideableOpenable(new AreYouSureComponent());
+    gameEnd.topElement.classList.add('vertical-center');
+
+    container.append(
+        mainMenu.topElement,
+        gameEnd.topElement
+    );
 }
 
 Scene_Menu.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     const gameTemp = window.$gameTemp;
     const f = window.$f;
-
     choicesList = mainMenu.element.choicesList;
+
     mainMenu.showAndOpen();
     mainMenu.element.mainMenuTakeChoice().then(choice => {
         mainMenu.closeAndHide();
@@ -121,8 +136,6 @@ Scene_Menu.prototype.start = function() {
         
         switch(choice.id) {
             case MAIN_MENU_CHOICES.EXIT.id:
-                // this.fadeOutAll();
-                // SceneManager.goto(Scene_Title);
                 SceneManager.push(Scene_GameEnd);
             break;
             case MAIN_MENU_CHOICES.ITEM.id:
@@ -142,14 +155,39 @@ Scene_Menu.prototype.start = function() {
     });
 }
 
-Scene_Menu.prototype.create = function() {
-    Scene_MenuBase.prototype.create.call(this);
+Scene_GameEnd.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+    choicesList = gameEnd.element.choicesList;
+
+    takeAreYouSure(gameEnd, {
+        explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br>All unsaved progress will be lost.`,
+        choices: [
+            { text: 'Return to title', id: ARE_YOU_SURE_IDS.YES },
+            { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO }
+        ]
+    }).then(playerChoice => {
+        if (playerChoice.id === ARE_YOU_SURE_IDS.YES) {
+            this.fadeOutAll();
+            SceneManager.goto(Scene_Title);
+        } else {
+            this.popScene();
+        }
+    });
 }
 
-const _Scene_Menu_update = Scene_Menu.prototype.update;
-Scene_Menu.prototype.update = function() {
-    _Scene_Menu_update.call(this);
-    handleMenuInputs(Scene_Menu);
+for (const scene of [
+        Scene_Menu,
+        Scene_GameEnd,
+        Scene_Options
+]) {
+    const _scene_update = scene.prototype.update;
+    scene.prototype.update = function() {
+        _scene_update.call(this);
+        handleMenuInputs(scene);
+    }
+
+    scene.prototype.create = Scene_MenuBase.prototype.create;
+    scene.prototype.stop = Scene_MenuBase.prototype.stop;
 }
 
 function handleMenuInputs(scene) {

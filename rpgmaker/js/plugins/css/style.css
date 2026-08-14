@@ -49,6 +49,15 @@ message-box-component.whole-screen {
     transform: translate(-50%, -50%);
 }
 
+.full-width {
+    width: 100%;
+}
+
+.vertical-center {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 .with-message-box {
     --message-box-height: calc(1em * 4 * 1.2);
     top: calc((100vh - var(--message-box-height)) / 2);
@@ -94,4 +103,12 @@ openable-component[data-target-state="closed"] main-menu-component .choices-list
 
 openable-component[data-target-state="closed"] main-menu-component .explanation {
     transform: translateX(100%);
+}
+
+:is(
+    are-you-sure-component,
+    options-menu-component
+) .choices-list {
+    width: 50%;
+    margin: auto;
 }
