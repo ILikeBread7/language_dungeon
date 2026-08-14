@@ -4,13 +4,13 @@ import { BaseComponent } from '../../common/components/base_component.js';
  * @typedef { {
  *  text: string,
  *  element: HTMLElement,
- *  visible?: boolean,
- *  enabled?: boolean
+ *  isVisible?: boolean,
+ *  isEnabled?: boolean
  * } } ChoiceListOption
  * @typedef { { 
  *  text: string,
- *  enabled?: boolean,
- *  visible?: boolean,
+ *  isVisible?: boolean,
+ *  isEnabled?: boolean,
  *  cssClass?: string,
  *  id?: number,
  *  } } ChoiceListChoice
@@ -64,6 +64,10 @@ export class ChoicesListComponent extends BaseComponent {
                 opacity: 0.6;
             }
 
+            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-hidden="hidden"] {
+                display: none;
+            }
+
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-selected="selected"] {
                 background: blue;
                 color: white;
@@ -108,10 +112,15 @@ export class ChoicesListComponent extends BaseComponent {
         this._active = false;
     }
 
-    choicesListRefreshEnabledOptions() {
+    choicesListRefreshVisibleAndEnabledOptions() {
         for (const option of this._displayedOptions) {
             const optionElement = option.element;
-            if (option.enabled && !option.enabled()) {
+            if (option.isVisible && !option.isVisible()) {
+                optionElement.dataset.hidden = 'hidden';
+            } else {
+                optionElement.removeAttribute('data-hidden');
+            }
+            if (option.isEnabled && !option.isEnabled()) {
                 optionElement.dataset.disabled = 'disabled';
             } else {
                 optionElement.removeAttribute('data-disabled');
@@ -119,7 +128,7 @@ export class ChoicesListComponent extends BaseComponent {
         }
 
         const currentOption = this._displayedOptions[this._selectedIndex];
-        if (currentOption && currentOption.element.dataset.disabled) {
+        if (!currentOption || currentOption.element.dataset.disabled || currentOption.element.dataset.hidden) {
             this.choicesListSelectOptionNoEvent();
         }
     }
@@ -152,10 +161,6 @@ export class ChoicesListComponent extends BaseComponent {
 
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
-            if (!option.visible && option.visible !== undefined) {
-                this._displayedOptions.push(option);
-                continue;
-            }
             const optionElement = document.createElement('li');
             optionElement.part = 'choice-item';
             optionElement.innerHTML = option.text;
@@ -303,7 +308,12 @@ export class ChoicesListComponent extends BaseComponent {
         }
 
         const option = this._displayedOptions[index];
-        if (!option || !option.element || option.element.dataset.disabled) {
+        if (
+            !option
+            || !option.element
+            || option.element.dataset.disabled
+            || option.element.dataset.hidden
+        ) {
             return;
         }
 

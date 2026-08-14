@@ -19,7 +19,7 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
     FLOOR: {
         text: 'Floor',
         explanation: 'Pick up items from the floor',
-        enabled() {
+        isEnabled() {
             const f = window.$f;
             return f.isFloorItem();
         }

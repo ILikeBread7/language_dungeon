@@ -63,7 +63,7 @@ export class MainMenuComponent extends BaseComponent {
 
     async mainMenuTakeChoice() {
         this._choicesList.choicesListSelectOptionNoEvent(this._defaultMenuOptionIndex);
-        this._choicesList.choicesListRefreshEnabledOptions();
+        this._choicesList.choicesListRefreshVisibleAndEnabledOptions();
         this._choicesList.choicesListActivate();
         const playerChoice = await this._choicesList.choicesListTakeChoice();
         this._choicesList.choicesListDeactivate();

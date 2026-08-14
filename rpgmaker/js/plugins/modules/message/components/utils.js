@@ -7,6 +7,7 @@
  */
 export async function takeOneChoice(choicesList, options, defaultIndex) {
     choicesList.element.choicesListSetChoices(options);
+    choicesList.element.choicesListRefreshVisibleAndEnabledOptions();
     choicesList.element.choicesListActivate();
     choicesList.element.choicesListSelectOption(defaultIndex);
     choicesList.showAndOpen();
