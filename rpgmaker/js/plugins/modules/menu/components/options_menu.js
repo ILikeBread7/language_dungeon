@@ -89,16 +89,11 @@ export class OptionsMenuComponent extends BaseComponent {
         }
     }
 
-    /**
-     * 
-     * @returns Last player choice, that resulted in exiting the menu
-     */
     async optionsMenuStart() {
         this._choicesList.choicesListActivate();
 
-        let choice;
         do {
-            choice = await this._choicesList.choicesListTakeChoice();
+            const choice = await this._choicesList.choicesListTakeChoice();
             if (choice.cancelled) {
                 break;
             }
@@ -120,7 +115,6 @@ export class OptionsMenuComponent extends BaseComponent {
         } while(true);
 
         this._choicesList.choicesListDeactivate();
-        return choice;
     }
 
     optionsMenuSetNextValue() {

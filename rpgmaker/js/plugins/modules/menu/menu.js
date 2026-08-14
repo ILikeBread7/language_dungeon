@@ -2,6 +2,7 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { MainMenuComponent } from './components/main_menu.js';
+import { OptionsMenuComponent } from './components/options_menu.js';
 
 /**
  * @type {HideableOpenable<MainMenuComponent>}
@@ -12,6 +13,11 @@ let mainMenu;
  * @type {HideableOpenable<AreYouSureComponent>}
  */
 let gameEnd;
+
+/**
+ * @type {HideableOpenable<OptionsMenuComponent>}
+ */
+let optionsMenu;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -38,59 +44,60 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
 });
 Object.values(MAIN_MENU_CHOICES).forEach((choice, index) => choice.id = index + 1);
 
+const configManager = window.ConfigManager;
 const step = 10;
 const mod = 100 + step;
-const options = [
+const OPTIONS_MENU_CHOICES = [
     {
         text: 'Always Dash',
         explanation: 'Make the character always run, without holding the run button.',
-        get value() { return mapToOnOff(ConfigManager.alwaysDash); },
+        get value() { return mapToOnOff(configManager.alwaysDash); },
         setValue() {
-            ConfigManager.alwaysDash = !ConfigManager.alwaysDash;
+            configManager.alwaysDash = !configManager.alwaysDash;
         }
     },
     {
         text: 'BGM Volume',
         explanation: 'Volume of the background music.',
-        get value() { return mapToPercentage(ConfigManager.bgmVolume) },
+        get value() { return mapToPercentage(configManager.bgmVolume) },
         setNextValue() {
-            ConfigManager.bgmVolume = (ConfigManager.bgmVolume + step + mod) % mod;
+            configManager.bgmVolume = (configManager.bgmVolume + step + mod) % mod;
         },
         setPreviousValue() {
-            ConfigManager.bgmVolume = (ConfigManager.bgmVolume - step + mod) % mod;
+            configManager.bgmVolume = (configManager.bgmVolume - step + mod) % mod;
         }
     },
     {
         text: 'BGS Volume',
         explanation: 'Volume of the background sounds.',
-        get value() { return mapToPercentage(ConfigManager.bgsVolume); },
+        get value() { return mapToPercentage(configManager.bgsVolume); },
         setNextValue() {
-            ConfigManager.bgsVolume = (ConfigManager.bgsVolume + step + mod) % mod;
+            configManager.bgsVolume = (configManager.bgsVolume + step + mod) % mod;
         },
         setPreviousValue() {
-            ConfigManager.bgsVolume = (ConfigManager.bgsVolume - step + mod) % mod;
+            configManager.bgsVolume = (configManager.bgsVolume - step + mod) % mod;
         }
     },
     {
         text: 'ME Volume',
         explanation: 'Volume of the musical effects.',
-        get value() { return mapToPercentage(ConfigManager.meVolume); },
+        get value() { return mapToPercentage(configManager.meVolume); },
         setNextValue() {
-            ConfigManager.meVolume = (ConfigManager.meVolume + step + mod) % mod;
+            configManager.meVolume = (configManager.meVolume + step + mod) % mod;
         },
         setPreviousValue() {
-            ConfigManager.meVolume = (ConfigManager.meVolume - step + mod) % mod;
+            configManager.meVolume = (configManager.meVolume - step + mod) % mod;
         }
     },
     {
         text: 'SE Volume',
         explanation: 'Volume of the sound effects.',
-        get value() { return mapToPercentage(ConfigManager.seVolume); },
+        get value() { return mapToPercentage(configManager.seVolume); },
         setNextValue() {
-            ConfigManager.seVolume = (ConfigManager.seVolume + step + mod) % mod;
+            configManager.seVolume = (configManager.seVolume + step + mod) % mod;
         },
         setPreviousValue() {
-            ConfigManager.seVolume = (ConfigManager.seVolume - step + mod ) % mod;
+            configManager.seVolume = (configManager.seVolume - step + mod ) % mod;
         }
     },
     {
@@ -113,9 +120,14 @@ export function initializeMainMenu(container = document.body) {
     gameEnd = new HideableOpenable(new AreYouSureComponent());
     gameEnd.topElement.classList.add('vertical-center');
 
+    OptionsMenuComponent.register();
+    optionsMenu = new HideableOpenable(new OptionsMenuComponent());
+    optionsMenu.topElement.classList.add('vertical-center');
+
     container.append(
         mainMenu.topElement,
-        gameEnd.topElement
+        gameEnd.topElement,
+        optionsMenu.topElement
     );
 }
 
@@ -175,6 +187,22 @@ Scene_GameEnd.prototype.start = function() {
     });
 }
 
+Scene_Options.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+    choicesList = optionsMenu.element.choicesList;
+    handleOptionsMenu().then(() => {
+        configManager.save();
+        this.popScene();
+    });
+}
+
+async function handleOptionsMenu() {
+    optionsMenu.element.optionsMenuSetOptions(OPTIONS_MENU_CHOICES);
+    optionsMenu.showAndOpen();
+    await optionsMenu.element.optionsMenuStart();
+    await optionsMenu.closeAndHide();
+}
+
 for (const scene of [
         Scene_Menu,
         Scene_GameEnd,
@@ -204,10 +232,17 @@ function handleMenuInputs(scene) {
         choicesList.choicesListCancel();
     } else if (scene === Scene_Options) {
         if (input.isTriggered('right')) {
-            // mainMenu.mainMenuSetNextValue();
+            optionsMenu.element.optionsMenuSetNextValue();
         } else if (input.isTriggered('left')) {
-            // mainMenu.mainMenuSetPreviousValue();
+            optionsMenu.element.optionsMenuSetPreviousValue();
         }
     }
-    
+}
+
+function mapToOnOff(boolValue) {
+    return boolValue ? 'ON' : 'OFF';
+}
+
+function mapToPercentage(value) {
+    return `${value}%`;
 }
