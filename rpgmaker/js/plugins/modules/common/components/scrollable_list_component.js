@@ -1,5 +1,5 @@
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
-import { clamp } from '../../message/components/utils.js';
+import { clamp, getNumberFromCssPxString } from '../../message/components/utils.js';
 
 export class ScrollableListComponent extends ChoicesListComponent {
 
@@ -27,6 +27,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
         this._container = document.createElement('div');
         this._container.classList.add('container');
+        this._list.style.top = `0px`;
         this._container.appendChild(this._list);
         this.appendChild(this._container);
     }
@@ -65,7 +66,6 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
-        const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
 
         for (
@@ -90,7 +90,6 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
-        const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
 
         for (

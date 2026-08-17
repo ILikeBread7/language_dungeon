@@ -56,3 +56,14 @@ export async function takeAreYouSure(areYouSure, options) {
 export function clamp(number, min, max) {
     return Math.min(Math.max(number, min), max);
 }
+
+/**
+ * 
+ * @param {string} cssValue css value in pixels
+ */
+export function getNumberFromCssPxString(cssValue) {
+    if (!cssValue) {
+        return;
+    }
+    return Number(cssValue.substring(0, cssValue.length - 2));
+}

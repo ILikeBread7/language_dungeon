@@ -1,5 +1,6 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { VISIBILITY_STATE } from '../../common/enums.js';
+import { getNumberFromCssPxString } from './utils.js';
 
 export const MESSAGE_BOX_STATE = /** @type {const} */ Object.freeze({
     INACTIVE: 'inactive',
@@ -367,16 +368,8 @@ export class MessageBoxComponent extends BaseComponent {
      */
     _findLinesNumber(element) {
         const style = getComputedStyle(element);
-        const lineHeight = this._getNumberFromCssPxString(style.lineHeight);
+        const lineHeight = getNumberFromCssPxString(style.lineHeight);
         return Math.ceil((element.getBoundingClientRect().height - this._textUnderScreenTolerance) / lineHeight);
-    }
-
-    /**
-     * 
-     * @param {string} cssValue css value in pixels
-     */
-    _getNumberFromCssPxString(cssValue) {
-        return Number(cssValue.substring(0, cssValue.length - 2));
     }
 
     async _messageContainerScroll() {
@@ -450,7 +443,7 @@ export class MessageBoxComponent extends BaseComponent {
         const style = getComputedStyle(this);
         this._linesPerScreen = Number(style.getPropertyValue('--lines-per-screen'));
         this._charWriteWaitMs = Number(style.getPropertyValue('--char-write-wait-ms'));
-        this._textUnderScreenTolerance = this._getNumberFromCssPxString(style.getPropertyValue('font-size')) * 0.75;
+        this._textUnderScreenTolerance = getNumberFromCssPxString(style.getPropertyValue('font-size')) * 0.75;
         this._adjustContainerScrollAfterResize();
     }
 
