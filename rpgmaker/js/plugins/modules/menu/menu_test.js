@@ -68,16 +68,14 @@ const tests = {
         choicesList = items.choicesList;
         document.body.appendChild(itemsMenu.topElement);
 
-        const itemChoices = [
-            { text: 'Item 1' },
-            { text: 'Item 2' },
-            { text: 'Item 3' },
-            { text: 'Item 4' }
-        ];
-        itemChoices.forEach((choice, index) => {
-            choice.explanation = `${choice.text} explanation`;
-            choice.id = index + 1;
-        });
+        const itemChoices = [];
+        for (let i = 1; i <= 28 * 5; i++) {
+            itemChoices.push({
+                text: `Item ${i}`,
+                explanation: `Item ${i} explanation`,
+                id: i
+            });
+        }
 
         items.itemsMenuStart(itemChoices);
         itemsMenu.showAndOpen();
@@ -181,8 +179,14 @@ const keyActionMap = new Map([
     [ 'ArrowUp', () => choicesList.choicesListSelectPreviousOption() ],
     [ 'Enter', () => choicesList.choicesListConfirmCurrentOption() ],
     [ 'Escape', () => choicesList.choicesListCancel() ],
-    [ 'ArrowRight', () => optionsMenu.optionsMenuSetNextValue() ],
-    [ 'ArrowLeft', () => optionsMenu.optionsMenuSetPreviousValue() ]
+    [ 'ArrowRight', () => {
+        optionsMenu.optionsMenuSetNextValue();
+        items.choicesList.scrollableListNextPage();
+    } ],
+    [ 'ArrowLeft', () => {
+        optionsMenu.optionsMenuSetPreviousValue();
+        items.choicesList.scrollableListPreviousPage();
+    } ]
 ]);
 document.addEventListener('keydown', event => {
     const action = keyActionMap.get(event.key);

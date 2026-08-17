@@ -8,9 +8,13 @@ ChoicesListComponent.register();
 
 export class ListWithExplanation {
 
-    constructor() {
-        this._choicesList = new ChoicesListComponent();
-        this._explanationDiv = document.createElement('div');
+    /**
+     * Can optionally take elements to use, creates new ones if none provided.
+     * @param {{ choicesList: ChoicesListComponent, explanationDiv: HTMLElement }} [elements]
+     */
+    constructor(elements) {
+        this._choicesList = (elements && elements.choicesList) || new ChoicesListComponent();
+        this._explanationDiv = (elements && elements.explanationDiv) || document.createElement('div');
         this._explanationDiv.classList.add('explanation');
 
         this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
