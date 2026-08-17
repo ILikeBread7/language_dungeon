@@ -31,7 +31,7 @@ export class HideableOpenable extends ElementStack {
     }
 
     async showAndOpen() {
-        this.hideable.hideableShow();
+        this.hideable.hideableShowWithReflow();
         await this.openable.openableOpen();
     }
 

@@ -10,7 +10,7 @@ hideable.appendChild(openable);
 document.body.appendChild(hideable);
 
 (async () => {
-    hideable.hideableShow();
+    hideable.hideableShowWithReflow();
     await openable.openableOpen();
     await openable.openableClose();
     hideable.hideableHide();

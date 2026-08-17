@@ -37,6 +37,10 @@ export class HideableComponent extends BaseComponent {
 
     hideableShow() {
         this.dataset.state = SHOWN_STATE.SHOWN;
+    }
+
+    hideableShowWithReflow() {
+        this.hideableShow();
         void this.clientWidth;
     }
 
