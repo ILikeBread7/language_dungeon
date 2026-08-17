@@ -75,8 +75,6 @@ export class ChoicesListComponent extends BaseComponent {
                 background: blue;
                 color: white;
             }
-
-            
         `;
     }
 
