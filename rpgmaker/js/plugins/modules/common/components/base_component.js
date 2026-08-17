@@ -1,7 +1,10 @@
 export class BaseComponent extends HTMLElement {
 
+    /**
+     * @returns {string}
+     */
     static get componentDefaultTagName() {
-        return 'base-component';
+        throw new Error('The componentDefaultTagName static getter needs to be overridden.');
     }
 
     get componentCssStyle() {
