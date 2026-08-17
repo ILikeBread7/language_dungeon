@@ -137,12 +137,14 @@ Scene_Menu.prototype.start = function() {
     const f = window.$f;
     choicesList = mainMenu.element.choicesList;
 
+    addMenuBackdrop();
     mainMenu.showAndOpen();
     mainMenu.element.mainMenuTakeChoice().then(choice => {
         mainMenu.closeAndHide();
 
         if (choice.cancelled || choice.id === MAIN_MENU_CHOICES.BACK.id) {
             this.popScene();
+            removeMenuBackdrop();
             return;
         }
         
@@ -179,6 +181,7 @@ Scene_GameEnd.prototype.start = function() {
         ]
     }).then(playerChoice => {
         if (playerChoice.id === ARE_YOU_SURE_IDS.YES) {
+            removeMenuBackdrop();
             this.fadeOutAll();
             SceneManager.goto(Scene_Title);
         } else {
@@ -189,10 +192,12 @@ Scene_GameEnd.prototype.start = function() {
 
 Scene_Options.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
+    addMenuBackdrop();
     choicesList = optionsMenu.element.choicesList;
     handleOptionsMenu().then(() => {
         configManager.save();
         this.popScene();
+        removeMenuBackdrop();
     });
 }
 
@@ -245,4 +250,12 @@ function mapToOnOff(boolValue) {
 
 function mapToPercentage(value) {
     return `${value}%`;
+}
+
+function addMenuBackdrop() {
+    document.body.classList.add('menu-backdrop');
+}
+
+function removeMenuBackdrop() {
+    document.body.classList.remove('menu-backdrop');
 }

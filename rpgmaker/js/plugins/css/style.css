@@ -112,3 +112,11 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
     width: 50%;
     margin: auto;
 }
+
+#components-container {
+    transition: background-color 0.5s;
+}
+
+body.menu-backdrop #components-container {
+    background-color: rgba(0, 0, 0, 0.6);
+}
