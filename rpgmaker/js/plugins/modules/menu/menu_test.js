@@ -153,7 +153,7 @@ const tests = {
         } while (choice.cancelled || !options[choice.index].returnToTitle);
     }
 };
-tests.areYouSure();
+tests.options();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],

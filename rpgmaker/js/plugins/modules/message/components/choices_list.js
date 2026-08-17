@@ -43,6 +43,9 @@ export class ChoicesListComponent extends BaseComponent {
     get componentCssStyle() {
         return /*css*/`
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5lh;
                 list-style-type: none;
                 padding: 0px;
                 background: green;
@@ -53,10 +56,6 @@ export class ChoicesListComponent extends BaseComponent {
                 background: yellow;
                 text-align: center;
                 cursor: pointer;
-            }
-
-            ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li:not(:first-of-type) {
-                margin-top: 10px;
             }
 
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-disabled="disabled"] {
