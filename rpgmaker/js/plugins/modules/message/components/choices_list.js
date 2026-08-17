@@ -56,6 +56,10 @@ export class ChoicesListComponent extends BaseComponent {
                 background: yellow;
                 text-align: center;
                 cursor: pointer;
+
+                & * {
+                    pointer-events: none;
+                }
             }
 
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} > li[data-disabled="disabled"] {
@@ -71,6 +75,8 @@ export class ChoicesListComponent extends BaseComponent {
                 background: blue;
                 color: white;
             }
+
+            
         `;
     }
 

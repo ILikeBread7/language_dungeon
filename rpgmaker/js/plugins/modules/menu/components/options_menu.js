@@ -30,10 +30,6 @@ export class OptionsMenuComponent extends BaseComponent {
                 position: absolute;
                 top: anchor(--choices-list bottom);
             }
-
-            ${this.componentTagName} .${VALUE_SPAN_CSS_CLASS} {
-                pointer-events: none;
-            }
         `;
     }
 

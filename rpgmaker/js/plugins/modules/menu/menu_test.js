@@ -144,13 +144,10 @@ const tests = {
         ];
 
         optionsMenu.optionsMenuSetOptions(options);
-        let choice;
-        do {
-            optionsMenuHideableOpenable.showAndOpen();
-            choice = await optionsMenu.optionsMenuStart();
-            ConfigManager.save();
-            await optionsMenuHideableOpenable.closeAndHide();
-        } while (choice.cancelled || !options[choice.index].returnToTitle);
+        optionsMenuHideableOpenable.showAndOpen();
+        await optionsMenu.optionsMenuStart();
+        ConfigManager.save();
+        await optionsMenuHideableOpenable.closeAndHide();
     }
 };
 tests.options();
