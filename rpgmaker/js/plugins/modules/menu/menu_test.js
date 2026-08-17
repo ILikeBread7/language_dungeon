@@ -1,6 +1,7 @@
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
+import { ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
 
@@ -28,6 +29,10 @@ AreYouSureComponent.register();
 const areYouSure = new HideableOpenable(new AreYouSureComponent());
 areYouSure.topElement.classList.add('centered', 'full-width');
 const confirmMenu = areYouSure.element;
+
+ItemsMenuComponent.register();
+const itemsMenu = new HideableOpenable(new ItemsMenuComponent());
+const items = itemsMenu.element;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -57,6 +62,25 @@ const tests = {
         do {
             playerChoice = await takeAreYouSure(areYouSure);
         } while(playerChoice.cancelled || playerChoice.id === ARE_YOU_SURE_IDS.NO);
+    },
+
+    async items() {
+        choicesList = items.choicesList;
+        document.body.appendChild(itemsMenu.topElement);
+
+        const itemChoices = [
+            { text: 'Item 1' },
+            { text: 'Item 2' },
+            { text: 'Item 3' },
+            { text: 'Item 4' }
+        ];
+        itemChoices.forEach((choice, index) => {
+            choice.explanation = `${choice.text} explanation`;
+            choice.id = index + 1;
+        });
+
+        items.itemsMenuStart(itemChoices);
+        itemsMenu.showAndOpen();
     },
 
     async options() {
@@ -150,7 +174,7 @@ const tests = {
         await optionsMenuHideableOpenable.closeAndHide();
     }
 };
-tests.options();
+tests.items();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],
