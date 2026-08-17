@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../common/components/base_component.js';
+import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 
 /**
@@ -35,21 +36,9 @@ export class OptionsMenuComponent extends BaseComponent {
 
     constructor() {
         super();
-        ChoicesListComponent.register();
-
-        this._choicesList = new ChoicesListComponent();
-        this._choicesList.classList.add('choices-list');
-
-        this._explanationDiv = document.createElement('div');
-        this._explanationDiv.classList.add('explanation');
-
-        this.append(this._choicesList, this._explanationDiv);
-
-        this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
-            const index = event.detail.index;
-            const option = this._options[index];
-            this._explanationDiv.innerHTML = option.explanation;
-        });
+        this._listWithExplanation = new ListWithExplanation();
+        this.choicesList.classList.add('choices-list');
+        this._listWithExplanation.appendAll(this);
     }
 
     /**
@@ -57,23 +46,23 @@ export class OptionsMenuComponent extends BaseComponent {
      */
     optionsMenuSetOptions(options) {
         this._options = options;
-        this._explanationDiv.innerHTML = options[0].explanation;
+        this._listWithExplanation.setChoices(options);
 
-        this._choicesList.choicesListSetChoices(this._options);
+        this.choicesList.choicesListSetChoices(this._options);
         for (let i = 0; i < this._options.length; i++) {
             const option = options[i];
             if (option.goBack) {
                 continue;
             }
-            const displayedOption = this._choicesList.choicesListDisplayedOptions[i];
+            const displayedOption = this.choicesList.choicesListDisplayedOptions[i];
             displayedOption.element.innerHTML += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
         }
-        this._choicesList.choicesListSelectOptionNoEvent();
+        this._listWithExplanation.selectChoice();
         this.optionsMenuUpdateOptionValues();
     }
 
     optionsMenuUpdateOptionValues() {
-        const displayedOptions = this._choicesList.choicesListDisplayedOptions;
+        const displayedOptions = this.choicesList.choicesListDisplayedOptions;
         for (let i = 0; i < this._options.length; i++) {
             const option = this._options[i];
             if (option.goBack) {
@@ -86,10 +75,10 @@ export class OptionsMenuComponent extends BaseComponent {
     }
 
     async optionsMenuStart() {
-        this._choicesList.choicesListActivate();
+        this.choicesList.choicesListActivate();
 
         do {
-            const choice = await this._choicesList.choicesListTakeChoice();
+            const choice = await this.choicesList.choicesListTakeChoice();
             if (choice.cancelled) {
                 break;
             }
@@ -110,11 +99,11 @@ export class OptionsMenuComponent extends BaseComponent {
             this._updateOptionValue(option, choice.element);
         } while(true);
 
-        this._choicesList.choicesListDeactivate();
+        this.choicesList.choicesListDeactivate();
     }
 
     optionsMenuSetNextValue() {
-        const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
+        const currentlySelectedOption = this.choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
             
@@ -132,7 +121,7 @@ export class OptionsMenuComponent extends BaseComponent {
     }
 
     optionsMenuSetPreviousValue() {
-        const currentlySelectedOption = this._choicesList.choicesListCurrentlySelectedOption;
+        const currentlySelectedOption = this.choicesList.choicesListCurrentlySelectedOption;
         if (currentlySelectedOption) {
             const option = this._options[currentlySelectedOption.index];
 
@@ -160,7 +149,7 @@ export class OptionsMenuComponent extends BaseComponent {
     }
 
     get choicesList() {
-        return this._choicesList;
+        return this._listWithExplanation.choicesList;
     }
 
 }

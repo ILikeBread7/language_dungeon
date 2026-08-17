@@ -1,5 +1,6 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { OPEN_STATE, VISIBILITY_STATE } from '../../common/enums.js';
+import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 
 /**
@@ -35,16 +36,15 @@ export class MainMenuComponent extends BaseComponent {
     constructor() {
         super();
         ChoicesListComponent.register();
-        this._choicesList = new ChoicesListComponent();
-        this._explanationDiv = document.createElement('div');
-        this._explanationDiv.classList.add('explanation');
-        this.append(this._choicesList, this._explanationDiv);
+        this._listWithExplanation = new ListWithExplanation();
+
         this._defaultMenuOptionIndex = 0;
-        this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
+        this.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
             const index = event.detail.index;
             this._defaultMenuOptionIndex = index;
-            this._setExplanationDivContent(index);
         });
+
+        this._listWithExplanation.appendAll(this);
     }
 
     /**
@@ -52,26 +52,22 @@ export class MainMenuComponent extends BaseComponent {
      */
     mainMenuSetOptions(options) {
         this._options = options;
-        this._choicesList.choicesListSetChoices(options);
+        this._listWithExplanation.setChoices(options);
+        this._listWithExplanation.selectChoice();
         this._defaultMenuOptionIndex = 0;
-        this._setExplanationDivContent();
-    }
-
-    _setExplanationDivContent(index = 0) {
-        this._explanationDiv.innerHTML = this._options[index].explanation;
     }
 
     async mainMenuTakeChoice() {
-        this._choicesList.choicesListSelectOptionNoEvent(this._defaultMenuOptionIndex);
-        this._choicesList.choicesListRefreshVisibleAndEnabledOptions();
-        this._choicesList.choicesListActivate();
-        const playerChoice = await this._choicesList.choicesListTakeChoice();
-        this._choicesList.choicesListDeactivate();
+        this._listWithExplanation.selectChoice(this._defaultMenuOptionIndex);
+        this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
+        this.choicesList.choicesListActivate();
+        const playerChoice = await this.choicesList.choicesListTakeChoice();
+        this.choicesList.choicesListDeactivate();
         return playerChoice;
     }
 
     get choicesList() {
-        return this._choicesList;
+        return this._listWithExplanation.choicesList;
     }
 
 }

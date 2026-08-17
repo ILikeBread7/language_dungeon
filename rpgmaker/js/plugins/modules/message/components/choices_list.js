@@ -372,7 +372,7 @@ export class ChoicesListComponent extends BaseComponent {
         this.choicesListSetChoices(choices);
         this.choicesListRefreshVisibleAndEnabledOptions();
         this.choicesListActivate();
-        this.choicesListSelectOption(defaultIndex);
+        this.choicesListSelectOptionNoEvent(defaultIndex);
         const choice = await this.choicesListTakeChoice();
         this.choicesListDeactivate();
         return choice;
