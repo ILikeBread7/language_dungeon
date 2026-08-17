@@ -46,9 +46,14 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
 
-        if (this._isElementOutOfView(optionDimensions, listDimensions, containerDimensions)) {
+        if (this._isElementBelowContainer(optionDimensions, containerDimensions)) {
+            const optionElementTopRelativeToList = optionDimensions.top - listDimensions.top;
             const maxScroll = this._calculateMaxScroll(listDimensions.height, containerDimensions.height);
-            this._scrollTo(optionDimensions.top, maxScroll);
+            this._scrollTo(optionElementTopRelativeToList, maxScroll);
+        } else if (this._isElementAboveContainer(optionDimensions, containerDimensions)) {
+            const optionElementBottomRelativeToList = optionDimensions.bottom - listDimensions.top;
+            console.log(optionElementBottomRelativeToList)
+            this._scrollTo(optionElementBottomRelativeToList - containerDimensions.height);
         }
 
         return option;
@@ -94,12 +99,19 @@ export class ScrollableListComponent extends ChoicesListComponent {
     /**
      * 
      * @param {DOMRect} elementDimensions 
-     * @param {DOMRect} listDimensions 
      * @param {DOMRect} containerDimensions 
      */
-    _isElementOutOfView(elementDimensions, listDimensions, containerDimensions) {
-        return elementDimensions.bottom > containerDimensions.bottom
-            || elementDimensions.top < containerDimensions.top;
+    _isElementAboveContainer(elementDimensions, containerDimensions) {
+        return elementDimensions.top < containerDimensions.top;
+    }
+
+    /**
+     * 
+     * @param {DOMRect} elementDimensions 
+     * @param {DOMRect} containerDimensions 
+     */
+    _isElementBelowContainer(elementDimensions, containerDimensions) {
+        return elementDimensions.bottom > containerDimensions.bottom;
     }
 
     /**
