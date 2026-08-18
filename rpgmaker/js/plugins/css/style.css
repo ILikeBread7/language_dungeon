@@ -117,6 +117,6 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
     transition: background-color 0.5s;
 }
 
-body.menu-backdrop #components-container {
+.menu-backdrop {
     background-color: rgba(0, 0, 0, 0.6);
 }

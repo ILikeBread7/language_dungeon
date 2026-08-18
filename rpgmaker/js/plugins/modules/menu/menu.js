@@ -25,6 +25,11 @@ let optionsMenu;
 let choicesList;
 
 /**
+ * @type {HTMLElement}
+ */
+let menuContainer;
+
+/**
  * @type {Object<string,import('./components/main_menu.js').MainMenuOption>}
  */
 const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
@@ -112,6 +117,7 @@ const OPTIONS_MENU_CHOICES = [
  * @param {HTMLElement} [container] 
  */
 export function initializeMainMenu(container = document.body) {
+    menuContainer = container;
     MainMenuComponent.register();
     mainMenu = new HideableOpenable(new MainMenuComponent());
     mainMenu.element.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
@@ -253,9 +259,9 @@ function mapToPercentage(value) {
 }
 
 function addMenuBackdrop() {
-    document.body.classList.add('menu-backdrop');
+    menuContainer.classList.add('menu-backdrop');
 }
 
 function removeMenuBackdrop() {
-    document.body.classList.remove('menu-backdrop');
+    menuContainer.classList.remove('menu-backdrop');
 }
