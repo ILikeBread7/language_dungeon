@@ -1,5 +1,5 @@
 import { BaseComponent } from '../../common/components/base_component.js';
-import { ScrollableListComponent } from '../../common/components/scrollable_list_component.js';
+import { PagedListComponent } from '../../common/components/paged_list_component.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
 
@@ -20,26 +20,19 @@ export class ItemsMenuComponent extends BaseComponent {
             }
 
             ${this.componentTagName} .explanation,
-            ${this.componentTagName} .items-container {
+            ${this.componentTagName} ${PagedListComponent.componentDefaultTagName} {
                 width: 50%;
-            }
-
-            ${this.componentTagName} .items-container {
-                position: relative;
-                overflow: hidden;
+                display: block;
             }
         `;
     }
 
     constructor() {
         super();
-        ScrollableListComponent.register();
+        PagedListComponent.register();
 
-        this._listWithExplanation = new ListWithExplanation({ choicesList: new ScrollableListComponent() });
-        this._itemsContainer = document.createElement('div');
-        this._itemsContainer.classList.add('items-container');
-        this._itemsContainer.appendChild(this._listWithExplanation.choicesList);
-        this.append(this._itemsContainer, this._listWithExplanation.explanationDiv);
+        this._listWithExplanation = new ListWithExplanation({ choicesList: new PagedListComponent() });
+        this._listWithExplanation.appendAll(this);
     }
 
     /**
@@ -54,7 +47,7 @@ export class ItemsMenuComponent extends BaseComponent {
     }
 
     /**
-     * @type {ScrollableListComponent}
+     * @type {PagedListComponent}
      */
     get choicesList() {
         return this._listWithExplanation.choicesList;

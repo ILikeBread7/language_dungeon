@@ -1,10 +1,10 @@
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
 import { clamp, getNumberFromCssPxString } from '../../message/components/utils.js';
 
-export class ScrollableListComponent extends ChoicesListComponent {
+export class PagedListComponent extends ChoicesListComponent {
 
     static get componentDefaultTagName() {
-        return 'scrollable-list-component';
+        return 'paged-list-component';
     }
 
     get componentCssStyle() {
@@ -60,7 +60,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         return option;
     }
 
-    scrollableListNextPage() {
+    pagedListNextPage() {
         const currentOption = this.choicesListCurrentlySelectedOption;
         if (!currentOption) {
             return;
@@ -94,7 +94,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this.choicesListSelectOption(lastElementIndex);
     }
 
-    scrollableListPreviousPage() {
+    pagedListPreviousPage() {
         const currentOption = this.choicesListCurrentlySelectedOption;
         if (!currentOption) {
             return;

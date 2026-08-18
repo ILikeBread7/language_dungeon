@@ -183,11 +183,11 @@ const keyActionMap = new Map([
     [ 'Escape', () => choicesList.choicesListCancel() ],
     [ 'ArrowRight', () => {
         optionsMenu.optionsMenuSetNextValue();
-        items.choicesList.scrollableListNextPage();
+        items.choicesList.pagedListNextPage();
     } ],
     [ 'ArrowLeft', () => {
         optionsMenu.optionsMenuSetPreviousValue();
-        items.choicesList.scrollableListPreviousPage();
+        items.choicesList.pagedListPreviousPage();
     } ]
 ]);
 document.addEventListener('keydown', event => {
