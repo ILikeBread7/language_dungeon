@@ -1,5 +1,5 @@
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
-import { clamp, getNumberFromCssPxString } from '../../message/components/utils.js';
+import { clamp, getNumberFromCssPxString, isElementAboveContainer, isElementBelowContainer, scrollElementTo } from '../../message/components/utils.js';
 
 export class PagedListComponent extends ChoicesListComponent {
 
@@ -13,6 +13,7 @@ export class PagedListComponent extends ChoicesListComponent {
 
             ${this.componentTagName} .choices-list {
                 position: relative;
+                top: 0px;
             }
 
             ${this.componentTagName} .container {
@@ -27,7 +28,6 @@ export class PagedListComponent extends ChoicesListComponent {
 
         this._container = document.createElement('div');
         this._container.classList.add('container');
-        this._list.style.top = `0px`;
         this._scroll = 0;
         this._container.appendChild(this._list);
         this.appendChild(this._container);
@@ -48,11 +48,11 @@ export class PagedListComponent extends ChoicesListComponent {
         const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
 
-        if (this._isElementBelowContainer(optionDimensions, listDimensions, containerDimensions)) {
+        if (isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
             const optionElementTopRelativeToList = optionDimensions.top - listDimensions.top;
             const maxScroll = this._calculateMaxScroll(listDimensions.height, containerDimensions.height);
             this._scrollTo(optionElementTopRelativeToList, maxScroll);
-        } else if (this._isElementAboveContainer(optionDimensions, listDimensions, containerDimensions)) {
+        } else if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
             const optionElementBottomRelativeToList = optionDimensions.bottom - listDimensions.top;
             this._scrollTo(optionElementBottomRelativeToList - containerDimensions.height);
         }
@@ -84,7 +84,7 @@ export class PagedListComponent extends ChoicesListComponent {
             element = nextActiveSibling(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
-            if (this._isElementBelowContainer(optionDimensions, listDimensions, containerDimensions)) {
+            if (isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
                 const index = Number(element.dataset.index);
                 this.choicesListSelectOption(index);
                 return;
@@ -119,7 +119,7 @@ export class PagedListComponent extends ChoicesListComponent {
             element = previousActiveSibling(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
-            if (this._isElementAboveContainer(optionDimensions, listDimensions, containerDimensions)) {
+            if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
                 const index = Number(element.dataset.index);
                 this.choicesListSelectOptionNoEvent(index);
                 this._selectTopmostVisibleElement(element, listDimensions, containerDimensions);
@@ -160,7 +160,7 @@ export class PagedListComponent extends ChoicesListComponent {
             }
 
             const previousElementDimensions = previousElement.getBoundingClientRect();
-            if (this._isElementAboveContainer(previousElementDimensions, listDimensions, containerDimensions)) {
+            if (isElementAboveContainer(previousElementDimensions, listDimensions, containerDimensions, this._scroll)) {
                 return element;
             }
         }
@@ -169,36 +169,12 @@ export class PagedListComponent extends ChoicesListComponent {
     }
 
     /**
-     * 
-     * @param {DOMRect} elementDimensions 
-     * @param {DOMRect} listDimensions 
-     * @param {DOMRect} containerDimensions 
-     */
-    _isElementAboveContainer(elementDimensions, listDimensions, containerDimensions) {
-        const realElementTop = elementDimensions.top - listDimensions.top - this._scroll;
-        return realElementTop < containerDimensions.top;
-    }
-
-    /**
-     * 
-     * @param {DOMRect} elementDimensions 
-     * @param {DOMRect} listDimensions 
-     * @param {DOMRect} containerDimensions 
-     */
-    _isElementBelowContainer(elementDimensions, listDimensions, containerDimensions) {
-        const realElementBottom = elementDimensions.bottom - listDimensions.top - this._scroll;
-        return realElementBottom > containerDimensions.bottom;
-    }
-
-    /**
      * Scrolls the list to the y position, clamped between 0 and maxScroll
      * @param {number} y 
      * @param {number} [maxScroll] 
      */
     _scrollTo(y, maxScroll = Number.MAX_SAFE_INTEGER) {
-        const scroll = clamp(y, 0, maxScroll);
-        this._scroll = scroll;
-        this._list.style.top = `-${scroll}px`;
+        this._scroll = scrollElementTo(this._list, y, maxScroll);
     }
 
     /**

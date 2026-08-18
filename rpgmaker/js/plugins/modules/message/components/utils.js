@@ -67,3 +67,40 @@ export function getNumberFromCssPxString(cssValue) {
     }
     return Number(cssValue.substring(0, cssValue.length - 2));
 }
+
+/**
+ * 
+ * @param {DOMRect} elementDimensions 
+ * @param {DOMRect} listDimensions 
+ * @param {DOMRect} containerDimensions 
+ * @param {number} scroll
+ */
+export function isElementAboveContainer(elementDimensions, listDimensions, containerDimensions, scroll) {
+    const realElementTop = elementDimensions.top - listDimensions.top - scroll;
+    return realElementTop < containerDimensions.top;
+}
+
+/**
+ * 
+ * @param {DOMRect} elementDimensions 
+ * @param {DOMRect} listDimensions 
+ * @param {DOMRect} containerDimensions 
+ * @param {number} scroll
+ */
+export function isElementBelowContainer(elementDimensions, listDimensions, containerDimensions, scroll) {
+    const realElementBottom = elementDimensions.bottom - listDimensions.top - scroll;
+    return realElementBottom > containerDimensions.bottom;
+}
+
+/**
+ * Scrolls an element, by setting it's top property, to the y position, clamped between 0 and maxScroll
+ * @param {HTMLElement} element 
+ * @param {number} y 
+ * @param {number} [maxScroll] 
+ * @returns {number} The new scroll value
+ */
+export function scrollElementTo(element, y, maxScroll = Number.MAX_SAFE_INTEGER) {
+    const scroll = clamp(y, 0, maxScroll);
+    element.style.top = `-${scroll}px`;
+    return scroll;
+}
