@@ -48,7 +48,8 @@ export class ItemsMenuComponent extends BaseComponent {
      */
     itemsMenuStart(items) {
         this._listWithExplanation.setChoices(items);
-        this._listWithExplanation.selectChoice()
+        this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
+        this._listWithExplanation.selectFirstActiveChoice()
         this.choicesList.choicesListActivate();
     }
 

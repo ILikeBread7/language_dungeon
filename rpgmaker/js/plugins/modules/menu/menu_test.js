@@ -71,6 +71,8 @@ const tests = {
         const itemChoices = [];
         for (let i = 1; i <= 28 * 5; i++) {
             itemChoices.push({
+                isEnabled: () => Math.random() > 0.5,
+                isVisible: () => Math.random() > 0.1,
                 text: `Item ${i}`,
                 explanation: `Item ${i} explanation`,
                 id: i

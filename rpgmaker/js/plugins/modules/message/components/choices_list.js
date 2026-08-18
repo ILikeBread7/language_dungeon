@@ -362,6 +362,18 @@ export class ChoicesListComponent extends BaseComponent {
 
     /**
      * 
+     * @returns {number} Index of the first active option, or -1 if there is no such option
+     */
+    choicesListSelectFirstActiveChoice() {
+        const firstActiveOptionIndex = this._displayedOptions.findIndex(isActiveOption);
+        if (firstActiveOptionIndex >= 0) {
+            this.choicesListSelectOptionNoEvent(firstActiveOptionIndex);
+        }
+        return firstActiveOptionIndex;
+    }
+
+    /**
+     * 
      * @param {[ChoiceListChoice]} choices 
      * @param {number} [defaultIndex] 
      * @returns 
@@ -393,4 +405,17 @@ export class ChoicesListComponent extends BaseComponent {
         return this._displayedOptions;
     }
 
+    get choicesListActiveOptions() {
+        return this._displayedOptions.filter(isActiveOption);
+    }
+
+}
+
+/**
+ * 
+ * @param {ChoiceListOption} option 
+ */
+function isActiveOption(option) {
+    const dataset = option.element.dataset;
+    return !dataset.disabled && !dataset.hidden;
 }

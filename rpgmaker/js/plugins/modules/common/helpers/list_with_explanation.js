@@ -48,6 +48,13 @@ export class ListWithExplanation {
         this._setExplanationDivContent(index);
     }
 
+    selectFirstActiveChoice() {
+        const selectedIndex = this._choicesList.choicesListSelectFirstActiveChoice();
+        if (selectedIndex >= 0) {
+            this._setExplanationDivContent(selectedIndex);
+        }
+    }
+
     /**
      * 
      * @param {HTMLElement} container 

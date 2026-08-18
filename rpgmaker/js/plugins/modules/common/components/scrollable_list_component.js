@@ -66,9 +66,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
-        const lastElementIndex = this.choicesListDisplayedOptions.length - 1;
+        const activeOptions = this.choicesListActiveOptions;
+        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
+        const lastActiveOption = activeOptions[activeOptions.length - 1];
+        const lastElementIndex = Number(lastActiveOption.element.dataset.index);
         if (currentOption.index === lastElementIndex) {
-            const firstElementIndex = 0;
             this.choicesListSelectOption(firstElementIndex);
             return;
         }
@@ -79,7 +81,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         for (
             let element = currentOption.option.element;
             element;
-            element = element.nextElementSibling
+            element = nextActiveSibling(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
             if (this._isElementBelowContainer(optionDimensions, listDimensions, containerDimensions)) {
@@ -101,18 +103,20 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const containerDimensions = this._container.getBoundingClientRect();
         const listDimensions = this._list.getBoundingClientRect();
         
-        const firstElementIndex = 0;
+        const activeOptions = this.choicesListActiveOptions;
+        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
+        const lastActiveOption = activeOptions[activeOptions.length - 1];
+        const lastElementIndex = Number(lastActiveOption.element.dataset.index);
         if (currentOption.index === firstElementIndex) {
-            const lastElementIndex = this.choicesListDisplayedOptions.length - 1;
             this.choicesListSelectOptionNoEvent(lastElementIndex);
-            this._selectTopmostVisibleElement(this.choicesListDisplayedOptions[lastElementIndex].element, listDimensions, containerDimensions);
+            this._selectTopmostVisibleElement(lastActiveOption.element, listDimensions, containerDimensions);
             return;
         }
 
         for (
             let element = currentOption.option.element;
             element;
-            element = element.previousElementSibling
+            element = previousActiveSibling(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
             if (this._isElementAboveContainer(optionDimensions, listDimensions, containerDimensions)) {
@@ -148,9 +152,9 @@ export class ScrollableListComponent extends ChoicesListComponent {
         for (
             let element = startingElement;
             element;
-            element = element.previousElementSibling
+            element = previousActiveSibling(element)
         ) {
-            const previousElement = element.previousElementSibling;
+            const previousElement = previousActiveSibling(element);
             if (!previousElement) {
                 return element;
             }
@@ -207,4 +211,37 @@ export class ScrollableListComponent extends ChoicesListComponent {
         return listHeight - containerHeight;
     }
 
+}
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+function nextActiveSibling(element) {
+    do {
+        element = element.nextElementSibling;
+    } while(element && !isActiveElement(element));
+
+    return element;
+}
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+function previousActiveSibling(element) {
+    do {
+        element = element.previousElementSibling;
+    } while(element && !isActiveElement(element));
+
+    return element;
+}
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+function isActiveElement(element) {
+    const dataset = element.dataset;
+    return !dataset.disabled && !dataset.hidden;
 }
