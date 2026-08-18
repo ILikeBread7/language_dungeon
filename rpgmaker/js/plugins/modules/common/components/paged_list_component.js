@@ -1,5 +1,5 @@
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
-import { clamp, getNumberFromCssPxString, isElementAboveContainer, isElementBelowContainer, scrollElementTo } from '../../message/components/utils.js';
+import { clamp, getNumberFromCssPxString, isElementAboveContainer, isElementBelowContainer, nextActiveSiblingOptionElement, previousActiveSiblingOptionElement, scrollElementTo } from '../../message/components/utils.js';
 
 export class PagedListComponent extends ChoicesListComponent {
 
@@ -81,7 +81,7 @@ export class PagedListComponent extends ChoicesListComponent {
         for (
             let element = currentOption.option.element;
             element;
-            element = nextActiveSibling(element)
+            element = nextActiveSiblingOptionElement(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
             if (isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
@@ -116,7 +116,7 @@ export class PagedListComponent extends ChoicesListComponent {
         for (
             let element = currentOption.option.element;
             element;
-            element = previousActiveSibling(element)
+            element = previousActiveSiblingOptionElement(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
             if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
@@ -152,9 +152,9 @@ export class PagedListComponent extends ChoicesListComponent {
         for (
             let element = startingElement;
             element;
-            element = previousActiveSibling(element)
+            element = previousActiveSiblingOptionElement(element)
         ) {
-            const previousElement = previousActiveSibling(element);
+            const previousElement = previousActiveSiblingOptionElement(element);
             if (!previousElement) {
                 return element;
             }
@@ -187,37 +187,4 @@ export class PagedListComponent extends ChoicesListComponent {
         return listHeight - containerHeight;
     }
 
-}
-
-/**
- * 
- * @param {HTMLElement} element 
- */
-function nextActiveSibling(element) {
-    do {
-        element = element.nextElementSibling;
-    } while(element && !isActiveElement(element));
-
-    return element;
-}
-
-/**
- * 
- * @param {HTMLElement} element 
- */
-function previousActiveSibling(element) {
-    do {
-        element = element.previousElementSibling;
-    } while(element && !isActiveElement(element));
-
-    return element;
-}
-
-/**
- * 
- * @param {HTMLElement} element 
- */
-function isActiveElement(element) {
-    const dataset = element.dataset;
-    return !dataset.disabled && !dataset.hidden;
 }

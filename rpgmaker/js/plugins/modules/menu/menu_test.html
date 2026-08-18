@@ -58,8 +58,12 @@
         background: orange;
     }
 
-    paged-list-component .choices-list {
-        transition: top 1s;
+    scrollable-list-component .choices-list {
+        transition: top var(--scroll-time, 0.1s);
+    }
+
+    .page-scroll {
+        --scroll-time: 1s;
     }
 </style>
 <script type="module" src="menu_test.js"></script>

@@ -1,5 +1,7 @@
 import { ChoicesListComponent } from '../../message/components/choices_list.js';
-import { isElementAboveContainer, isElementBelowContainer, scrollElementTo } from '../../message/components/utils.js';
+import { findElement, isElementAboveContainer, isElementBelowContainer, nextActiveSiblingOptionElement, previousActiveSiblingOptionElement, scrollElementTo } from '../../message/components/utils.js';
+
+const PAGE_SCROLL_CSS_CLASS = 'page-scroll';
 
 export class ScrollableListComponent extends ChoicesListComponent {
 
@@ -60,13 +62,115 @@ export class ScrollableListComponent extends ChoicesListComponent {
         return option;
     }
 
+    scrollableListNextPage() {
+        const currentOption = this.choicesListCurrentlySelectedOption;
+        if (!currentOption) {
+            return;
+        }
+
+        const activeOptions = this.choicesListActiveOptions;
+        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
+        const lastElement = activeOptions[activeOptions.length - 1].element;
+        const lastElementIndex = Number(lastElement.dataset.index);
+        if (currentOption.index === lastElementIndex) {
+            this.choicesListSelectOption(firstElementIndex);
+            return;
+        }
+
+        const containerDimensions = this._container.getBoundingClientRect();
+        const listDimensions = this._list.getBoundingClientRect();
+
+        const elementToSelect = this._findNextElementBelowContainer(
+            currentOption.option.element,
+            listDimensions,
+            containerDimensions
+        );
+
+        if (!elementToSelect) {
+            this.choicesListSelectOption(lastElementIndex);
+            return;
+        }
+
+        const elementIndex = Number(elementToSelect.dataset.index);
+        this.choicesListSelectOption(elementIndex);
+
+        const elementDimensions = elementToSelect.getBoundingClientRect();
+        this._scrollTo(elementDimensions.top - listDimensions.top);
+        this._list.classList.add(PAGE_SCROLL_CSS_CLASS);
+    }
+
+    scrollableListPreviousPage() {
+        const currentOption = this.choicesListCurrentlySelectedOption;
+        if (!currentOption) {
+            return;
+        }
+
+        const activeOptions = this.choicesListActiveOptions;
+        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
+        const lastElement = activeOptions[activeOptions.length - 1].element;
+        const lastElementIndex = Number(lastElement.dataset.index);
+        if (currentOption.index === firstElementIndex) {
+            this.choicesListSelectOption(lastElementIndex);
+            return;
+        }
+
+        const containerDimensions = this._container.getBoundingClientRect();
+        const listDimensions = this._list.getBoundingClientRect();
+
+        const elementToSelect = this._findNextElementAboveContainer(
+            currentOption.option.element,
+            listDimensions,
+            containerDimensions
+        );
+
+        if (!elementToSelect) {
+            this.choicesListSelectOption(firstElementIndex);
+            return;
+        }
+
+        const elementIndex = Number(elementToSelect.dataset.index);
+        this.choicesListSelectOption(elementIndex);
+
+        const elementDimensions = elementToSelect.getBoundingClientRect();
+        this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height);
+        this._list.classList.add(PAGE_SCROLL_CSS_CLASS);
+    }
+
+    /**
+     * 
+     * @param {HTMLElement} startingElement 
+     * @param {DOMRect} listDimensions
+     * @param {DOMRect} containerDimensions
+     */
+    _findNextElementBelowContainer(startingElement, listDimensions, containerDimensions) {
+        return findElement(
+            startingElement,
+            nextActiveSiblingOptionElement,
+            element => isElementBelowContainer(element.getBoundingClientRect(), listDimensions, containerDimensions, this._scroll)
+        );
+    }
+
+    /**
+     * 
+     * @param {HTMLElement} startingElement 
+     * @param {DOMRect} listDimensions
+     * @param {DOMRect} containerDimensions
+     */
+    _findNextElementAboveContainer(startingElement, listDimensions, containerDimensions) {
+        return findElement(
+            startingElement,
+            previousActiveSiblingOptionElement,
+            element => isElementAboveContainer(element.getBoundingClientRect(), listDimensions, containerDimensions, this._scroll)
+        );
+    }
+
     /**
      * Scrolls the list to the y position
      * @param {number} y 
      */
     _scrollTo(y) {
+        this._list.classList.remove(PAGE_SCROLL_CSS_CLASS);
         this._scroll = scrollElementTo(this._list, y);
     }
 
 }
-

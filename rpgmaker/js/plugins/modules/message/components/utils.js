@@ -104,3 +104,57 @@ export function scrollElementTo(element, y, maxScroll = Number.MAX_SAFE_INTEGER)
     element.style.top = `-${scroll}px`;
     return scroll;
 }
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+export function nextActiveSiblingOptionElement(element) {
+    do {
+        element = element.nextElementSibling;
+    } while(element && !isActiveOptionElement(element));
+
+    return element;
+}
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+export function previousActiveSiblingOptionElement(element) {
+    do {
+        element = element.previousElementSibling;
+    } while(element && !isActiveOptionElement(element));
+
+    return element;
+}
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+export function isActiveOptionElement(element) {
+    const dataset = element.dataset;
+    return !dataset.disabled && !dataset.hidden;
+}
+
+/**
+ * 
+ * @param {HTMLElement} startingElement 
+ * @param {(element: HTMLElement) => HTMLElement|undefined} nextElementFunction 
+ * @param {(element: HTMLElement) => boolean} predicate 
+ * @returns {HTMLElement|undefined} The first element that fulfills the predicate, or undefined if no such element exists
+ */
+export function findElement(startingElement, nextElementFunction, predicate) {
+    for (
+        let element = startingElement;
+        element;
+        element = nextElementFunction(element)
+    ) {
+        if (predicate(element)) {
+            return element;
+        }
+    }
+
+    return;
+}

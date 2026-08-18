@@ -71,8 +71,8 @@ const tests = {
         const itemChoices = [];
         for (let i = 1; i <= 28 * 5; i++) {
             itemChoices.push({
-                isEnabled: () => Math.random() > 0.5,
-                isVisible: () => Math.random() > 0.1,
+                // isEnabled: () => Math.random() > 0.5,
+                // isVisible: () => Math.random() > 0.1,
                 text: `Item ${i}`,
                 explanation: `Item ${i} explanation`,
                 id: i
@@ -183,11 +183,11 @@ const keyActionMap = new Map([
     [ 'Escape', () => choicesList.choicesListCancel() ],
     [ 'ArrowRight', () => {
         optionsMenu.optionsMenuSetNextValue();
-        items.choicesList.pagedListNextPage();
+        items.choicesList.scrollableListNextPage();
     } ],
     [ 'ArrowLeft', () => {
         optionsMenu.optionsMenuSetPreviousValue();
-        items.choicesList.pagedListPreviousPage();
+        items.choicesList.scrollableListPreviousPage();
     } ]
 ]);
 document.addEventListener('keydown', event => {
