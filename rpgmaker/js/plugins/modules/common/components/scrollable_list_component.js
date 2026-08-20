@@ -2,6 +2,8 @@ import { ChoicesListComponent } from '../../message/components/choices_list.js';
 import { findElement, isElementAboveContainer, isElementBelowContainer, nextActiveSiblingOptionElement, previousActiveSiblingOptionElement, scrollElementTo } from '../../message/components/utils.js';
 
 const PAGE_SCROLL_CSS_CLASS = 'page-scroll';
+const PAGE_SCROLL_UP_CSS_CLASS = 'page-scroll-up';
+const PAGE_SCROLL_DOWN_CSS_CLASS = 'page-scroll-down';
 
 export class ScrollableListComponent extends ChoicesListComponent {
 
@@ -96,7 +98,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
         this._scrollTo(elementDimensions.top - listDimensions.top);
-        this._list.classList.add(PAGE_SCROLL_CSS_CLASS);
+        this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS);
     }
 
     scrollableListPreviousPage() {
@@ -133,7 +135,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
         this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height);
-        this._list.classList.add(PAGE_SCROLL_CSS_CLASS);
+        this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
     }
 
     /**
@@ -169,7 +171,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {number} y 
      */
     _scrollTo(y) {
-        this._list.classList.remove(PAGE_SCROLL_CSS_CLASS);
+        this._list.classList.remove(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
         this._scroll = scrollElementTo(this._list, y);
     }
 

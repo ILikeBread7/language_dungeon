@@ -59,11 +59,31 @@
     }
 
     scrollable-list-component .choices-list {
-        transition: top var(--scroll-time, 0.1s);
+        transition: top 0.1s;
     }
 
-    .page-scroll {
-        --scroll-time: 1s;
+    scrollable-list-component .choices-list.page-scroll {
+        transition: none;
+    }
+
+    scrollable-list-component:has(.page-scroll-down) {
+        animation: shake-right 0.15s;
+    }
+
+    scrollable-list-component:has(.page-scroll-up) {
+        animation: shake-left 0.15s;
+    }
+
+    @keyframes shake-right {
+        50% {
+            transform: rotate(2deg);
+        }
+    }
+
+    @keyframes shake-left {
+        50% {
+            transform: rotate(-2deg);
+        }
     }
 </style>
 <script type="module" src="menu_test.js"></script>
