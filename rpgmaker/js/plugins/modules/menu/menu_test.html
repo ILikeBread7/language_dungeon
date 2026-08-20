@@ -85,5 +85,31 @@
             transform: rotate(-2deg);
         }
     }
+
+    scrollable-list-component .scroll-up-indicator {
+        animation: floating-up 0.75s linear alternate infinite;
+    }
+
+    scrollable-list-component .scroll-down-indicator {
+        animation: floating-down 0.75s linear alternate infinite;
+    }
+
+    @keyframes floating-down {
+        0% {
+            transform: translateY(0%);
+        }
+        50% {
+            transform: translateY(50%);
+        }
+    }
+
+    @keyframes floating-up {
+        0% {
+            transform: translateY(0%);
+        }
+        50% {
+            transform: translateY(-50%);
+        }
+    }
 </style>
 <script type="module" src="menu_test.js"></script>
