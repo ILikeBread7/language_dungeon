@@ -13,8 +13,8 @@ export class ListWithExplanation {
      * @param {{ choicesList: ChoicesListComponent, explanationDiv: HTMLElement }} [elements]
      */
     constructor(elements) {
-        this._choicesList = (elements && elements.choicesList) || new ChoicesListComponent();
-        this._explanationDiv = (elements && elements.explanationDiv) || document.createElement('div');
+        this._choicesList = elements?.choicesList ?? new ChoicesListComponent();
+        this._explanationDiv = elements?.explanationDiv ?? document.createElement('div');
         this._explanationDiv.classList.add('explanation');
 
         this._choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
