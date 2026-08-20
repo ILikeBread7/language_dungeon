@@ -101,7 +101,7 @@ export function isElementBelowContainer(elementDimensions, listDimensions, conta
  */
 export function scrollElementTo(element, y, maxScroll = Number.MAX_SAFE_INTEGER) {
     const scroll = clamp(y, 0, maxScroll);
-    element.style.top = `-${scroll}px`;
+    element.style.setProperty('--scroll', `${scroll}px`);
     return scroll;
 }
 

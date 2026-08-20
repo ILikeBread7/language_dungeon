@@ -15,7 +15,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
             ${this.componentTagName} .choices-list {
                 position: relative;
-                top: 0px;
+                top: calc(-1 * var(--scroll, 0px));
             }
 
             ${this.componentTagName} .container {
