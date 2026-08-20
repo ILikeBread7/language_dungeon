@@ -70,6 +70,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
+        const oldScroll = this._scroll;
         const activeOptions = this.choicesListActiveOptions;
         const firstElementIndex = Number(activeOptions[0].element.dataset.index);
         const lastElement = activeOptions[activeOptions.length - 1].element;
@@ -94,10 +95,19 @@ export class ScrollableListComponent extends ChoicesListComponent {
         }
 
         const elementIndex = Number(elementToSelect.dataset.index);
-        this.choicesListSelectOption(elementIndex);
+        this.choicesListSelectOptionNoEvent(elementIndex);
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
+        const currentOptionElement = currentOption.option.element;
+        const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
         this._scrollTo(elementDimensions.top - listDimensions.top, calculateMaxScroll(listDimensions, containerDimensions));
+        const elementSamePosition = findNextElementAtSamePosition(currentOptionElement, currentOptionDimensions, oldScroll, this._scroll);
+        if (elementSamePosition === currentOptionElement) {
+            super.choicesListSelectOption(elementIndex);
+        } else {
+            const elementSamePositionIndex = Number(elementSamePosition.dataset.index);
+            super.choicesListSelectOption(elementSamePositionIndex);
+        }
         this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS);
     }
 
@@ -107,6 +117,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
+        const oldScroll = this._scroll;
         const activeOptions = this.choicesListActiveOptions;
         const firstElementIndex = Number(activeOptions[0].element.dataset.index);
         const lastElement = activeOptions[activeOptions.length - 1].element;
@@ -131,10 +142,19 @@ export class ScrollableListComponent extends ChoicesListComponent {
         }
 
         const elementIndex = Number(elementToSelect.dataset.index);
-        this.choicesListSelectOption(elementIndex);
+        this.choicesListSelectOptionNoEvent(elementIndex);
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
+        const currentOptionElement = currentOption.option.element;
+        const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
         this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height, calculateMaxScroll(listDimensions, containerDimensions));
+        const elementSamePosition = findPreviousElementAtSamePosition(currentOptionElement, currentOptionDimensions, oldScroll, this._scroll);
+        if (elementSamePosition === currentOptionElement) {
+            super.choicesListSelectOption(elementIndex);
+        } else {
+            const elementSamePositionIndex = Number(elementSamePosition.dataset.index);
+            super.choicesListSelectOption(elementSamePositionIndex);
+        }
         this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
     }
 
@@ -185,4 +205,48 @@ export class ScrollableListComponent extends ChoicesListComponent {
  */
 function calculateMaxScroll(listDimensions, containerDimensions) {
     return listDimensions.height - containerDimensions.height;
+}
+
+/**
+ * 
+ * @param {HTMLElement} element
+ * @param {DOMRect} elementOldDimensions 
+ * @param {number} oldScroll 
+ * @param {number} newScroll 
+ */
+function findNextElementAtSamePosition(element, elementOldDimensions, oldScroll, newScroll) {
+    const startingElementDimensions = elementOldDimensions;
+    const startingElementRelativeTop = startingElementDimensions.top - oldScroll;
+    
+    return findElement(
+        element,
+        nextActiveSiblingOptionElement,
+        currentElement => {
+            const currentElementDimensions = currentElement.getBoundingClientRect();
+            const currentElementRelativeBottom = currentElementDimensions.bottom - newScroll;
+            return startingElementRelativeTop <= currentElementRelativeBottom;
+        }
+    );
+}
+
+/**
+ * 
+ * @param {HTMLElement} element
+ * @param {DOMRect} elementOldDimensions 
+ * @param {number} oldScroll 
+ * @param {number} newScroll 
+ */
+function findPreviousElementAtSamePosition(element, elementOldDimensions, oldScroll, newScroll) {
+    const startingElementDimensions = elementOldDimensions;
+    const startingElementRelativeBottom = startingElementDimensions.bottom - oldScroll;
+    
+    return findElement(
+        element,
+        previousActiveSiblingOptionElement,
+        currentElement => {
+            const currentElementDimensions = currentElement.getBoundingClientRect();
+            const currentElementRelativeTop = currentElementDimensions.top - newScroll;
+            return currentElementRelativeTop <= startingElementRelativeBottom;
+        }
+    );
 }
