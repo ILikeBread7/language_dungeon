@@ -55,10 +55,10 @@ export class ScrollableListComponent extends ChoicesListComponent {
         if (isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
             const optionElementBottomRelativeToList = optionDimensions.bottom - listDimensions.top;
             const scrollTarget = optionElementBottomRelativeToList - containerDimensions.height;
-            this._scrollTo(scrollTarget);
+            this._scrollTo(scrollTarget, calculateMaxScroll(listDimensions, containerDimensions));
         } else if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
             const optionElementTopRelativeToList = optionDimensions.top - listDimensions.top;
-            this._scrollTo(optionElementTopRelativeToList);
+            this._scrollTo(optionElementTopRelativeToList, calculateMaxScroll(listDimensions, containerDimensions));
         }
 
         return option;
@@ -97,7 +97,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this.choicesListSelectOption(elementIndex);
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
-        this._scrollTo(elementDimensions.top - listDimensions.top);
+        this._scrollTo(elementDimensions.top - listDimensions.top, calculateMaxScroll(listDimensions, containerDimensions));
         this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS);
     }
 
@@ -134,7 +134,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this.choicesListSelectOption(elementIndex);
 
         const elementDimensions = elementToSelect.getBoundingClientRect();
-        this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height);
+        this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height, calculateMaxScroll(listDimensions, containerDimensions));
         this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
     }
 
@@ -169,10 +169,20 @@ export class ScrollableListComponent extends ChoicesListComponent {
     /**
      * Scrolls the list to the y position
      * @param {number} y 
+     * @param {number} [maxScroll] 
      */
-    _scrollTo(y) {
+    _scrollTo(y, maxScroll) {
         this._list.classList.remove(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
-        this._scroll = scrollElementTo(this._list, y);
+        this._scroll = scrollElementTo(this._list, y, maxScroll);
     }
 
+}
+
+/**
+ * 
+ * @param {DOMRect} listDimensions 
+ * @param {DOMRect} containerDimensions 
+ */
+function calculateMaxScroll(listDimensions, containerDimensions) {
+    return listDimensions.height - containerDimensions.height;
 }
