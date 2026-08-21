@@ -45,12 +45,16 @@ export class ScrollableListComponent extends ChoicesListComponent {
             ${this.componentTagName} :is(.scroll-up-indicator, .scroll-down-indicator) {
                 display: none;
                 position: absolute;
-                --triangle-side-length: 1lh;
+                --triangle-side-length: 0.75lh;
                 --triangle-height: calc(var(--triangle-side-length) * 0.87);
-                width: var(--triangle-side-length);
-                height: var(--triangle-height);
-                background: red;
+                --circle-diameter: 1.2lh;
+
+                width: var(--circle-diameter);
+                height: var(--circle-diameter);
+                border-radius: 100%;
+
                 left: 50%;
+                background: red;
                 opacity: 0.6;
                 transition: opacity 0.1s;
                 cursor: pointer;
@@ -58,16 +62,31 @@ export class ScrollableListComponent extends ChoicesListComponent {
                 &:hover {
                     opacity: 1;
                 }
+
+                &::before {
+                    content: '';
+                    width: var(--triangle-side-length);
+                    height: var(--triangle-height);
+                    position: absolute;
+                    background: yellow;
+                    left: calc((var(--circle-diameter) - var(--triangle-side-length)) / 2);
+                    top: calc((var(--circle-diameter) - var(--triangle-height)) / 2);
+                }
             }
 
             ${this.componentTagName} .scroll-down-indicator {
-                clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
                 bottom: 0px;
+
+                &::before {
+                    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                }
             }
             
             ${this.componentTagName} .scroll-up-indicator {
-                clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
                 top: 0px;
+                &::before {
+                    clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
+                }
             }
         `;
     }

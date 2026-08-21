@@ -66,11 +66,11 @@
         transition: none;
     }
 
-    scrollable-list-component:has(.page-scroll-down) {
+    scrollable-list-component .container:has(.page-scroll-down) {
         animation: shake-right 0.15s;
     }
 
-    scrollable-list-component:has(.page-scroll-up) {
+    scrollable-list-component .container:has(.page-scroll-up) {
         animation: shake-left 0.15s;
     }
 
@@ -86,29 +86,35 @@
         }
     }
 
-    scrollable-list-component .scroll-up-indicator {
+    scrollable-list-component .scroll-up-indicator::before {
         animation: floating-down 0.75s linear alternate infinite;
     }
     
-    scrollable-list-component .scroll-down-indicator {
+    scrollable-list-component .scroll-down-indicator::before {
         animation: floating-up 0.75s linear alternate infinite;
     }
 
     @keyframes floating-down {
         0% {
-            transform: translateY(0%);
+            transform: translateY(-33%);
         }
         50% {
-            transform: translateY(50%);
+            transform: translateY(16%);
+        }
+        100% {
+            transform: translateY(-33%);
         }
     }
 
     @keyframes floating-up {
         0% {
-            transform: translateY(0%);
+            transform: translateY(33%);
         }
         50% {
-            transform: translateY(-50%);
+            transform: translateY(-16%);
+        }
+        100% {
+            transform: translateY(33%);
         }
     }
 </style>
