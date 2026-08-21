@@ -316,8 +316,7 @@ function calculateMaxScroll(listDimensions, containerDimensions) {
  * @param {number} newScroll 
  */
 function findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
-    const startingElementDimensions = samePositionElementOldDimensions;
-    const startingElementRelativeTop = startingElementDimensions.top - oldScroll;
+    const samePositionRelativeTop = samePositionElementOldDimensions.top - oldScroll;
     
     return findElement(
         startingElement,
@@ -325,7 +324,7 @@ function findNextElementAtSamePosition(startingElement, samePositionElementOldDi
         currentElement => {
             const currentElementDimensions = currentElement.getBoundingClientRect();
             const currentElementRelativeBottom = currentElementDimensions.bottom - newScroll;
-            return startingElementRelativeTop <= currentElementRelativeBottom;
+            return samePositionRelativeTop <= currentElementRelativeBottom;
         }
     );
 }
@@ -338,8 +337,7 @@ function findNextElementAtSamePosition(startingElement, samePositionElementOldDi
  * @param {number} newScroll 
  */
 function findPreviousElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
-    const startingElementDimensions = samePositionElementOldDimensions;
-    const startingElementRelativeBottom = startingElementDimensions.bottom - oldScroll;
+    const samePositionRelativeBottom = samePositionElementOldDimensions.bottom - oldScroll;
     
     return findElement(
         startingElement,
@@ -347,7 +345,7 @@ function findPreviousElementAtSamePosition(startingElement, samePositionElementO
         currentElement => {
             const currentElementDimensions = currentElement.getBoundingClientRect();
             const currentElementRelativeTop = currentElementDimensions.top - newScroll;
-            return currentElementRelativeTop <= startingElementRelativeBottom;
+            return currentElementRelativeTop <= samePositionRelativeBottom;
         }
     );
 }
