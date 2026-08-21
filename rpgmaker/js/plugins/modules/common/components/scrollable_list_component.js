@@ -244,7 +244,6 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
         this._scrollTo(this._scroll, calculateMaxScroll(listDimensions, containerDimensions));
-        console.log(listDimensions, containerDimensions, this._scroll)
     }
 
     /**
