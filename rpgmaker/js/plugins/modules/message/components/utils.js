@@ -72,12 +72,11 @@ export function getNumberFromCssPxString(cssValue) {
  * 
  * @param {DOMRect} elementDimensions 
  * @param {DOMRect} listDimensions 
- * @param {DOMRect} containerDimensions 
  * @param {number} scroll
  */
-export function isElementAboveContainer(elementDimensions, listDimensions, containerDimensions, scroll) {
+export function isElementAboveContainer(elementDimensions, listDimensions, scroll) {
     const realElementTop = elementDimensions.top - listDimensions.top - scroll;
-    return realElementTop < containerDimensions.top;
+    return realElementTop < 0;
 }
 
 /**
@@ -89,7 +88,7 @@ export function isElementAboveContainer(elementDimensions, listDimensions, conta
  */
 export function isElementBelowContainer(elementDimensions, listDimensions, containerDimensions, scroll) {
     const realElementBottom = elementDimensions.bottom - listDimensions.top - scroll;
-    return realElementBottom > containerDimensions.bottom;
+    return realElementBottom > containerDimensions.height;
 }
 
 /**

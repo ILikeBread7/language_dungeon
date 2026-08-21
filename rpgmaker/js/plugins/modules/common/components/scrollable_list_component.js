@@ -150,7 +150,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             const optionElementBottomRelativeToList = optionDimensions.bottom - listDimensions.top;
             const scrollTarget = optionElementBottomRelativeToList - containerDimensions.height;
             this._scrollTo(scrollTarget, calculateMaxScroll(listDimensions, containerDimensions));
-        } else if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
+        } else if (isElementAboveContainer(optionDimensions, listDimensions, this._scroll)) {
             const optionElementTopRelativeToList = optionDimensions.top - listDimensions.top;
             this._scrollTo(optionElementTopRelativeToList, calculateMaxScroll(listDimensions, containerDimensions));
         }
@@ -239,13 +239,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
             return;
         }
 
-        const containerDimensions = this._container.getBoundingClientRect();
         const listDimensions = this._list.getBoundingClientRect();
 
         const elementToSelect = this._findNextElementAboveContainer(
             currentOption.option.element,
-            listDimensions,
-            containerDimensions
+            listDimensions
         );
 
         if (!elementToSelect) {
@@ -256,6 +254,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const elementIndex = Number(elementToSelect.dataset.index);
         this.choicesListSelectOptionNoEvent(elementIndex);
 
+        const containerDimensions = this._container.getBoundingClientRect();
         const elementDimensions = elementToSelect.getBoundingClientRect();
         const currentOptionElement = currentOption.option.element;
         const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
@@ -303,13 +302,12 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * 
      * @param {HTMLElement} startingElement 
      * @param {DOMRect} listDimensions
-     * @param {DOMRect} containerDimensions
      */
-    _findNextElementAboveContainer(startingElement, listDimensions, containerDimensions) {
+    _findNextElementAboveContainer(startingElement, listDimensions) {
         return findElement(
             startingElement,
             previousActiveSiblingOptionElement,
-            element => isElementAboveContainer(element.getBoundingClientRect(), listDimensions, containerDimensions, this._scroll)
+            element => isElementAboveContainer(element.getBoundingClientRect(), listDimensions, this._scroll)
         );
     }
 

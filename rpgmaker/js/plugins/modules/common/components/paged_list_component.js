@@ -52,7 +52,7 @@ export class PagedListComponent extends ChoicesListComponent {
             const optionElementTopRelativeToList = optionDimensions.top - listDimensions.top;
             const maxScroll = this._calculateMaxScroll(listDimensions.height, containerDimensions.height);
             this._scrollTo(optionElementTopRelativeToList, maxScroll);
-        } else if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
+        } else if (isElementAboveContainer(optionDimensions, listDimensions, this._scroll)) {
             const optionElementBottomRelativeToList = optionDimensions.bottom - listDimensions.top;
             this._scrollTo(optionElementBottomRelativeToList - containerDimensions.height);
         }
@@ -119,7 +119,7 @@ export class PagedListComponent extends ChoicesListComponent {
             element = previousActiveSiblingOptionElement(element)
         ) {
             const optionDimensions = element.getBoundingClientRect();
-            if (isElementAboveContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
+            if (isElementAboveContainer(optionDimensions, listDimensions, this._scroll)) {
                 const index = Number(element.dataset.index);
                 this.choicesListSelectOptionNoEvent(index);
                 this._selectTopmostVisibleElement(element, listDimensions, containerDimensions);
@@ -160,7 +160,7 @@ export class PagedListComponent extends ChoicesListComponent {
             }
 
             const previousElementDimensions = previousElement.getBoundingClientRect();
-            if (isElementAboveContainer(previousElementDimensions, listDimensions, containerDimensions, this._scroll)) {
+            if (isElementAboveContainer(previousElementDimensions, listDimensions, this._scroll)) {
                 return element;
             }
         }
