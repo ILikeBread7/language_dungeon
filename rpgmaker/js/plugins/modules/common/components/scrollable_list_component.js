@@ -4,10 +4,11 @@ import { findElement, isElementAboveContainer, isElementBelowContainer, nextActi
 const PAGE_SCROLL_CSS_CLASS = 'page-scroll';
 const PAGE_SCROLL_UP_CSS_CLASS = 'page-scroll-up';
 const PAGE_SCROLL_DOWN_CSS_CLASS = 'page-scroll-down';
-const SCROLLABE_UP_CSS_CLASS = 'scrollable-up';
+const SCROLLABLE_UP_CSS_CLASS = 'scrollable-up';
 const SCROLLABLE_DOWN_CSS_CLASS = 'scrollable-down';
 const SCROLL_UP_INDICATOR_CSS_CLASS = 'scroll-up-indicator';
 const SCROLL_DOWN_INDICATOR_CSS_CLASS = 'scroll-down-indicator';
+const CONTAINER_CSS_CLASS = 'container';
 
 export class ScrollableListComponent extends ChoicesListComponent {
 
@@ -32,17 +33,17 @@ export class ScrollableListComponent extends ChoicesListComponent {
                 top: calc(-1 * var(--scroll, 0px));
             }
 
-            ${this.componentTagName} .container {
+            ${this.componentTagName} .${CONTAINER_CSS_CLASS} {
                 overflow: hidden;
                 height: 100%;
             }
 
-            ${this.componentTagName}.scrollable-down .scroll-down-indicator,
-            ${this.componentTagName}.scrollable-up .scroll-up-indicator {
+            ${this.componentTagName}.${SCROLLABLE_DOWN_CSS_CLASS} .${SCROLL_DOWN_INDICATOR_CSS_CLASS},
+            ${this.componentTagName}.${SCROLLABLE_UP_CSS_CLASS} .${SCROLL_UP_INDICATOR_CSS_CLASS} {
                 display: initial;
             }
 
-            ${this.componentTagName} :is(.scroll-up-indicator, .scroll-down-indicator) {
+            ${this.componentTagName} :is(.${SCROLL_UP_INDICATOR_CSS_CLASS}, .${SCROLL_DOWN_INDICATOR_CSS_CLASS}) {
                 display: none;
                 position: absolute;
                 --triangle-side-length: 0.75lh;
@@ -74,7 +75,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
                 }
             }
 
-            ${this.componentTagName} .scroll-down-indicator {
+            ${this.componentTagName} .${SCROLL_DOWN_INDICATOR_CSS_CLASS} {
                 bottom: 0px;
 
                 &::before {
@@ -82,7 +83,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
                 }
             }
             
-            ${this.componentTagName} .scroll-up-indicator {
+            ${this.componentTagName} .${SCROLL_UP_INDICATOR_CSS_CLASS} {
                 top: 0px;
                 &::before {
                     clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
@@ -284,9 +285,9 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this._scroll = scrollElementTo(this._list, y, maxScroll);
         
         if (this._scroll > 0) {
-            this.classList.add(SCROLLABE_UP_CSS_CLASS);
+            this.classList.add(SCROLLABLE_UP_CSS_CLASS);
         } else {
-            this.classList.remove(SCROLLABE_UP_CSS_CLASS);
+            this.classList.remove(SCROLLABLE_UP_CSS_CLASS);
         }
 
         if (this._scroll < maxScroll) {
