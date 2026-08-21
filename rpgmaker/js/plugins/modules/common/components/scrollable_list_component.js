@@ -179,7 +179,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const currentOptionElement = currentOption.option.element;
         const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
         this._scrollTo(elementDimensions.top - listDimensions.top, calculateMaxScroll(listDimensions, containerDimensions));
-        const elementSamePosition = findNextElementAtSamePosition(currentOptionElement, currentOptionDimensions, oldScroll, this._scroll);
+        const elementSamePosition = findNextElementAtSamePosition(elementToSelect, currentOptionDimensions, oldScroll, this._scroll);
         if (elementSamePosition === currentOptionElement) {
             super.choicesListSelectOption(elementIndex);
         } else {
@@ -226,7 +226,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const currentOptionElement = currentOption.option.element;
         const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
         this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height, calculateMaxScroll(listDimensions, containerDimensions));
-        const elementSamePosition = findPreviousElementAtSamePosition(currentOptionElement, currentOptionDimensions, oldScroll, this._scroll);
+        const elementSamePosition = findPreviousElementAtSamePosition(elementToSelect, currentOptionDimensions, oldScroll, this._scroll);
         if (elementSamePosition === currentOptionElement) {
             super.choicesListSelectOption(elementIndex);
         } else {
