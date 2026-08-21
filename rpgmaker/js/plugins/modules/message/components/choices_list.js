@@ -29,7 +29,7 @@ export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
     CHOICES_CANCEL: 'choicescancel'
 });
 /**
- * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoiceListEvent
+ * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoicesListEvent
  */
 
 const CHOICES_LIST_CSS_CLASS_NAME = 'choices-list';

@@ -1,4 +1,6 @@
+import { SCROLLABLE_LIST_EVENTS } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ItemsMenuComponent } from './components/items_menu.js';
@@ -81,6 +83,12 @@ const tests = {
 
         items.itemsMenuStart(itemChoices);
         itemsMenu.showAndOpen();
+
+        for (const eventName of [ ...Object.values(CHOICES_LIST_EVENTS), ...Object.values(SCROLLABLE_LIST_EVENTS) ]) {
+            items.choicesList.addEventListener(eventName, event => {
+                console.log(eventName, event.detail);
+            });
+        }
     },
 
     async options() {
