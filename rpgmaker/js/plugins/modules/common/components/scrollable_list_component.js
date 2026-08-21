@@ -62,12 +62,12 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
             ${this.componentTagName} .scroll-down-indicator {
                 clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
-                top: 0px;
+                bottom: 0px;
             }
-
+            
             ${this.componentTagName} .scroll-up-indicator {
                 clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
-                bottom: 0px;
+                top: 0px;
             }
         `;
     }
