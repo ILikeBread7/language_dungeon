@@ -22,8 +22,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             ${this.componentTagName} {
                 /*
                     Translate is needed to make sroll indicators
-                    posiiton avsolute work relative to this component
-                    (creates a new stacking context)
+                    position absolute work relative to this component
                 */
                 translate: 0;
             }
