@@ -310,17 +310,17 @@ function calculateMaxScroll(listDimensions, containerDimensions) {
 
 /**
  * 
- * @param {HTMLElement} element
- * @param {DOMRect} elementOldDimensions 
+ * @param {HTMLElement} startingElement
+ * @param {DOMRect} samePositionElementOldDimensions 
  * @param {number} oldScroll 
  * @param {number} newScroll 
  */
-function findNextElementAtSamePosition(element, elementOldDimensions, oldScroll, newScroll) {
-    const startingElementDimensions = elementOldDimensions;
+function findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
+    const startingElementDimensions = samePositionElementOldDimensions;
     const startingElementRelativeTop = startingElementDimensions.top - oldScroll;
     
     return findElement(
-        element,
+        startingElement,
         nextActiveSiblingOptionElement,
         currentElement => {
             const currentElementDimensions = currentElement.getBoundingClientRect();
@@ -332,17 +332,17 @@ function findNextElementAtSamePosition(element, elementOldDimensions, oldScroll,
 
 /**
  * 
- * @param {HTMLElement} element
- * @param {DOMRect} elementOldDimensions 
+ * @param {HTMLElement} startingElement
+ * @param {DOMRect} samePositionElementOldDimensions 
  * @param {number} oldScroll 
  * @param {number} newScroll 
  */
-function findPreviousElementAtSamePosition(element, elementOldDimensions, oldScroll, newScroll) {
-    const startingElementDimensions = elementOldDimensions;
+function findPreviousElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
+    const startingElementDimensions = samePositionElementOldDimensions;
     const startingElementRelativeBottom = startingElementDimensions.bottom - oldScroll;
     
     return findElement(
-        element,
+        startingElement,
         previousActiveSiblingOptionElement,
         currentElement => {
             const currentElementDimensions = currentElement.getBoundingClientRect();
