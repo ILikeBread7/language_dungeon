@@ -174,9 +174,12 @@ export class MessageBoxComponent extends BaseComponent {
         this.dataset.boxState = MESSAGE_BOX_STATE.INACTIVE;
 
         window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
+    }
 
-        // Take some property values from css variables
-        new MutationObserver(() => this._saveCssVariables()).observe(this, { attributeFilter: [ 'style', 'class' ] });
+    static observedAttributes = [ 'style', 'class' ];
+
+    attributeChangedCallback() {
+        this._saveCssVariables();
     }
 
     /**
