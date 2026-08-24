@@ -173,13 +173,21 @@ export class MessageBoxComponent extends BaseComponent {
         this._forceFinish = false;
         this.dataset.boxState = MESSAGE_BOX_STATE.INACTIVE;
 
-        window.addEventListener('resize', () => this._adjustContainerScrollAfterResize());
+        this._connectedCallback = this._adjustContainerScrollAfterResize.bind(this);
     }
 
     static observedAttributes = [ 'style', 'class' ];
 
     attributeChangedCallback() {
         this._saveCssVariables();
+    }
+
+    connectedCallback() {
+        window.addEventListener('resize', this._connectedCallback);
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener('resize', this._connectedCallback);
     }
 
     /**
