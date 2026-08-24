@@ -138,6 +138,16 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this._adjustScrollAfterResize();
     }
 
+    connectedCallback() {
+        queueMicrotask(() => this._refreshScrollIndicators());
+    }
+
+    _refreshScrollIndicators() {
+        const listDimensions = this._list.getBoundingClientRect();
+        const containerDimensions = this._container.getBoundingClientRect();
+        this._scrollTo(this._scroll, calculateMaxScroll(listDimensions, containerDimensions));
+    }
+
     _adjustScrollAfterResize() {
         const selectedOption = this.choicesListCurrentlySelectedOption;
         if (!selectedOption) {
@@ -290,16 +300,6 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
         this._list.classList.add(PAGE_SCROLL_CSS_CLASS, scrollCssClass);
         this.dispatchEvent(new CustomEvent(SCROLLABLE_LIST_EVENTS.CHANGE_PAGE, { detail: { index: finalElementIndex, option, page: pageId } }));
-    }
-
-    connectedCallback() {
-        queueMicrotask(() => this._refreshScrollIndicators());
-    }
-
-    _refreshScrollIndicators() {
-        const listDimensions = this._list.getBoundingClientRect();
-        const containerDimensions = this._container.getBoundingClientRect();
-        this._scrollTo(this._scroll, calculateMaxScroll(listDimensions, containerDimensions));
     }
 
     /**
