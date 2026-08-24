@@ -202,6 +202,40 @@ export class ScrollableListComponent extends ChoicesListComponent {
     }
 
     scrollableListNextPage() {
+        this._subsequentPage(
+            elements => Number(elements[0].element.dataset.index),
+            elements => Number(elements[elements.length - 1].element.dataset.index),
+            this._findNextElementBelowContainer.bind(this),
+            findNextElementAtSamePosition,
+            (elementDimensions, listDimensions) => elementDimensions.top - listDimensions.top,
+            PAGE_IDS.NEXT,
+            PAGE_SCROLL_DOWN_CSS_CLASS
+        );
+    }
+
+    scrollableListPreviousPage() {
+        this._subsequentPage(
+            elements => Number(elements[elements.length - 1].element.dataset.index),
+            elements => Number(elements[0].element.dataset.index),
+            this._findNextElementAboveContainer.bind(this),
+            findPreviousElementAtSamePosition,
+            (elementDimensions, listDimensions, containerDimensions) => elementDimensions.bottom - listDimensions.top - containerDimensions.height,
+            PAGE_IDS.PREVIOUS,
+            PAGE_SCROLL_UP_CSS_CLASS
+        );
+    }
+
+    /**
+     * @param {(arr: [{ element: { dataset: { index: string } } }]) => number} getBeginIndex 
+     * @param {(arr: [{ element: { dataset: { index: string } } }]) => number} getEndIndex 
+     * @param {(startingElement: HTMLElement, listDimensions: DOMRect, containerDimensions: DOMRect)} findNextElement 
+     * @param {(startingElement: HTMLElement, samePositionElementOldDimensions: DOMRect, oldScroll: number, newScroll: number)} findElementSamePosition
+     * @param {(elementDimensions: DOMRect, listDimensions: DOMRect, containerDimensions: DOMRect)} calculateScroll 
+     * @param {PageId} pageId 
+     * @param {string} scrollCssClass 
+     * @returns 
+     */
+    _subsequentPage(getBeginIndex, getEndIndex, findNextElement, findElementSamePosition, calculateScroll, pageId, scrollCssClass) {
         const currentOption = this.choicesListCurrentlySelectedOption;
         if (!currentOption) {
             return;
@@ -209,25 +243,27 @@ export class ScrollableListComponent extends ChoicesListComponent {
 
         const oldScroll = this._scroll;
         const activeOptions = this.choicesListActiveOptions;
-        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
-        const lastElement = activeOptions[activeOptions.length - 1].element;
-        const lastElementIndex = Number(lastElement.dataset.index);
-        if (currentOption.index === lastElementIndex) {
-            super.choicesListSelectOption(firstElementIndex);
+
+
+        const beginElementIndex = getBeginIndex(activeOptions);
+        const endElementIndex = getEndIndex(activeOptions);
+
+        if (currentOption.index === endElementIndex) {
+            super.choicesListSelectOption(beginElementIndex);
             return;
         }
 
         const containerDimensions = this._container.getBoundingClientRect();
         const listDimensions = this._list.getBoundingClientRect();
 
-        const elementToSelect = this._findNextElementBelowContainer(
+        const elementToSelect = findNextElement(
             currentOption.option.element,
             listDimensions,
             containerDimensions
         );
 
         if (!elementToSelect) {
-            super.choicesListSelectOption(lastElementIndex);
+            super.choicesListSelectOption(endElementIndex);
             return;
         }
 
@@ -237,59 +273,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const elementDimensions = elementToSelect.getBoundingClientRect();
         const currentOptionElement = currentOption.option.element;
         const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
-        this._scrollTo(elementDimensions.top - listDimensions.top, calculateMaxScroll(listDimensions, containerDimensions));
-        const elementSamePosition = findNextElementAtSamePosition(elementToSelect, currentOptionDimensions, oldScroll, this._scroll);
-        
-        let finalElementIndex;
-        if (elementSamePosition === currentOptionElement) {
-            finalElementIndex = elementIndex;
-        } else {
-            const elementSamePositionIndex = Number(elementSamePosition.dataset.index);
-            finalElementIndex = elementSamePositionIndex;
-        }
-        const option = super.choicesListSelectOption(finalElementIndex);
-
-        this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS);
-        this.dispatchEvent(new CustomEvent(SCROLLABLE_LIST_EVENTS.CHANGE_PAGE, { detail: { index: finalElementIndex, option, page: PAGE_IDS.NEXT } }));
-    }
-
-    scrollableListPreviousPage() {
-        const currentOption = this.choicesListCurrentlySelectedOption;
-        if (!currentOption) {
-            return;
-        }
-
-        const oldScroll = this._scroll;
-        const activeOptions = this.choicesListActiveOptions;
-        const firstElementIndex = Number(activeOptions[0].element.dataset.index);
-        const lastElement = activeOptions[activeOptions.length - 1].element;
-        const lastElementIndex = Number(lastElement.dataset.index);
-        if (currentOption.index === firstElementIndex) {
-            super.choicesListSelectOption(lastElementIndex);
-            return;
-        }
-
-        const listDimensions = this._list.getBoundingClientRect();
-
-        const elementToSelect = this._findNextElementAboveContainer(
-            currentOption.option.element,
-            listDimensions
+        this._scrollTo(
+            calculateScroll(elementDimensions, listDimensions, containerDimensions),
+            calculateMaxScroll(listDimensions, containerDimensions)
         );
-
-        if (!elementToSelect) {
-            super.choicesListSelectOption(firstElementIndex);
-            return;
-        }
-
-        const elementIndex = Number(elementToSelect.dataset.index);
-        this.choicesListSelectOptionNoEvent(elementIndex);
-
-        const containerDimensions = this._container.getBoundingClientRect();
-        const elementDimensions = elementToSelect.getBoundingClientRect();
-        const currentOptionElement = currentOption.option.element;
-        const currentOptionDimensions = currentOptionElement.getBoundingClientRect();
-        this._scrollTo(elementDimensions.bottom - listDimensions.top - containerDimensions.height, calculateMaxScroll(listDimensions, containerDimensions));
-        const elementSamePosition = findPreviousElementAtSamePosition(elementToSelect, currentOptionDimensions, oldScroll, this._scroll);
+        const elementSamePosition = findElementSamePosition(elementToSelect, currentOptionDimensions, oldScroll, this._scroll);
         
         let finalElementIndex;
         if (elementSamePosition === currentOptionElement) {
@@ -300,8 +288,8 @@ export class ScrollableListComponent extends ChoicesListComponent {
         }
         const option = super.choicesListSelectOption(finalElementIndex);
 
-        this._list.classList.add(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
-        this.dispatchEvent(new CustomEvent(SCROLLABLE_LIST_EVENTS.CHANGE_PAGE, { detail: { index: finalElementIndex, option, page: PAGE_IDS.PREVIOUS } }));
+        this._list.classList.add(PAGE_SCROLL_CSS_CLASS, scrollCssClass);
+        this.dispatchEvent(new CustomEvent(SCROLLABLE_LIST_EVENTS.CHANGE_PAGE, { detail: { index: finalElementIndex, option, page: pageId } }));
     }
 
     connectedCallback() {
