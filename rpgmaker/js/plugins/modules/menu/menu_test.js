@@ -68,6 +68,7 @@ const tests = {
 
     async items() {
         choicesList = items.choicesList;
+        // items.choicesList.scrollableListSwitchToHorizontal();
         document.body.appendChild(itemsMenu.topElement);
 
         const itemChoices = [];
