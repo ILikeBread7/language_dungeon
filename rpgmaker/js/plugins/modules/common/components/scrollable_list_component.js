@@ -4,8 +4,7 @@ import { findElement, isElementAboveContainer, isElementBelowContainer, nextActi
 const PAGE_SCROLL_CSS_CLASS = 'page-scroll';
 const PAGE_SCROLL_UP_CSS_CLASS = 'page-scroll-up';
 const PAGE_SCROLL_DOWN_CSS_CLASS = 'page-scroll-down';
-const SCROLLABLE_UP_CSS_CLASS = 'scrollable-up';
-const SCROLLABLE_DOWN_CSS_CLASS = 'scrollable-down';
+const VISIBLE_CSS_CLASS = 'visible';
 const SCROLL_UP_INDICATOR_CSS_CLASS = 'scroll-up-indicator';
 const SCROLL_DOWN_INDICATOR_CSS_CLASS = 'scroll-down-indicator';
 const CONTAINER_CSS_CLASS = 'container';
@@ -54,8 +53,8 @@ export class ScrollableListComponent extends ChoicesListComponent {
                 height: 100%;
             }
 
-            ${this.componentTagName}.${SCROLLABLE_DOWN_CSS_CLASS} .${SCROLL_DOWN_INDICATOR_CSS_CLASS},
-            ${this.componentTagName}.${SCROLLABLE_UP_CSS_CLASS} .${SCROLL_UP_INDICATOR_CSS_CLASS} {
+            ${this.componentTagName} .${SCROLL_DOWN_INDICATOR_CSS_CLASS}.${VISIBLE_CSS_CLASS},
+            ${this.componentTagName} .${SCROLL_UP_INDICATOR_CSS_CLASS}.${VISIBLE_CSS_CLASS} {
                 display: initial;
             }
 
@@ -129,6 +128,37 @@ export class ScrollableListComponent extends ChoicesListComponent {
             this._scrollUpIndicator,
             this._scrollDownIndicator
         );
+
+        window.addEventListener('resize', this._adjustScrollAfterResize.bind(this));
+    }
+
+    static observedAttributes = [ 'style', 'class' ];
+
+    attributeChangedCallback() {
+        this._adjustScrollAfterResize();
+    }
+
+    _adjustScrollAfterResize() {
+        const selectedOption = this.choicesListCurrentlySelectedOption;
+        if (!selectedOption) {
+            return;
+        }
+
+        const element = selectedOption.option.element;
+        const elementDimensions = element.getBoundingClientRect();
+        const containerDimensions = this._container.getBoundingClientRect();
+        
+        if (
+            elementDimensions.top >= containerDimensions.top
+            && elementDimensions.bottom <= containerDimensions.bottom
+        ) {
+            this._refreshScrollIndicators();
+            return;
+        }
+
+        const newScroll = elementDimensions.top + this._scroll + (elementDimensions.height - containerDimensions.height) / 2;
+        const listDimensions = this._list.getBoundingClientRect();
+        this._scrollTo(newScroll, calculateMaxScroll(listDimensions, containerDimensions));
     }
 
     /**
@@ -321,15 +351,15 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this._scroll = scrollElementTo(this._list, y, maxScroll);
         
         if (this._scroll > 0) {
-            this.classList.add(SCROLLABLE_UP_CSS_CLASS);
+            this._scrollUpIndicator.classList.add(VISIBLE_CSS_CLASS);
         } else {
-            this.classList.remove(SCROLLABLE_UP_CSS_CLASS);
+            this._scrollUpIndicator.classList.remove(VISIBLE_CSS_CLASS);
         }
 
         if (this._scroll < maxScroll) {
-            this.classList.add(SCROLLABLE_DOWN_CSS_CLASS);
+            this._scrollDownIndicator.classList.add(VISIBLE_CSS_CLASS);
         } else {
-            this.classList.remove(SCROLLABLE_DOWN_CSS_CLASS);
+            this._scrollDownIndicator.classList.remove(VISIBLE_CSS_CLASS);
         }
     }
 
