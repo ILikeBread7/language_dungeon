@@ -131,3 +131,11 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
     height: fit-content;
     padding: 1lh 0;
 }
+
+.item-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background-image: url('../../../img/system/IconSet.png');
+    background-position: calc(-32px * var(--icon-x)) calc(-32px * var(--icon-y));
+}

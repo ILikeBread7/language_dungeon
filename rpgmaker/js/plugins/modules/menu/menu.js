@@ -228,14 +228,21 @@ Scene_Item.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     addMenuBackdrop();
 
+    const ICON_COLUMNS = 16;
+    const choices = $gameParty.items().map(item => {
+        const iconIndex = item.iconIndex;
+        const iconX = iconIndex % ICON_COLUMNS;
+        const iconY = Math.floor(iconIndex / ICON_COLUMNS);
+
+        return {
+            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${$gameParty.numItems($dataItems[item.id])}`,
+            explanation: item.description,
+            id: item.id,
+        }
+    });
+
     itemsMenu.showAndOpen();
-    itemsMenu.element.itemsMenuStart([
-        { text: 'Item 1', explanation: 'Item 1 explanation' },
-        { text: 'Item 2', explanation: 'Item 2 explanation' },
-        { text: 'Item 3', explanation: 'Item 3 explanation' },
-        { text: 'Item 4', explanation: 'Item 4 explanation' },
-        { text: 'Item 5', explanation: 'Item 5 explanation' },
-    ]).then(async () => {
+    itemsMenu.element.itemsMenuStart(choices).then(async () => {
         await itemsMenu.closeAndHide();
         this.popScene();
     });
