@@ -369,8 +369,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {number} [maxScroll] 
      */
     _scrollTo(y, maxScroll) {
-        y = Math.floor(y);
-        maxScroll = Math.floor(maxScroll);
+        const maxScrollFloored = Math.floor(maxScroll);
 
         this._list.classList.remove(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
         this._scroll = scrollElementTo(this._list, y, maxScroll);
@@ -381,7 +380,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             this._scrollUpIndicator.classList.remove(VISIBLE_CSS_CLASS);
         }
 
-        if (this._scroll < maxScroll) {
+        if (this._scroll < maxScrollFloored) {
             this._scrollDownIndicator.classList.add(VISIBLE_CSS_CLASS);
         } else {
             this._scrollDownIndicator.classList.remove(VISIBLE_CSS_CLASS);
