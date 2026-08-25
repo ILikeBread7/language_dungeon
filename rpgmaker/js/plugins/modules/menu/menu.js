@@ -227,6 +227,7 @@ for (const scene of [
 
     scene.prototype.create = Scene_MenuBase.prototype.create;
     scene.prototype.stop = Scene_MenuBase.prototype.stop;
+    scene.prototype.createBackground = Scene_MenuBase.prototype.createBackground;
 }
 
 function handleMenuInputs(scene) {
