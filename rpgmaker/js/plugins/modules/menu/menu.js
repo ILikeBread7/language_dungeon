@@ -1,7 +1,7 @@
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
-import { ItemsMenuComponent } from './components/items_menu.js';
+import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
 
@@ -138,6 +138,7 @@ export function initializeMainMenu(container = document.body) {
 
     ItemsMenuComponent.register();
     itemsMenu = new HideableOpenable(new ItemsMenuComponent());
+    createItemsMenuEventListeners();
 
     container.append(
         mainMenu.topElement,
@@ -228,8 +229,18 @@ Scene_Item.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     addMenuBackdrop();
 
+    const choices = createItemChoices();
+    itemsMenu.showAndOpen();
+    itemsMenu.element.itemsMenuStart(choices).then(async () => {
+        await itemsMenu.closeAndHide();
+        this.popScene();
+    });
+}
+
+function createItemChoices() {
     const ICON_COLUMNS = 16;
-    const choices = $gameParty.items().map(item => {
+
+    return $gameParty.items().map(item => {
         const iconIndex = item.iconIndex;
         const iconX = iconIndex % ICON_COLUMNS;
         const iconY = Math.floor(iconIndex / ICON_COLUMNS);
@@ -240,11 +251,45 @@ Scene_Item.prototype.start = function() {
             id: item.id,
         }
     });
+}
 
-    itemsMenu.showAndOpen();
-    itemsMenu.element.itemsMenuStart(choices).then(async () => {
-        await itemsMenu.closeAndHide();
-        this.popScene();
+function createItemsMenuEventListeners() {
+    const f = window.$f;
+    
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_USED, event => {
+        const dataItems = window.$dataItems;
+        const itemId = event.detail.itemId;
+        const itemData = dataItems[itemId];
+
+        f.useInventoryItem(itemId);
+
+        if (itemData.meta.closeMenu) {
+            itemsMenu.closeAndHide();
+            SceneManager.goto(Scene_Map);
+            removeMenuBackdrop();
+        } else if (itemData.consumable) {
+            const list = itemsMenu.element.itemsChoicesList;
+            const choices = createItemChoices();
+            const lastUsedItemChoiceIndex = choices.findIndex(choice => choice.id === itemId);
+
+            list.choicesListSetChoices(choices);
+            list.choicesListRefreshVisibleAndEnabledOptions();
+            if (lastUsedItemChoiceIndex >= 0) {
+                list.choicesListSelectOptionNoEvent(lastUsedItemChoiceIndex);
+            } else {
+                list.choicesListSelectFirstActiveChoice();
+            }
+        }
+    });
+    
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, event => {
+        const itemId = event.detail.itemId;
+        console.log(itemId);
+    });
+    
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, event => {
+        const itemId = event.detail.itemId;
+        console.log(itemId);
     });
 }
 

@@ -3,10 +3,19 @@ import { ScrollableListComponent } from '../../common/components/scrollable_list
 import { HideableOpenable } from '../../common/helpers/hideable_openable.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
-import { ItemUseDialogComponent } from './item_use_dialog.js';
+import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.js';
 
 const ITEM_USE_DIALOG_CSS_CLASS = 'item-use-dialog';
 const ITEMS_LIST_CSS_CLASS = 'items-list';
+
+export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
+    ITEM_USED: 'itemused',
+    ITEM_THROWN_AWAY: 'itemthrownaway',
+    ITEM_PICKED_UP: 'itempickedup'
+});
+/**
+ * @typedef { Enum<ITEMS_MENU_EVENTS> } ItemsMenuEvent
+ */
 
 export class ItemsMenuComponent extends BaseComponent {
 
@@ -56,10 +65,20 @@ export class ItemsMenuComponent extends BaseComponent {
         this._listWithExplanation.appendAll(this);
         
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, async event => {
-            const itemName = event.detail.option.text;
+            /**
+             * @type {import('../../message/components/choices_list.js').ChoiceListOption}
+             */
+            const option = event.detail.option;
+            
+            const itemName = option.text;
+            const itemId = option.id;
+
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
+
             const choice = await this._itemUseDialog.element.itemUseDialogStart(itemName);
+            this._dispatchItemEvent(choice, itemId)
+
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
             this._itemUseDialog.closeAndHide();
             this._listWithExplanation.choicesList.choicesListActivate();
@@ -90,13 +109,47 @@ export class ItemsMenuComponent extends BaseComponent {
     }
 
     /**
+     * 
+     * @param {import('../../message/components/choices_list.js').ChoiceListPlayerChoice} choice 
+     * @param {number} itemId 
+     */
+    _dispatchItemEvent(choice, itemId) {
+        switch (choice.id) {
+            case ITEM_DIALOG_CHOICES.USE.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_USED, { detail: { itemId } }));
+            break;
+            case ITEM_DIALOG_CHOICES.THROW_AWAY.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, { detail: { itemId } }));
+            break;
+            case ITEM_DIALOG_CHOICES.PICK_UP.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, { detail: { itemId } }));
+            break;
+            default: // No event
+        }
+    }
+
+    /**
      * @type {ScrollableListComponent|ChoicesListComponent}
      */
     get choicesList() {
-        if (this._itemUseDialog.element.choicesList.choicesListActive) {
-            return this._itemUseDialog.element.choicesList;
+        if (this.dialogChoicesList.choicesListActive) {
+            return this.dialogChoicesList;
         }
+        return this.itemsChoicesList;
+    }
+
+    /**
+     * @type {ScrollableListComponent}
+     */
+    get itemsChoicesList() {
         return this._listWithExplanation.choicesList;
+    }
+
+    /**
+     * @type {ChoicesListComponent}
+     */
+    get dialogChoicesList() {
+        return this._itemUseDialog.element.choicesList;
     }
 
 }

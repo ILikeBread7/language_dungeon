@@ -1333,6 +1333,11 @@ var $f = $f || {};
         action.applyGlobal();
     }
 
+    $f.useInventoryItem = itemId => {
+        $f.useFloorItem(itemId);
+        $gameParty.consumeItem($dataItems[itemId]);
+    }
+
     function isFloorItem() {
         const x = $gamePlayer.x;
         const y = $gamePlayer.y;

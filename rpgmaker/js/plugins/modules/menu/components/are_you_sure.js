@@ -56,7 +56,6 @@ export class AreYouSureComponent extends BaseComponent {
 
     /**
      * @param {AreYouSureOptions} [options]
-     * @returns {boolean} True if should exit, false if cancelled
      */
     async areYouSureTakeChoice(options) {
         const finalOptions = Object.assign({

@@ -1,13 +1,13 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { AreYouSureComponent } from './are_you_sure.js';
 
-export const DIALOG_CHOICES = /** @type {const} */ Object.freeze({
+export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
     USE: { text: 'Use' },
     PICK_UP: { text: 'Pick up' },
     THROW_AWAY: { text: 'Throw away' },
     CANCEL: { text: 'Cancel' }
 });
-Object.values(DIALOG_CHOICES).forEach((choice, index) => choice.id = index + 1);
+Object.values(ITEM_DIALOG_CHOICES).forEach((choice, index) => choice.id = index + 1);
 
 export class ItemUseDialogComponent extends BaseComponent {
 
@@ -31,7 +31,7 @@ export class ItemUseDialogComponent extends BaseComponent {
     async itemUseDialogStart(explanation) {
         const choicePromise = this._dialog.areYouSureTakeChoice({
             explanation,
-            choices: Object.values(DIALOG_CHOICES)
+            choices: Object.values(ITEM_DIALOG_CHOICES)
         });
         this._dialog.choicesList.choicesListSelectFirstActiveChoice();
         return await choicePromise;
