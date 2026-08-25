@@ -35,7 +35,7 @@ export class ItemsMenuComponent extends BaseComponent {
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 50%;
+                width: 100%;
                 height: fit-content;
                 z-index: 1;
             }
@@ -59,10 +59,11 @@ export class ItemsMenuComponent extends BaseComponent {
             const itemId = event.detail.option.id;
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
-            const choice = await this._itemUseDialog.element.itemUseDialogStart();
+            const choice = await this._itemUseDialog.element.itemUseDialogStart(`Item ${itemId}`);
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
             this._itemUseDialog.closeAndHide();
             this._listWithExplanation.choicesList.choicesListActivate();
+            console.log(choice);
         });
     }
 

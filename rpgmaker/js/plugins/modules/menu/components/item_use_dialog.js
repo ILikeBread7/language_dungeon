@@ -1,11 +1,11 @@
 import { BaseComponent } from '../../common/components/base_component.js';
-import { ChoicesListComponent } from '../../message/components/choices_list.js';
+import { AreYouSureComponent } from './are_you_sure.js';
 
-const DIALOG_CHOICES = /** @type {const} */ Object.freeze({
-    USE: { text: 'Use'  },
-    PICK_UP: { text: 'Pick up'  },
-    THROW_AWAY: { text: 'Throw away'  },
-    CANCEL: { text: 'Cancel'  }
+export const DIALOG_CHOICES = /** @type {const} */ Object.freeze({
+    USE: { text: 'Use' },
+    PICK_UP: { text: 'Pick up' },
+    THROW_AWAY: { text: 'Throw away' },
+    CANCEL: { text: 'Cancel' }
 });
 Object.values(DIALOG_CHOICES).forEach((choice, index) => choice.id = index + 1);
 
@@ -17,24 +17,28 @@ export class ItemUseDialogComponent extends BaseComponent {
 
     constructor() {
         super();
-        ChoicesListComponent.register();
+        AreYouSureComponent.register();
 
-        this._choicesList = new ChoicesListComponent();
-        this._choicesList.choicesListSetChoices(Object.values(DIALOG_CHOICES));
-        this.appendChild(this._choicesList);
+        this._dialog = new AreYouSureComponent();
+        this.appendChild(this._dialog);
     }
 
-    async itemUseDialogStart() {
-        this._choicesList.choicesListRefreshVisibleAndEnabledOptions();
-        this._choicesList.choicesListSelectFirstActiveChoice();
-        this._choicesList.choicesListActivate();
-        const choice = await this._choicesList.choicesListTakeChoice();
-        this._choicesList.choicesListDeactivate();
-        return choice;
+    /**
+     * 
+     * @param {string} explanation 
+     * @returns 
+     */
+    async itemUseDialogStart(explanation) {
+        const choicePromise = this._dialog.areYouSureTakeChoice({
+            explanation,
+            choices: Object.values(DIALOG_CHOICES)
+        });
+        this._dialog.choicesList.choicesListSelectFirstActiveChoice();
+        return await choicePromise;
     }
 
     get choicesList() {
-        return this._choicesList;
+        return this._dialog.choicesList;
     }
 
 }
