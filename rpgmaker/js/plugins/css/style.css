@@ -20,7 +20,7 @@ body {
     --mesage-choice-transition-time: 0.1s;
 }
 
-hideable-component {
+hideable-component:not(.item-use-dialog) {
     position: relative;
 }
 
@@ -34,6 +34,10 @@ message-box-component {
 }
 
 hideable-component:has(message-box-component.whole-screen) {
+    height: 100%;
+}
+
+hideable-component:has(items-menu-component) {
     height: 100%;
 }
 
@@ -119,4 +123,11 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
 
 .menu-backdrop {
     background-color: rgba(0, 0, 0, 0.6);
+}
+
+.item-use-dialog .explanation {
+    top: initial;
+    bottom: anchor(--choices-list top);
+    height: fit-content;
+    padding: 1lh 0;
 }

@@ -56,25 +56,37 @@ export class ItemsMenuComponent extends BaseComponent {
         this._listWithExplanation.appendAll(this);
         
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, async event => {
-            const itemId = event.detail.option.id;
+            const itemName = event.detail.option.text;
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
-            const choice = await this._itemUseDialog.element.itemUseDialogStart(`Item ${itemId}`);
+            const choice = await this._itemUseDialog.element.itemUseDialogStart(itemName);
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
             this._itemUseDialog.closeAndHide();
             this._listWithExplanation.choicesList.choicesListActivate();
+        });
+
+        this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
+            if (this._resolve) {
+                this._resolve();
+                this._resolve = null;
+            }
         });
     }
 
     /**
      * 
      * @param {[ItemChoice]} items 
+     * @returns {Promise<void>}
      */
-    itemsMenuStart(items) {
-        this._listWithExplanation.setChoices(items);
-        this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
-        this._listWithExplanation.selectFirstActiveChoice()
-        this.choicesList.choicesListActivate();
+    async itemsMenuStart(items) {
+        return new Promise(resolve => {
+            this._listWithExplanation.setChoices(items);
+            this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
+            this._listWithExplanation.selectFirstActiveChoice()
+            this.choicesList.choicesListActivate();
+
+            this._resolve = resolve;
+        });
     }
 
     /**

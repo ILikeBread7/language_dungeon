@@ -1,6 +1,7 @@
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
+import { ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
 
@@ -18,6 +19,11 @@ let gameEnd;
  * @type {HideableOpenable<OptionsMenuComponent>}
  */
 let optionsMenu;
+
+/**
+ * @type {HideableOpenable<ItemsMenuComponent>}
+ */
+let itemsMenu;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -130,10 +136,14 @@ export function initializeMainMenu(container = document.body) {
     optionsMenu = new HideableOpenable(new OptionsMenuComponent());
     optionsMenu.topElement.classList.add('vertical-center');
 
+    ItemsMenuComponent.register();
+    itemsMenu = new HideableOpenable(new ItemsMenuComponent());
+
     container.append(
         mainMenu.topElement,
         gameEnd.topElement,
-        optionsMenu.topElement
+        optionsMenu.topElement,
+        itemsMenu.topElement
     );
 }
 
@@ -214,10 +224,28 @@ async function handleOptionsMenu() {
     await optionsMenu.closeAndHide();
 }
 
+Scene_Item.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+    addMenuBackdrop();
+
+    itemsMenu.showAndOpen();
+    itemsMenu.element.itemsMenuStart([
+        { text: 'Item 1', explanation: 'Item 1 explanation' },
+        { text: 'Item 2', explanation: 'Item 2 explanation' },
+        { text: 'Item 3', explanation: 'Item 3 explanation' },
+        { text: 'Item 4', explanation: 'Item 4 explanation' },
+        { text: 'Item 5', explanation: 'Item 5 explanation' },
+    ]).then(async () => {
+        await itemsMenu.closeAndHide();
+        this.popScene();
+    });
+}
+
 for (const scene of [
         Scene_Menu,
         Scene_GameEnd,
-        Scene_Options
+        Scene_Options,
+        Scene_Item
 ]) {
     const _scene_update = scene.prototype.update;
     scene.prototype.update = function() {
@@ -228,6 +256,12 @@ for (const scene of [
     scene.prototype.create = Scene_MenuBase.prototype.create;
     scene.prototype.stop = Scene_MenuBase.prototype.stop;
     scene.prototype.createBackground = Scene_MenuBase.prototype.createBackground;
+}
+
+const _Scene_Item_update = Scene_Item.prototype.update;
+Scene_Item.prototype.update = function() {
+    choicesList = itemsMenu.element.choicesList;
+    _Scene_Item_update.call(this);
 }
 
 function handleMenuInputs(scene) {
