@@ -5,14 +5,15 @@ import { BaseComponent } from '../../common/components/base_component.js';
  *  text: string,
  *  element: HTMLElement,
  *  isVisible?: boolean,
- *  isEnabled?: boolean
+ *  isEnabled?: boolean,
+ *  id?: number
  * } } ChoiceListOption
  * @typedef { { 
  *  text: string,
  *  isVisible?: boolean,
  *  isEnabled?: boolean,
  *  cssClass?: string,
- *  id?: number,
+ *  id?: number
  *  } } ChoiceListChoice
  * @typedef { {
  *  index: number,
@@ -26,7 +27,9 @@ import { BaseComponent } from '../../common/components/base_component.js';
 export const CHOICES_LIST_EVENTS = /** @type {const} */ Object.freeze({
     OPTION_SELECT: 'optionselect',
     OPTION_CONFIRM: 'optionconfirm',
-    CHOICES_CANCEL: 'choicescancel'
+    CHOICES_CANCEL: 'choicescancel',
+    ACTIVATED: 'choicesactivated',
+    DEACTIVATED: 'choicesdeactivated'
 });
 /**
  * @typedef { Enum<CHOICES_LIST_EVENTS> } ChoicesListEvent
@@ -109,10 +112,12 @@ export class ChoicesListComponent extends BaseComponent {
 
     choicesListActivate() {
         this._active = true;
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.ACTIVATED));
     }
 
     choicesListDeactivate() {
         this._active = false;
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.DEACTIVATED));
     }
 
     choicesListRefreshVisibleAndEnabledOptions() {

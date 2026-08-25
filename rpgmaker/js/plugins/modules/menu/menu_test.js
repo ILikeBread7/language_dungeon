@@ -90,6 +90,13 @@ const tests = {
                 console.log(eventName, event.detail);
             });
         }
+
+        for (const list of [ items._listWithExplanation.choicesList, items._itemUseDialog.element.choicesList ]) {
+            list.addEventListener(CHOICES_LIST_EVENTS.ACTIVATED, () => {
+                console.log('activated', list)
+                choicesList = list;
+            });
+        }
     },
 
     async options() {
@@ -192,11 +199,11 @@ const keyActionMap = new Map([
     [ 'Escape', () => choicesList.choicesListCancel() ],
     [ 'ArrowRight', () => {
         optionsMenu.optionsMenuSetNextValue();
-        items.choicesList.scrollableListNextPage();
+        items.choicesList.scrollableListNextPage?.();
     } ],
     [ 'ArrowLeft', () => {
         optionsMenu.optionsMenuSetPreviousValue();
-        items.choicesList.scrollableListPreviousPage();
+        items.choicesList.scrollableListPreviousPage?.();
     } ]
 ]);
 document.addEventListener('keydown', event => {
