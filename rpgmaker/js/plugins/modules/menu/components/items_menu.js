@@ -63,7 +63,6 @@ export class ItemsMenuComponent extends BaseComponent {
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
             this._itemUseDialog.closeAndHide();
             this._listWithExplanation.choicesList.choicesListActivate();
-            console.log(choice);
         });
     }
 
