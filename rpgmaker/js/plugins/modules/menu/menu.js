@@ -262,9 +262,15 @@ function createItemsMenuEventListeners() {
         const itemData = dataItems[itemId];
 
         itemsMenu.closeAndHide();
-        SceneManager.goto(Scene_Map);
+
+        // Remove Scene_Item
+        SceneManager.pop();
+
+        // Remove Scene_Menu
+        SceneManager.pop();
+
         removeMenuBackdrop();
-        
+
         f.useInventoryItem(itemId);
     });
     
