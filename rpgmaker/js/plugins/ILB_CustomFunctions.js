@@ -1283,6 +1283,18 @@ var $f = $f || {};
         addEvent(event, x, y);
     }
 
+    $f.placeItem = (x, y, itemId) => {
+        const eventData = $dataMap.events.find(event => Number(event?.meta?.['item']) === itemId);
+        if (!eventData) {
+            console.warn(`No event for item id = ${itemId}!`);
+            return;
+        }
+
+        console.log(eventData)
+        const event = new Game_Event($gameMap.mapId(), eventData.id);
+        addEvent(event, x, y);
+    }
+
     function addEvent(event, x = 0, y = 0) {
         $gameMap._events.push(event);
         event._eventId = $gameMap._events.length - 1;

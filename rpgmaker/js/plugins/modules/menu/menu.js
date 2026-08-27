@@ -257,32 +257,42 @@ function createItemsMenuEventListeners() {
     const f = window.$f;
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_USED, event => {
+        goBackFromItemsMenu();
+
         const dataItems = window.$dataItems;
         const itemId = event.detail.itemId;
         const itemData = dataItems[itemId];
-
-        itemsMenu.closeAndHide();
-
-        // Remove Scene_Item
-        SceneManager.pop();
-
-        // Remove Scene_Menu
-        SceneManager.pop();
-
-        removeMenuBackdrop();
-
         f.useInventoryItem(itemId);
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, event => {
-        const itemId = event.detail.itemId;
-        console.log(itemId);
+        goBackFromItemsMenu();
+
+        setTimeout(() => {
+            const itemId = event.detail.itemId;
+            f.placeItem($gamePlayer.x, $gamePlayer.y, itemId);
+            $gameParty.consumeItem($dataItems[itemId]);
+        }, 100);
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, event => {
+        goBackFromItemsMenu();
+
         const itemId = event.detail.itemId;
         console.log(itemId);
     });
+}
+
+function goBackFromItemsMenu() {
+    itemsMenu.closeAndHide();
+
+    // Remove Scene_Item
+    SceneManager.pop();
+
+    // Remove Scene_Menu
+    SceneManager.pop();
+
+    removeMenuBackdrop();
 }
 
 for (const scene of [
