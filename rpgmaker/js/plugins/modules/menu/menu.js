@@ -261,25 +261,11 @@ function createItemsMenuEventListeners() {
         const itemId = event.detail.itemId;
         const itemData = dataItems[itemId];
 
+        itemsMenu.closeAndHide();
+        SceneManager.goto(Scene_Map);
+        removeMenuBackdrop();
+        
         f.useInventoryItem(itemId);
-
-        if (itemData.meta.closeMenu) {
-            itemsMenu.closeAndHide();
-            SceneManager.goto(Scene_Map);
-            removeMenuBackdrop();
-        } else if (itemData.consumable) {
-            const list = itemsMenu.element.itemsChoicesList;
-            const choices = createItemChoices();
-            const lastUsedItemChoiceIndex = choices.findIndex(choice => choice.id === itemId);
-
-            list.choicesListSetChoices(choices);
-            list.choicesListRefreshVisibleAndEnabledOptions();
-            if (lastUsedItemChoiceIndex >= 0) {
-                list.choicesListSelectOptionNoEvent(lastUsedItemChoiceIndex);
-            } else {
-                list.choicesListSelectFirstActiveChoice();
-            }
-        }
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, event => {
