@@ -39,7 +39,7 @@ let menuContainer;
  * @type {Object<string,import('./components/main_menu.js').MainMenuOption>}
  */
 const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
-    ITEM: { text: 'Item', explanation: 'Use and manage items' },
+    ITEMS: { text: 'Items', explanation: 'Use and manage items' },
     FLOOR: {
         text: 'Floor',
         explanation: 'Pick up items from the floor',
@@ -169,7 +169,7 @@ Scene_Menu.prototype.start = function() {
             case MAIN_MENU_CHOICES.EXIT.id:
                 SceneManager.push(Scene_GameEnd);
             break;
-            case MAIN_MENU_CHOICES.ITEM.id:
+            case MAIN_MENU_CHOICES.ITEMS.id:
                 SceneManager.push(Scene_Item);
             break;
             case MAIN_MENU_CHOICES.FLOOR.id:
