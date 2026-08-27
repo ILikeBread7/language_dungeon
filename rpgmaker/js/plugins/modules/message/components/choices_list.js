@@ -232,9 +232,18 @@ export class ChoicesListComponent extends BaseComponent {
         }
         const option = this.choicesListSelectOptionNoEvent(index);
         if (option) {
-            this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
+            this._dispatchSelectedEvent(option);
         }
         return option;
+    }
+
+    /**
+     * 
+     * @param {ChoiceListOption} option 
+     */
+    _dispatchSelectedEvent(option) {
+        const index = Number(option.element.dataset.index);
+        this.dispatchEvent(new CustomEvent(CHOICES_LIST_EVENTS.OPTION_SELECT, { detail: { index, option } }));
     }
 
     /**
@@ -375,6 +384,58 @@ export class ChoicesListComponent extends BaseComponent {
             this.choicesListSelectOptionNoEvent(firstActiveOptionIndex);
         }
         return firstActiveOptionIndex;
+    }
+
+    /**
+     * 
+     * @returns {number} Index of the last active option, or -1 if there is no such option
+     */
+    choicesListSelectLastActiveChoice() {
+        const lastActiveOptionIndex = this._displayedOptions.findLastIndex(isActiveOption);
+        if (lastActiveOptionIndex >= 0) {
+            this.choicesListSelectOptionNoEvent(lastActiveOptionIndex);
+        }
+        return lastActiveOptionIndex;
+    }
+
+    choicesListGoToBottom() {
+        const activeOptions = this.choicesListActiveOptions;
+        if (!activeOptions) {
+            return;
+        }
+
+        const currentOption = this.choicesListCurrentlySelectedOption;
+        const lastActiveOption = activeOptions[activeOptions.length - 1];
+
+        const currentIndex = currentOption?.index;
+        const lastActiveIndex = Number(lastActiveOption.element.dataset.index);
+
+        if (currentIndex === lastActiveIndex) {
+            this.choicesListSelectFirstActiveChoice();
+        } else {
+            this.choicesListSelectLastActiveChoice();
+        }
+        this._dispatchSelectedEvent(this.choicesListCurrentlySelectedOption.option);
+    }
+
+    choicesListGoToTop() {
+        const activeOptions = this.choicesListActiveOptions;
+        if (!activeOptions) {
+            return;
+        }
+
+        const currentOption = this.choicesListCurrentlySelectedOption;
+        const firstActiveOption = activeOptions[0];
+
+        const currentIndex = currentOption?.index;
+        const firstActiveIndex = Number(firstActiveOption.element.dataset.index);
+
+        if (currentIndex === firstActiveIndex) {
+            this.choicesListSelectLastActiveChoice();
+        } else {
+            this.choicesListSelectFirstActiveChoice();
+        }
+        this._dispatchSelectedEvent(this.choicesListCurrentlySelectedOption.option);
     }
 
     /**

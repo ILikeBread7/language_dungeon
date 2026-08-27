@@ -1,4 +1,4 @@
-import { SCROLLABLE_LIST_EVENTS } from '../common/components/scrollable_list_component.js';
+import { SCROLLABLE_LIST_EVENTS, ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
 import { takeAreYouSure } from '../message/components/utils.js';
@@ -199,11 +199,19 @@ const keyActionMap = new Map([
     [ 'Escape', () => choicesList.choicesListCancel() ],
     [ 'ArrowRight', () => {
         optionsMenu.optionsMenuSetNextValue();
-        items.choicesList.scrollableListNextPage?.();
+        if (choicesList instanceof ScrollableListComponent) {
+            choicesList.scrollableListNextPage();
+        } else {
+            choicesList.choicesListGoToBottom();
+        }
     } ],
     [ 'ArrowLeft', () => {
         optionsMenu.optionsMenuSetPreviousValue();
-        items.choicesList.scrollableListPreviousPage?.();
+        if (choicesList instanceof ScrollableListComponent) {
+            choicesList.scrollableListPreviousPage();
+        } else {
+            choicesList.choicesListGoToTop();
+        }
     } ]
 ]);
 document.addEventListener('keydown', event => {
