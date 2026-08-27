@@ -249,6 +249,7 @@ function createItemChoices() {
             text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${$gameParty.numItems($dataItems[item.id])}`,
             explanation: item.description,
             id: item.id,
+            item
         }
     });
 }

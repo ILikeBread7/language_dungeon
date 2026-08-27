@@ -72,10 +72,17 @@ export class ItemsMenuComponent extends BaseComponent {
             
             const itemName = option.text;
             const itemId = option.id;
+            const item = option.item;
 
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
 
+            const canDropItem = item.itypeId !== 2; // 2 = Key item
+            this._itemUseDialog.element.itemsUseDialogSetShowChoiceFunctions({
+                canUse: () => true,
+                canDrop: () => canDropItem,
+                canPickUp: () => false
+            });
             const choice = await this._itemUseDialog.element.itemUseDialogStart(itemName);
             this._dispatchItemEvent(choice, itemId)
 

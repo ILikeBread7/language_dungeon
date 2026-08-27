@@ -28,13 +28,25 @@ export class ItemUseDialogComponent extends BaseComponent {
      * @param {string} explanation 
      * @returns 
      */
-    async itemUseDialogStart(explanation) {
+    async itemUseDialogStart(explanation, ) {
+        const choices = Object.values(ITEM_DIALOG_CHOICES);
+
         const choicePromise = this._dialog.areYouSureTakeChoice({
             explanation,
-            choices: Object.values(ITEM_DIALOG_CHOICES)
+            choices
         });
         this._dialog.choicesList.choicesListSelectFirstActiveChoice();
         return await choicePromise;
+    }
+
+    /**
+     *
+     * @param {{ canUse: (itemId: number) => boolean, canDrop: (itemId: number) => boolean, canPickUp: (itemId: number) => boolean }} showChoiceFunctions 
+     */
+    itemsUseDialogSetShowChoiceFunctions(showChoiceFunctions) {
+        ITEM_DIALOG_CHOICES.USE.isVisible = showChoiceFunctions.canUse;
+        ITEM_DIALOG_CHOICES.DROP.isVisible = showChoiceFunctions.canDrop;
+        ITEM_DIALOG_CHOICES.PICK_UP.isVisible = showChoiceFunctions.canPickUp;
     }
 
     get choicesList() {
