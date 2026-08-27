@@ -265,7 +265,7 @@ function createItemsMenuEventListeners() {
         f.useInventoryItem(itemId);
     });
     
-    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, event => {
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_DROPPED, event => {
         goBackFromItemsMenu();
 
         setTimeout(() => {

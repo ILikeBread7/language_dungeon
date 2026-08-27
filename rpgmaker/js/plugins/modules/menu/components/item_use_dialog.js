@@ -4,7 +4,7 @@ import { AreYouSureComponent } from './are_you_sure.js';
 export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
     USE: { text: 'Use' },
     PICK_UP: { text: 'Pick up' },
-    THROW_AWAY: { text: 'Throw away' },
+    DROP: { text: 'Drop' },
     CANCEL: { text: 'Cancel' }
 });
 Object.values(ITEM_DIALOG_CHOICES).forEach((choice, index) => choice.id = index + 1);

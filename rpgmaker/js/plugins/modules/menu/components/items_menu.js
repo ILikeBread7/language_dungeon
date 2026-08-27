@@ -10,7 +10,7 @@ const ITEMS_LIST_CSS_CLASS = 'items-list';
 
 export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
     ITEM_USED: 'itemused',
-    ITEM_THROWN_AWAY: 'itemthrownaway',
+    ITEM_DROPPED: 'itemdropped',
     ITEM_PICKED_UP: 'itempickedup'
 });
 /**
@@ -118,8 +118,8 @@ export class ItemsMenuComponent extends BaseComponent {
             case ITEM_DIALOG_CHOICES.USE.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_USED, { detail: { itemId } }));
             break;
-            case ITEM_DIALOG_CHOICES.THROW_AWAY.id:
-                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_THROWN_AWAY, { detail: { itemId } }));
+            case ITEM_DIALOG_CHOICES.DROP.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_DROPPED, { detail: { itemId } }));
             break;
             case ITEM_DIALOG_CHOICES.PICK_UP.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, { detail: { itemId } }));
