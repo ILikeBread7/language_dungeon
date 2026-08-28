@@ -5,6 +5,11 @@ import { ListWithExplanation } from '../../common/helpers/list_with_explanation.
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.js';
 
+/**
+ * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean } } ItemUseOptions
+ * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions } ItemChoice
+ */
+
 const ITEM_USE_DIALOG_CSS_CLASS = 'item-use-dialog';
 const ITEMS_LIST_CSS_CLASS = 'items-list';
 
@@ -66,23 +71,17 @@ export class ItemsMenuComponent extends BaseComponent {
         
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, async event => {
             /**
-             * @type {import('../../message/components/choices_list.js').ChoiceListOption}
+             * @type {ItemChoice}
              */
             const option = event.detail.option;
             
             const itemName = option.text;
             const itemId = option.id;
-            const item = option.item;
 
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
 
-            const canDropItem = item.itypeId !== 2; // 2 = Key item
-            this._itemUseDialog.element.itemsUseDialogSetShowChoiceFunctions({
-                canUse: () => true,
-                canDrop: () => canDropItem,
-                canPickUp: () => false
-            });
+            this._itemUseDialog.element.itemsUseDialogSetShowChoiceFunctions(option);
             const choice = await this._itemUseDialog.element.itemUseDialogStart(itemName);
             this._dispatchItemEvent(choice, itemId)
 

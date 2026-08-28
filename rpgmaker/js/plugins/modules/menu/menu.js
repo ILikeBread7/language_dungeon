@@ -249,7 +249,9 @@ function createItemChoices() {
             text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${$gameParty.numItems($dataItems[item.id])}`,
             explanation: item.description,
             id: item.id,
-            item
+            canUse: () => true,
+            canPickUp: () => false,
+            canDrop: () => !!item.meta.item
         }
     });
 }
@@ -271,8 +273,10 @@ function createItemsMenuEventListeners() {
 
         setTimeout(() => {
             const itemId = event.detail.itemId;
-            f.placeItem($gamePlayer.x, $gamePlayer.y, itemId);
-            $gameParty.consumeItem($dataItems[itemId]);
+            const itemData = $dataItems[itemId];
+
+            f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
+            $gameParty.loseItem(itemData, 1);
         }, 100);
     });
     

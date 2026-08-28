@@ -1269,28 +1269,16 @@ var $f = $f || {};
     }
 
     $f.placePortal = (x, y) => {
-        $f.placeEvent(x, y, 'portal');
+        $f.placeItemEvent(x, y, 'portal');
     };
 
-    $f.placeEvent = (x, y, eventTag) => {
-        const eventData = $dataMap.events.find(event => event && event.meta && event.meta[eventTag]);
+    $f.placeItemEvent = (x, y, itemName) => {
+        const eventData = $dataMap.events.find(event => event?.meta?.item === itemName);
         if (!eventData) {
-            console.warn(`No event with tag: ${eventTag}!`);
+            console.warn(`No item event with tag: <item:${itemName}>!`);
             return;
         }
 
-        const event = new Game_Event($gameMap.mapId(), eventData.id);
-        addEvent(event, x, y);
-    }
-
-    $f.placeItem = (x, y, itemId) => {
-        const eventData = $dataMap.events.find(event => Number(event?.meta?.['item']) === itemId);
-        if (!eventData) {
-            console.warn(`No event for item id = ${itemId}!`);
-            return;
-        }
-
-        console.log(eventData)
         const event = new Game_Event($gameMap.mapId(), eventData.id);
         addEvent(event, x, y);
     }
@@ -1320,7 +1308,7 @@ var $f = $f || {};
             if (enemyEvent.quiz.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.1) {
-                $f.placeEvent(enemyEvent.x, enemyEvent.y, 'potion');
+                $f.placeItemEvent(enemyEvent.x, enemyEvent.y, 'potion');
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
 
