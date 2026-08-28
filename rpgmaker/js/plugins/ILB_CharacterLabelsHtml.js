@@ -74,6 +74,7 @@ const $characterLabels = { };
             this.textLabelElement = document.createElement('span');
             this.textLabelElement.style.position = 'absolute';
             this.textLabelElement.style.transform = 'translate(-50%, -100%)';
+            this.textLabelElement.style.whiteSpace = 'nowrap';
             labelsContainer.appendChild(this.textLabelElement);
         }
 
