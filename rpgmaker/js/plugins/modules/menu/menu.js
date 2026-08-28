@@ -25,6 +25,12 @@ let optionsMenu;
  */
 let itemsMenu;
 
+const SCENE_ITEM_TYPES = Object.freeze({
+    ITEMS: 1,
+    FLOOR: 2
+});
+let sceneItemType = SCENE_ITEM_TYPES.ITEMS;
+
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
  */
@@ -170,11 +176,11 @@ Scene_Menu.prototype.start = function() {
                 SceneManager.push(Scene_GameEnd);
             break;
             case MAIN_MENU_CHOICES.ITEMS.id:
+                sceneItemType = SCENE_ITEM_TYPES.ITEMS;
                 SceneManager.push(Scene_Item);
             break;
             case MAIN_MENU_CHOICES.FLOOR.id:
-                this.popScene();
-                f.triggerFloorItemEvents();
+                showFloor();
             break;
             case MAIN_MENU_CHOICES.OPTIONS.id:
                 SceneManager.push(Scene_Options);
@@ -233,6 +239,7 @@ Scene_Item.prototype.start = function() {
     itemsMenu.showAndOpen();
     itemsMenu.element.itemsMenuStart(choices).then(async () => {
         await itemsMenu.closeAndHide();
+        removeMenuBackdrop();
         this.popScene();
     });
 }
@@ -240,20 +247,34 @@ Scene_Item.prototype.start = function() {
 function createItemChoices() {
     const ICON_COLUMNS = 16;
 
-    return $gameParty.items().map(item => {
+    return getItems().map(item => {
         const iconIndex = item.iconIndex;
         const iconX = iconIndex % ICON_COLUMNS;
         const iconY = Math.floor(iconIndex / ICON_COLUMNS);
 
         return {
-            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${$gameParty.numItems($dataItems[item.id])}`,
+            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${getItemAmounts(item)}`,
             explanation: item.description,
             id: item.id,
             canUse: () => true,
-            canPickUp: () => false,
-            canDrop: () => !!item.meta.item
+            canPickUp: () => sceneItemType === SCENE_ITEM_TYPES.FLOOR,
+            canDrop: () => sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item
         }
     });
+}
+
+function getItems() {
+    switch (sceneItemType) {
+        case SCENE_ITEM_TYPES.FLOOR: return $f.getFloorItems();
+        default: return $gameParty.items();
+    }
+}
+
+function getItemAmounts(item) {
+    switch (sceneItemType) {
+        case SCENE_ITEM_TYPES.FLOOR: return item.amount;
+        default: return $gameParty.numItems($dataItems[item.id]);
+    }
 }
 
 function createItemsMenuEventListeners() {
@@ -265,7 +286,18 @@ function createItemsMenuEventListeners() {
         const dataItems = window.$dataItems;
         const itemId = event.detail.itemId;
         const itemData = dataItems[itemId];
-        f.useInventoryItem(itemId);
+
+        switch (sceneItemType) {
+            case SCENE_ITEM_TYPES.FLOOR:
+                const x = $gamePlayer.x;
+                const y = $gamePlayer.y;
+                const itemEvent = $gameMap.eventsXy(x, y)
+                    .find(event => event && !event._erased && event.event()?.meta?.item === itemData.meta.item);
+                itemEvent.erase();
+                f.useFloorItem(itemId);
+            break;
+            default: f.useInventoryItem(itemId);
+        }
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_DROPPED, event => {
@@ -284,19 +316,31 @@ function createItemsMenuEventListeners() {
         goBackFromItemsMenu();
 
         const itemId = event.detail.itemId;
-        console.log(itemId);
+        const x = $gamePlayer.x;
+        const y = $gamePlayer.y;
+        const itemData = $dataItems[itemId];
+
+        const itemEvent = $gameMap.eventsXy(x, y)
+            .find(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
+        itemEvent.erase();
+        $gameParty.gainItem(itemData, 1);
     });
 }
 
+function showFloor() {
+    if (itemsMenu.hideable.hideableIsShown) {
+        return;
+    }
+    sceneItemType = SCENE_ITEM_TYPES.FLOOR;
+    SceneManager.push(Scene_Item);
+}
+
+window.$f = $f || {};
+$f.showFloor = showFloor;
+
 function goBackFromItemsMenu() {
     itemsMenu.closeAndHide();
-
-    // Remove Scene_Item
-    SceneManager.pop();
-
-    // Remove Scene_Menu
-    SceneManager.pop();
-
+    SceneManager.goto(Scene_Map);
     removeMenuBackdrop();
 }
 

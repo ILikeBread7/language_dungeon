@@ -1350,8 +1350,17 @@ var $f = $f || {};
     $f.getFloorItems = () => {
         const x = $gamePlayer.x;
         const y = $gamePlayer.y;
-        return $gameMap.eventsXy(x, y)
-            .filter(event => event && !event._erased && event.event().meta && event.event().meta.item);
+        const itemEventsMap = $gameMap.eventsXy(x, y)
+            .filter(event => event && !event._erased && event.event().meta && event.event().meta.item)
+            .reduce((acc, event) => {
+                const key = event.event().meta.item;
+                const value = acc.get(key) || 0;
+                acc.set(key, value + 1);
+                return acc;
+            }, new Map());
+
+            return [...itemEventsMap.entries()]
+                .map(([ itemName, amount ]) => ({ ...$dataItems.find(item => itemName === item?.meta?.item), amount }));
     }
 
     $f.triggerFloorItemEvents = () => {
