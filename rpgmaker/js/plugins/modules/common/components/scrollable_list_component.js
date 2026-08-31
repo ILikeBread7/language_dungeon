@@ -128,6 +128,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this._container = document.createElement('div');
         this._container.classList.add('container');
         this._scroll = 0;
+        this._scrollThreshold = 0;
         this._container.appendChild(this._list);
 
         this._scrollUpIndicator = document.createElement('div');
@@ -152,6 +153,8 @@ export class ScrollableListComponent extends ChoicesListComponent {
     static observedAttributes = [ 'style', 'class' ];
 
     attributeChangedCallback() {
+        const style = getComputedStyle(this);
+        this._scrollThreshold = Number(style.getPropertyValue('--scroll-threshold-px') || 0);
         this._adjustScrollAfterResize();
     }
 
@@ -176,8 +179,8 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const containerDimensions = this._container.getBoundingClientRect();
         
         if (
-            this._getTop(elementDimensions) >= this._getTop(containerDimensions)
-            && this._getBottom(elementDimensions) <= this._getBottom(containerDimensions)
+            this._getTop(elementDimensions) >= this._getTop(containerDimensions) + this._scrollThreshold
+            && this._getBottom(elementDimensions) <= this._getBottom(containerDimensions) - this._scrollThreshold
         ) {
             this._refreshScrollIndicators();
             return;
@@ -219,13 +222,13 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const listDimensions = this._list.getBoundingClientRect();
         const containerDimensions = this._container.getBoundingClientRect();
 
-        if (this._isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll)) {
+        if (this._isElementBelowContainer(optionDimensions, listDimensions, containerDimensions, this._scroll, this._scrollThreshold)) {
             const optionElementBottomRelativeToList = this._getBottom(optionDimensions) - this._getTop(listDimensions);
             const scrollTarget = optionElementBottomRelativeToList - this._getHeight(containerDimensions);
-            this._scrollTo(scrollTarget, this._calculateMaxScroll(listDimensions, containerDimensions));
-        } else if (this._isElementAboveContainer(optionDimensions, listDimensions, this._scroll)) {
+            this._scrollTo(scrollTarget + this._scrollThreshold, this._calculateMaxScroll(listDimensions, containerDimensions));
+        } else if (this._isElementAboveContainer(optionDimensions, listDimensions, this._scroll, this._scrollThreshold)) {
             const optionElementTopRelativeToList = this._getTop(optionDimensions) - this._getTop(listDimensions);
-            this._scrollTo(optionElementTopRelativeToList, this._calculateMaxScroll(listDimensions, containerDimensions));
+            this._scrollTo(optionElementTopRelativeToList - this._scrollThreshold, this._calculateMaxScroll(listDimensions, containerDimensions));
         }
 
         return option;
@@ -320,7 +323,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
             calculateScroll(elementDimensions, listDimensions, containerDimensions),
             maxScroll
         );
-        const elementSamePosition = findElementSamePosition(elementToSelect, currentOptionDimensions, oldScroll, newScroll);
+        const elementSamePosition = findElementSamePosition(elementToSelect, currentOptionDimensions, oldScroll, newScroll, maxScroll);
         this._scrollTo(newScroll, maxScroll);
 
         let finalElementIndex;
@@ -343,6 +346,9 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} containerDimensions
      */
     _findNextElementBelowContainer(startingElement, listDimensions, containerDimensions) {
+        const isScrollAtBottom = this._scroll >= Math.floor(this._calculateMaxScroll(listDimensions, containerDimensions)) + this._scrollThreshold;
+        const threshold = isScrollAtBottom ? 0 : this._scrollThreshold;
+        
         return findElement(
             startingElement,
             nextActiveSiblingOptionElement,
@@ -356,10 +362,13 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} listDimensions
      */
     _findNextElementAboveContainer(startingElement, listDimensions) {
+        const isScrollAtTop = this._scroll <= this._scrollThreshold;
+        const threshold = isScrollAtTop ? 0 : this._scrollThreshold;
+        
         return findElement(
             startingElement,
             previousActiveSiblingOptionElement,
-            element => this._isElementAboveContainer(element.getBoundingClientRect(), listDimensions, this._scroll)
+            element => this._isElementAboveContainer(element.getBoundingClientRect(), listDimensions, this._scroll, threshold)
         );
     }
 
@@ -369,10 +378,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {number} [maxScroll] 
      */
     _scrollTo(y, maxScroll) {
+        const yFloored = Math.floor(y);
         const maxScrollFloored = Math.floor(maxScroll);
 
         this._list.classList.remove(PAGE_SCROLL_CSS_CLASS, PAGE_SCROLL_DOWN_CSS_CLASS, PAGE_SCROLL_UP_CSS_CLASS);
-        this._scroll = scrollElementTo(this._list, y, maxScroll);
+        this._scroll = scrollElementTo(this._list, yFloored, maxScrollFloored);
         
         if (this._scroll > 0) {
             this._scrollUpIndicator.classList.add(VISIBLE_CSS_CLASS);
@@ -402,9 +412,14 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} samePositionElementOldDimensions 
      * @param {number} oldScroll 
      * @param {number} newScroll 
+     * @param {number} maxScroll 
      */
-    _findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
+    _findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll, maxScroll) {
         const samePositionRelativeTop = this._getTop(samePositionElementOldDimensions) - oldScroll;
+        if (Math.floor(newScroll) >= Math.floor(maxScroll)) {
+            const options = this.choicesListActiveOptions;
+            return options[options.length - 1].element;
+        }
 
         return findElement(
             startingElement,
@@ -426,7 +441,10 @@ export class ScrollableListComponent extends ChoicesListComponent {
      */
     _findPreviousElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
         const samePositionRelativeBottom = this._getBottom(samePositionElementOldDimensions) - oldScroll;
-        
+        if (Math.floor(newScroll) <= 0) {
+            return this.choicesListActiveOptions[0].element;
+        }
+
         return findElement(
             startingElement,
             previousActiveSiblingOptionElement,
@@ -443,10 +461,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} elementDimensions 
      * @param {DOMRect} listDimensions 
      * @param {number} scroll
+     * @param {number} [threshold]
      */
-    _isElementAboveContainer(elementDimensions, listDimensions, scroll) {
+    _isElementAboveContainer(elementDimensions, listDimensions, scroll, threshold = 0) {
         const realElementTop = this._getTop(elementDimensions) - this._getTop(listDimensions) - scroll;
-        return realElementTop < 0;
+        return realElementTop < threshold;
     }
 
     /**
@@ -455,10 +474,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} listDimensions 
      * @param {DOMRect} containerDimensions 
      * @param {number} scroll
+     * @param {number} [threshold]
      */
-    _isElementBelowContainer(elementDimensions, listDimensions, containerDimensions, scroll) {
+    _isElementBelowContainer(elementDimensions, listDimensions, containerDimensions, scroll, threshold = 0) {
         const realElementBottom = this._getBottom(elementDimensions) - this._getTop(listDimensions) - scroll;
-        return realElementBottom > this._getHeight(containerDimensions);
+        return realElementBottom > this._getHeight(containerDimensions) - threshold;
     }
 }
 

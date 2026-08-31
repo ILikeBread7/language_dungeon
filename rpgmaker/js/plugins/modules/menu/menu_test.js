@@ -85,11 +85,11 @@ const tests = {
         items.itemsMenuStart(itemChoices);
         itemsMenu.showAndOpen();
 
-        for (const eventName of [ ...Object.values(CHOICES_LIST_EVENTS), ...Object.values(SCROLLABLE_LIST_EVENTS) ]) {
-            items.choicesList.addEventListener(eventName, event => {
-                console.log(eventName, event.detail);
-            });
-        }
+        // for (const eventName of [ ...Object.values(CHOICES_LIST_EVENTS), ...Object.values(SCROLLABLE_LIST_EVENTS) ]) {
+        //     items.choicesList.addEventListener(eventName, event => {
+        //         console.log(eventName, event.detail);
+        //     });
+        // }
 
         for (const list of [ items._listWithExplanation.choicesList, items._itemUseDialog.element.choicesList ]) {
             list.addEventListener(CHOICES_LIST_EVENTS.ACTIVATED, () => {
