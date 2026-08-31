@@ -86,6 +86,11 @@
         }
     }
 
+    .scroll-up-indicator,
+    .scroll-down-indicator {
+        z-index: 2;
+    }
+
     scrollable-list-component .scroll-up-indicator::before {
         animation: floating-down 0.75s linear alternate infinite;
     }
@@ -133,6 +138,31 @@
         bottom: anchor(--choices-list top);
         height: fit-content;
         padding: 1lh 0;
+    }
+
+    scrollable-list-component {
+        --scroll-threshold-px: 50;
+        --edge-height: calc(var(--scroll-threshold-px) * 1px);
+    }
+
+    scrollable-list-component:has(.scroll-up-indicator.visible) .container::before,
+    scrollable-list-component:has(.scroll-down-indicator.visible) .container::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: var(--edge-height);
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    scrollable-list-component:has(.scroll-up-indicator.visible) .container::before {
+        top: 0px;
+        background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    }
+
+    scrollable-list-component:has(.scroll-down-indicator.visible) .container::after {
+        bottom: 0px;
+        background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
     }
 </style>
 <script type="module" src="menu_test.js"></script>

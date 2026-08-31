@@ -153,13 +153,20 @@ export class ScrollableListComponent extends ChoicesListComponent {
     static observedAttributes = [ 'style', 'class' ];
 
     attributeChangedCallback() {
-        const style = getComputedStyle(this);
-        this._scrollThreshold = Number(style.getPropertyValue('--scroll-threshold-px') || 0);
+        this._saveCssVariables();
         this._adjustScrollAfterResize();
     }
 
     connectedCallback() {
-        queueMicrotask(() => this._refreshScrollIndicators());
+        queueMicrotask(() => {
+            this._saveCssVariables();
+            this._refreshScrollIndicators();
+        });
+    }
+
+    _saveCssVariables() {
+        const style = getComputedStyle(this);
+        this._scrollThreshold = Number(style.getPropertyValue('--scroll-threshold-px') || 0);
     }
 
     _refreshScrollIndicators() {
