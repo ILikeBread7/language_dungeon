@@ -326,16 +326,13 @@ export class ScrollableListComponent extends ChoicesListComponent {
         const elementDimensions = elementToSelect.getBoundingClientRect();
         
         const maxScroll = this._calculateMaxScroll(listDimensions, containerDimensions);
-        const newScroll = Math.min(
-            calculateScroll(elementDimensions, listDimensions, containerDimensions),
-            maxScroll
-        );
-        const elementSamePosition = findElementSamePosition(elementToSelect, currentOptionDimensions, oldScroll, newScroll, maxScroll);
+        const newScroll = calculateScroll(elementDimensions, listDimensions, containerDimensions);
+        const elementSamePosition = findElementSamePosition(elementToSelect, currentOptionDimensions, oldScroll, newScroll);
         this._scrollTo(newScroll, maxScroll);
 
         let finalElementIndex;
         if (!elementSamePosition || elementSamePosition === currentOptionElement) {
-            finalElementIndex = elementIndex;
+            finalElementIndex = endElementIndex;
         } else {
             const elementSamePositionIndex = Number(elementSamePosition.dataset.index);
             finalElementIndex = elementSamePositionIndex;
@@ -353,13 +350,13 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} containerDimensions
      */
     _findNextElementBelowContainer(startingElement, listDimensions, containerDimensions) {
-        const isScrollAtBottom = this._scroll >= Math.floor(this._calculateMaxScroll(listDimensions, containerDimensions)) + this._scrollThreshold;
+        const isScrollAtBottom = this._scroll >= Math.floor(this._calculateMaxScroll(listDimensions, containerDimensions)) - this._scrollThreshold;
         const threshold = isScrollAtBottom ? 0 : this._scrollThreshold;
-        
+
         return findElement(
             startingElement,
             nextActiveSiblingOptionElement,
-            element => this._isElementBelowContainer(element.getBoundingClientRect(), listDimensions, containerDimensions, this._scroll)
+            element => this._isElementBelowContainer(element.getBoundingClientRect(), listDimensions, containerDimensions, this._scroll, threshold)
         );
     }
 
@@ -419,15 +416,10 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} samePositionElementOldDimensions 
      * @param {number} oldScroll 
      * @param {number} newScroll 
-     * @param {number} maxScroll 
      */
-    _findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll, maxScroll) {
+    _findNextElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
         const samePositionRelativeTop = this._getTop(samePositionElementOldDimensions) - oldScroll;
-        if (Math.floor(newScroll) >= Math.floor(maxScroll)) {
-            const options = this.choicesListActiveOptions;
-            return options[options.length - 1].element;
-        }
-
+    
         return findElement(
             startingElement,
             nextActiveSiblingOptionElement,
@@ -448,10 +440,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
      */
     _findPreviousElementAtSamePosition(startingElement, samePositionElementOldDimensions, oldScroll, newScroll) {
         const samePositionRelativeBottom = this._getBottom(samePositionElementOldDimensions) - oldScroll;
-        if (Math.floor(newScroll) <= 0) {
-            return this.choicesListActiveOptions[0].element;
-        }
-
+        
         return findElement(
             startingElement,
             previousActiveSiblingOptionElement,
@@ -485,7 +474,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
      */
     _isElementBelowContainer(elementDimensions, listDimensions, containerDimensions, scroll, threshold = 0) {
         const realElementBottom = this._getBottom(elementDimensions) - this._getTop(listDimensions) - scroll;
-        return realElementBottom > this._getHeight(containerDimensions) - threshold;
+        return Math.floor(realElementBottom) > Math.floor(this._getHeight(containerDimensions) - threshold);
     }
 }
 
