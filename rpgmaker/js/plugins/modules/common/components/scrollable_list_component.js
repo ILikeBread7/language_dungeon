@@ -44,6 +44,8 @@ export class ScrollableListComponent extends ChoicesListComponent {
                     position absolute work relative to this component
                 */
                 translate: 0;
+                
+                --direction: vertical;
             }
 
             ${this.componentTagName} .${CHOICES_LIST_CSS_CLASS_NAME} {
@@ -139,8 +141,6 @@ export class ScrollableListComponent extends ChoicesListComponent {
         this._scrollDownIndicator.classList.add(SCROLL_DOWN_INDICATOR_CSS_CLASS);
         this._scrollDownIndicator.addEventListener('click', () => this.scrollableListNextPage());
 
-        this.scrollableListSwitchToVertical();
-
         this.append(
             this._container,
             this._scrollUpIndicator,
@@ -167,6 +167,11 @@ export class ScrollableListComponent extends ChoicesListComponent {
     _saveCssVariables() {
         const style = getComputedStyle(this);
         this._scrollThreshold = Number(style.getPropertyValue('--scroll-threshold-px') || 0);
+        if (style.getPropertyValue('--direction') === 'horizontal') {
+            this.scrollableListSwitchToHorizontal();
+        } else {
+            this.scrollableListSwitchToVertical();
+        }
     }
 
     _refreshScrollIndicators() {
