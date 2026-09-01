@@ -292,7 +292,7 @@ function createItemsMenuEventListeners() {
                 const x = $gamePlayer.x;
                 const y = $gamePlayer.y;
                 const itemEvent = $gameMap.eventsXy(x, y)
-                    .find(event => event && !event._erased && event.event()?.meta?.item === itemData.meta.item);
+                    .findLast(event => event && !event._erased && event.event()?.meta?.item === itemData.meta.item);
                 itemEvent.erase();
                 f.useFloorItem(itemId);
             break;
@@ -309,6 +309,7 @@ function createItemsMenuEventListeners() {
 
             f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
             $gameParty.loseItem(itemData, 1);
+            f.moveEnemies();
         }, 100);
     });
     
@@ -321,9 +322,10 @@ function createItemsMenuEventListeners() {
         const itemData = $dataItems[itemId];
 
         const itemEvent = $gameMap.eventsXy(x, y)
-            .find(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
+            .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
         itemEvent.erase();
         $gameParty.gainItem(itemData, 1);
+        f.moveEnemies();
     });
 }
 
