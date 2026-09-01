@@ -1,3 +1,4 @@
+import { ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
@@ -381,11 +382,21 @@ function handleMenuInputs(scene) {
         choicesList.choicesListConfirmCurrentOption();
     } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
         choicesList.choicesListCancel();
-    } else if (scene === Scene_Options) {
-        if (input.isTriggered('right')) {
+    } if (input.isTriggered('right')) {
+        if (scene === Scene_Options) {
             optionsMenu.element.optionsMenuSetNextValue();
-        } else if (input.isTriggered('left')) {
+        } else if (choicesList instanceof ScrollableListComponent) {
+            choicesList.scrollableListNextPage();
+        } else {
+            choicesList.choicesListGoToBottom();
+        }
+    } else if (input.isTriggered('left')) {
+        if (scene === Scene_Options) {
             optionsMenu.element.optionsMenuSetPreviousValue();
+        } else if (choicesList instanceof ScrollableListComponent) {
+            choicesList.scrollableListPreviousPage();
+        } else {
+            choicesList.choicesListGoToTop();
         }
     }
 }
