@@ -1,11 +1,12 @@
 import { SCROLLABLE_LIST_EVENTS, ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
-import { takeAreYouSure } from '../message/components/utils.js';
+import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
+import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
  * @type {Object<string,import('./components/main_menu.js').MainMenuOption>}
@@ -35,6 +36,10 @@ const confirmMenu = areYouSure.element;
 ItemsMenuComponent.register();
 const itemsMenu = new HideableOpenable(new ItemsMenuComponent());
 const items = itemsMenu.element;
+
+TitleMenuComponent.register();
+const titleMenu = new HideableOpenable(new TitleMenuComponent());
+const title = titleMenu.element;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -188,9 +193,57 @@ const tests = {
         await optionsMenu.optionsMenuStart();
         ConfigManager.save();
         await optionsMenuHideableOpenable.closeAndHide();
+    },
+
+    async title() {
+        choicesList = title.choicesList;
+        document.body.appendChild(titleMenu.topElement);
+        document.body.appendChild(areYouSure.topElement);
+
+        /**
+         * @type {Object<string,import('../message/components/choices_list.js').ChoiceListChoice>}
+         */
+        const choices = {
+            NEW_GAME: { text: 'New game' },
+            CONTINUE: { text: 'Continue' },
+            OPTIONS: { text: 'Options' },
+            EXIT: { text: 'Exit' }
+        };
+        addChoiceIds(choices);
+
+        /**
+         * @type {import('../message/components/choices_list.js').ChoiceListPlayerChoice}
+         */
+        let choice;
+        titleMenu.showAndOpen();
+        do {
+            choice = await title.titleMenuTakeChoice(Object.values(choices));
+            if (choice.id === choices.EXIT.id) {
+                choicesList = areYouSure.element.choicesList;
+                titleMenu.closeAndHide();
+                areYouSure.showAndOpen();
+                const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
+                    choices: [
+                        { text: 'Exit the game', id: ARE_YOU_SURE_IDS.YES },
+                        { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO },
+                    ],
+                    explanation: 'Are you sure you want to exit the game?'
+                });
+                areYouSure.closeAndHide();
+                if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
+                    break;
+                } else {
+                    choicesList = title.choicesList;
+                    titleMenu.showAndOpen();
+                }
+            }
+        } while(!choice.cancelled);
+        if (titleMenu.hideable.hideableIsShown) {
+            titleMenu.closeAndHide();
+        }
     }
 };
-tests.items();
+tests.title();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],

@@ -1,6 +1,6 @@
 import { ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
-import { takeAreYouSure } from '../message/components/utils.js';
+import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
@@ -60,7 +60,7 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
     BACK: { text: 'Go back', explanation: 'Close this menu, and return to the game' },
     EXIT: { text: 'Exit', explanation: 'Exit the game, and return to the title screen' }
 });
-Object.values(MAIN_MENU_CHOICES).forEach((choice, index) => choice.id = index + 1);
+addChoiceIds(MAIN_MENU_CHOICES);
 
 const configManager = window.ConfigManager;
 const step = 10;

@@ -4,9 +4,13 @@
  */
 
 /**
+ * @typedef {import('./choices_list.js').ChoiceListChoice} ChoiceListChoice
+ */
+
+/**
  * 
  * @param {HideableOpenable<import('./choices_list.js').ChoicesListComponent>} choicesList
- * @param {[import('./choices_list.js').ChoiceListChoice]} options 
+ * @param {[ChoiceListChoice]} options 
  * @param {number} [defaultIndex] 
  * 
  */
@@ -156,4 +160,13 @@ export function findElement(startingElement, nextElementFunction, predicate) {
     }
 
     return;
+}
+
+/**
+ * 
+ * @param {Object<string,ChoiceListChoice>} choices 
+ */
+export function addChoiceIds(choices) {
+    Object.values(choices)
+        .forEach((choice, index) => choice.id = index + 1);
 }
