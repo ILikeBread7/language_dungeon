@@ -367,8 +367,8 @@ function goBackFromItemsMenu() {
  * @type {Object<string,import('../message/components/choices_list.js').ChoiceListChoice>}
  */
 const TITLE_CHOICES = {
+    CONTINUE: { text: 'Continue', isEnabled: () => DataManager.isAnySavefileExists() },
     NEW_GAME: { text: 'New game' },
-    CONTINUE: { text: 'Continue' },
     OPTIONS: { text: 'Options' },
     EXIT: { text: 'Exit' }
 };

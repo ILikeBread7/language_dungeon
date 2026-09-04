@@ -70,6 +70,10 @@ const $characterLabels = { };
     const _Game_Character_update = Game_Character.prototype.update;
     Game_Character.prototype.update = function() {
         _Game_Character_update.call(this);
+        if (this.textLabelElement && !this.textLabelElement.style) {
+            delete this.textLabelElement;
+        }
+
         if (this.textLabel && !this.textLabelElement) {
             this.textLabelElement = document.createElement('span');
             this.textLabelElement.style.position = 'absolute';
@@ -116,9 +120,14 @@ const $characterLabels = { };
         _Game_Player_performTransfer.call(this);
     }
 
-    const _Game_Event_refresh = Game_Event.prototype.refresh;
-    Game_Event.prototype.refresh = function() {
-        _Game_Event_refresh.call(this);
+    const _Game_Event_update = Game_Event.prototype.update;
+    Game_Event.prototype.update = function() {
+        _Game_Event_update.call(this);
+
+        if (this.textLabelElement && !this.textLabelElement.style) {
+            delete this.textLabelElement;
+            return;
+        }
         
         if (this.textLabelElement) {
             if (this._pageIndex === -1) {
@@ -127,6 +136,13 @@ const $characterLabels = { };
                 this.textLabelElement.style.removeProperty('display');
             }
         }
+    }
+
+    const _Scene_Title_start = Scene_Title.prototype.start;
+    Scene_Title.prototype.start = function() {
+        _Scene_Title_start.call(this);
+        console.log('crer')
+        clearLabels();
     }
 
     const modifyFunction = Graphics._modifyExistingElements;
