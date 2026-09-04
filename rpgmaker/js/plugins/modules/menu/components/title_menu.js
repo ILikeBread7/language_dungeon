@@ -11,8 +11,9 @@ export class TitleMenuComponent extends BaseComponent {
         super();
         ChoicesListComponent.register();
 
-        this._lastSelectedIndex = 0;
+        this._lastSelectedIndex = null;
         this._choicesList = new ChoicesListComponent();
+        this._choicesList.classList.add('choices-list');
         this.appendChild(this._choicesList);
     }
 
@@ -21,7 +22,11 @@ export class TitleMenuComponent extends BaseComponent {
      * @param {import('../../message/components/choices_list.js').ChoiceListChoice} choices 
      */
     async titleMenuTakeChoice(choices) {
-        const playerChoice = await this._choicesList.choicesListTakeOneChoice(choices, this._lastSelectedIndex);
+        const choicePromise = this._choicesList.choicesListTakeOneChoice(choices, this._lastSelectedIndex);
+        if (this._lastSelectedIndex === null) {
+            this._choicesList.choicesListSelectFirstActiveChoice();
+        }
+        const playerChoice = await choicePromise;
         this._lastSelectedIndex = playerChoice.index;
         return playerChoice;
     }

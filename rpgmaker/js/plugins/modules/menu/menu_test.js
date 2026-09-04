@@ -243,7 +243,7 @@ const tests = {
         }
     }
 };
-tests.items();
+tests.title();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],

@@ -20,10 +20,6 @@ body {
     --mesage-choice-transition-time: 0.1s;
 }
 
-hideable-component:not(.item-use-dialog) {
-    position: relative;
-}
-
 openable-component {
     --transition-time: var(--mesage-choice-transition-time);
 }
@@ -86,9 +82,12 @@ hideable-component.bottom-slide-in > openable-component[data-target-state="close
     opacity: initial;
 }
 
-hideable-component:has(main-menu-component) {
+hideable-component {
     position: absolute;
     width: 100%;
+}
+
+hideable-component:has(main-menu-component) {
     height: 100%;
 }
 
@@ -111,7 +110,8 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
 
 :is(
     are-you-sure-component,
-    options-menu-component
+    options-menu-component,
+    title-menu-component
 ) .choices-list {
     width: 50%;
     margin: auto;

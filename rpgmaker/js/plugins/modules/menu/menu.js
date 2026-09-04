@@ -5,6 +5,7 @@ import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure
 import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { OptionsMenuComponent } from './components/options_menu.js';
+import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
  * @type {HideableOpenable<MainMenuComponent>}
@@ -14,7 +15,7 @@ let mainMenu;
 /**
  * @type {HideableOpenable<AreYouSureComponent>}
  */
-let gameEnd;
+let areYouSure;
 
 /**
  * @type {HideableOpenable<OptionsMenuComponent>}
@@ -31,6 +32,11 @@ const SCENE_ITEM_TYPES = Object.freeze({
     FLOOR: 2
 });
 let sceneItemType = SCENE_ITEM_TYPES.ITEMS;
+
+/**
+ * @type {HideableOpenable<TitleMenuComponent>}
+ */
+let titleMenu;
 
 /**
  * @type {import('../message/components/choices_list.js').ChoicesListComponent}
@@ -136,8 +142,8 @@ export function initializeMainMenu(container = document.body) {
     mainMenu.element.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
 
     AreYouSureComponent.register();
-    gameEnd = new HideableOpenable(new AreYouSureComponent());
-    gameEnd.topElement.classList.add('vertical-center');
+    areYouSure = new HideableOpenable(new AreYouSureComponent());
+    areYouSure.topElement.classList.add('vertical-center');
 
     OptionsMenuComponent.register();
     optionsMenu = new HideableOpenable(new OptionsMenuComponent());
@@ -147,11 +153,16 @@ export function initializeMainMenu(container = document.body) {
     itemsMenu = new HideableOpenable(new ItemsMenuComponent());
     createItemsMenuEventListeners();
 
+    TitleMenuComponent.register();
+    titleMenu = new HideableOpenable(new TitleMenuComponent());
+    titleMenu.topElement.classList.add('vertical-center');
+
     container.append(
         mainMenu.topElement,
-        gameEnd.topElement,
+        areYouSure.topElement,
         optionsMenu.topElement,
-        itemsMenu.topElement
+        itemsMenu.topElement,
+        titleMenu.topElement
     );
 }
 
@@ -195,9 +206,9 @@ Scene_Menu.prototype.start = function() {
 
 Scene_GameEnd.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
-    choicesList = gameEnd.element.choicesList;
+    choicesList = areYouSure.element.choicesList;
 
-    takeAreYouSure(gameEnd, {
+    takeAreYouSure(areYouSure, {
         explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br>All unsaved progress will be lost.`,
         choices: [
             { text: 'Return to title', id: ARE_YOU_SURE_IDS.YES },
@@ -352,6 +363,79 @@ function goBackFromItemsMenu() {
     removeMenuBackdrop();
 }
 
+/**
+ * @type {Object<string,import('../message/components/choices_list.js').ChoiceListChoice>}
+ */
+const TITLE_CHOICES = {
+    NEW_GAME: { text: 'New game' },
+    CONTINUE: { text: 'Continue' },
+    OPTIONS: { text: 'Options' },
+    EXIT: { text: 'Exit' }
+};
+addChoiceIds(TITLE_CHOICES);
+
+const _Scene_Title_start = Scene_Title.prototype.start;
+Scene_Title.prototype.start = function() {
+    _Scene_Title_start.call(this);
+    takeTitleChoiceAsync().then(choice => {
+        switch (choice.id) {
+            case TITLE_CHOICES.EXIT.id:
+                SceneManager.exit();
+            return;
+            case TITLE_CHOICES.NEW_GAME.id:
+                DataManager.setupNewGame();
+                this.fadeOutAll();
+                SceneManager.goto(Scene_Map);
+            break;
+            case TITLE_CHOICES.CONTINUE.id:
+                SceneManager.push(Scene_Load);
+            break;
+            case TITLE_CHOICES.OPTIONS.id:
+                SceneManager.push(Scene_Options);
+            break;
+        }
+    });
+}
+
+async function takeTitleChoiceAsync() {
+    const title = titleMenu.element;
+    const choices = Object.values(TITLE_CHOICES);
+    do {
+        choicesList = title.choicesList;
+        titleMenu.showAndOpen();
+        const choice = await title.titleMenuTakeChoice(choices);
+        titleMenu.closeAndHide();
+        if (choice.id !== TITLE_CHOICES.EXIT.id) {
+            return choice;
+        }
+
+        choicesList = areYouSure.element.choicesList;
+        areYouSure.showAndOpen();
+        const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
+            choices: [
+                { text: 'Exit the game', id: ARE_YOU_SURE_IDS.YES },
+                { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO },
+            ],
+            explanation: 'Are you sure you want to exit the game?'
+        });
+        areYouSure.closeAndHide();
+        if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
+            return choice;
+        }
+    } while(true);
+}
+
+Scene_Title.prototype.update = function() {
+    Scene_Base.prototype.update.call(this);
+    handleMenuInputs(Scene_Title);
+}
+
+Scene_Title.prototype.isBusy = Scene_Base.prototype.isBusy;
+
+Scene_Title.prototype.createCommandWindow = function() {
+    // empty
+}
+
 for (const scene of [
         Scene_Menu,
         Scene_GameEnd,
@@ -386,7 +470,9 @@ function handleMenuInputs(scene) {
     } else if (input.isTriggered('ok')) {
         choicesList.choicesListConfirmCurrentOption();
     } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
-        choicesList.choicesListCancel();
+        if (scene !== Scene_Title || areYouSure.hideable.hideableIsShown) {
+            choicesList.choicesListCancel();
+        }
     } if (input.isTriggered('right')) {
         if (scene === Scene_Options) {
             optionsMenu.element.optionsMenuSetNextValue();
