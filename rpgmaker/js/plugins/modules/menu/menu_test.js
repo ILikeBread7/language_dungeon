@@ -72,7 +72,6 @@ const tests = {
     },
 
     async items() {
-        choicesList = items.choicesList;
         // items.choicesList.scrollableListSwitchToHorizontal();
         document.body.appendChild(itemsMenu.topElement);
 
@@ -87,8 +86,9 @@ const tests = {
             });
         }
 
-        items.itemsMenuStart(itemChoices);
+        items.itemsMenuStartOpenFirst(itemChoices);
         itemsMenu.showAndOpen();
+        choicesList = items.choicesList;
 
         // for (const eventName of [ ...Object.values(CHOICES_LIST_EVENTS), ...Object.values(SCROLLABLE_LIST_EVENTS) ]) {
         //     items.choicesList.addEventListener(eventName, event => {
@@ -243,7 +243,7 @@ const tests = {
         }
     }
 };
-tests.title();
+tests.items();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],

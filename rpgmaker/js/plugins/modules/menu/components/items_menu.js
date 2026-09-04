@@ -116,6 +116,17 @@ export class ItemsMenuComponent extends BaseComponent {
 
     /**
      * 
+     * @param {[ItemChoice]} items 
+     * @returns {Promise<void>}
+     */
+    async itemsMenuStartOpenFirst(items) {
+        const promise = this.itemsMenuStart(items);
+        this.choicesList.choicesListConfirmCurrentOption();
+        return await promise;
+    }
+
+    /**
+     * 
      * @param {import('../../message/components/choices_list.js').ChoiceListPlayerChoice} choice 
      * @param {number} itemId 
      */

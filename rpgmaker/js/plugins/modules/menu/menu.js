@@ -238,7 +238,12 @@ Scene_Item.prototype.start = function() {
 
     const choices = createItemChoices();
     itemsMenu.showAndOpen();
-    itemsMenu.element.itemsMenuStart(choices).then(async () => {
+
+    (
+        sceneItemType === SCENE_ITEM_TYPES.FLOOR
+            ? itemsMenu.element.itemsMenuStartOpenFirst(choices)
+            : itemsMenu.element.itemsMenuStart(choices)
+    ).then(async () => {
         await itemsMenu.closeAndHide();
         removeMenuBackdrop();
         this.popScene();
