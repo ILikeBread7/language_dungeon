@@ -320,29 +320,31 @@ function createItemsMenuEventListeners() {
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_DROPPED, event => {
         goBackFromItemsMenu();
 
-        setTimeout(() => {
+        mapStartActions.push(() => {
             const itemId = event.detail.itemId;
             const itemData = $dataItems[itemId];
 
             f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
             $gameParty.loseItem(itemData, 1);
             f.moveEnemies();
-        }, 100);
+        });
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, event => {
         goBackFromItemsMenu();
 
-        const itemId = event.detail.itemId;
-        const x = $gamePlayer.x;
-        const y = $gamePlayer.y;
-        const itemData = $dataItems[itemId];
-
-        const itemEvent = $gameMap.eventsXy(x, y)
-            .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
-        itemEvent.erase();
-        $gameParty.gainItem(itemData, 1);
-        f.moveEnemies();
+        mapStartActions.push(() => {
+            const itemId = event.detail.itemId;
+            const x = $gamePlayer.x;
+            const y = $gamePlayer.y;
+            const itemData = $dataItems[itemId];
+    
+            const itemEvent = $gameMap.eventsXy(x, y)
+                .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
+            itemEvent.erase();
+            $gameParty.gainItem(itemData, 1);
+            f.moveEnemies();
+        });
     });
 }
 
@@ -377,6 +379,8 @@ addChoiceIds(TITLE_CHOICES);
 const _Scene_Title_start = Scene_Title.prototype.start;
 Scene_Title.prototype.start = function() {
     _Scene_Title_start.call(this);
+    mapStartActions = [];
+
     takeTitleChoiceAsync().then(choice => {
         switch (choice.id) {
             case TITLE_CHOICES.EXIT.id:
@@ -506,4 +510,14 @@ function addMenuBackdrop() {
 
 function removeMenuBackdrop() {
     menuContainer.classList.remove('menu-backdrop');
+}
+
+let mapStartActions;
+const _Scene_Map_start = Scene_Map.prototype.start;
+Scene_Map.prototype.start = function() {
+    _Scene_Map_start.call(this);
+    for (const action of mapStartActions) {
+        action();
+    }
+    mapStartActions = [];
 }
