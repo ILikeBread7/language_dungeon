@@ -63,7 +63,7 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
     },
     OPTIONS: { text: 'Options', explanation: "Adjust the game's settings" },
     SAVE: { text: 'Save', explanation: 'Save your progress' },
-    BACK: { text: 'Go back', explanation: 'Close this menu, and return to the game' },
+    BACK: { text: 'Back to the game', explanation: 'Close this menu, and return to the game' },
     EXIT: { text: 'Exit', explanation: 'Exit the game, and return to the title screen' }
 });
 addChoiceIds(MAIN_MENU_CHOICES);
