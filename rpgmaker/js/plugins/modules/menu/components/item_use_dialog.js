@@ -6,9 +6,9 @@ import { AreYouSureComponent } from './are_you_sure.js';
  * @type {Object<string,import('./items_menu.js').ItemChoice>}
  */
 export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
-    USE: { text: 'Use' },
-    PICK_UP: { text: 'Pick up' },
-    DROP: { text: 'Drop' },
+    PICK_UP: { text: 'Pick up (1)' },
+    USE: { text: 'Use (1)' },
+    DROP: { text: 'Drop (1)' },
     CANCEL: { text: 'Cancel' }
 });
 addChoiceIds(ITEM_DIALOG_CHOICES);
