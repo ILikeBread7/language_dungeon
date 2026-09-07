@@ -255,7 +255,7 @@ Scene_Item.prototype.start = function() {
     itemsMenu.showAndOpen();
 
     (
-        sceneItemType === SCENE_ITEM_TYPES.FLOOR
+        sceneItemType === SCENE_ITEM_TYPES.FLOOR && choices.length === 1
             ? itemsMenu.element.itemsMenuStartOpenFirst(choices)
             : itemsMenu.element.itemsMenuStart(choices)
     ).then(async () => {
