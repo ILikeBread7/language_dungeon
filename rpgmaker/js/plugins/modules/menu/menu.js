@@ -179,7 +179,6 @@ Scene_Menu.prototype.start = function() {
 
         if (choice.cancelled || choice.id === MAIN_MENU_CHOICES.BACK.id) {
             this.popScene();
-            removeMenuBackdrop();
             return;
         }
         
@@ -232,7 +231,6 @@ Scene_Options.prototype.start = function() {
     handleOptionsMenu().then(() => {
         configManager.save();
         this.popScene();
-        removeMenuBackdrop();
     });
 }
 
@@ -256,7 +254,6 @@ Scene_Item.prototype.start = function() {
             : itemsMenu.element.itemsMenuStart(choices)
     ).then(async () => {
         await itemsMenu.closeAndHide();
-        removeMenuBackdrop();
         this.popScene();
     });
 }
@@ -362,7 +359,6 @@ $f.showFloor = showFloor;
 function goBackFromItemsMenu() {
     itemsMenu.closeAndHide();
     SceneManager.goto(Scene_Map);
-    removeMenuBackdrop();
 }
 
 /**
@@ -380,11 +376,12 @@ const _Scene_Title_start = Scene_Title.prototype.start;
 Scene_Title.prototype.start = function() {
     _Scene_Title_start.call(this);
     mapStartActions = [];
+    removeMenuBackdrop();
 
     takeTitleChoiceAsync().then(choice => {
         switch (choice.id) {
             case TITLE_CHOICES.EXIT.id:
-                SceneManager.exit();
+                SceneManager.push(Scene_GameExit);
             return;
             case TITLE_CHOICES.NEW_GAME.id:
                 DataManager.setupNewGame();
@@ -404,29 +401,12 @@ Scene_Title.prototype.start = function() {
 async function takeTitleChoiceAsync() {
     const title = titleMenu.element;
     const choices = Object.values(TITLE_CHOICES);
-    do {
-        choicesList = title.choicesList;
-        titleMenu.showAndOpen();
-        const choice = await title.titleMenuTakeChoice(choices);
-        titleMenu.closeAndHide();
-        if (choice.id !== TITLE_CHOICES.EXIT.id) {
-            return choice;
-        }
-
-        choicesList = areYouSure.element.choicesList;
-        areYouSure.showAndOpen();
-        const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
-            choices: [
-                { text: 'Exit the game', id: ARE_YOU_SURE_IDS.YES },
-                { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO },
-            ],
-            explanation: 'Are you sure you want to exit the game?'
-        });
-        areYouSure.closeAndHide();
-        if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
-            return choice;
-        }
-    } while(true);
+    choicesList = title.choicesList;
+    
+    titleMenu.showAndOpen();
+    const choice = await title.titleMenuTakeChoice(choices);
+    titleMenu.closeAndHide();
+    return choice;
 }
 
 Scene_Title.prototype.update = function() {
@@ -440,11 +420,46 @@ Scene_Title.prototype.createCommandWindow = function() {
     // empty
 }
 
+class Scene_GameExit extends Scene_MenuBase {
+    
+    constructor() {
+        super();
+    }
+
+    async start() {
+        super.start();
+        addMenuBackdrop();
+
+        choicesList = areYouSure.element.choicesList;
+        areYouSure.showAndOpen();
+        const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
+            choices: [
+                { text: 'Exit the game', id: ARE_YOU_SURE_IDS.YES },
+                { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO },
+            ],
+            explanation: 'Are you sure you want to exit the game?'
+        });
+        console.log(playerConfirm, playerConfirm.id === ARE_YOU_SURE_IDS.YES)
+
+        if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
+            SceneManager.exit();
+            return;
+        }
+
+        areYouSure.closeAndHide();
+        this.popScene();
+    }
+
+}
+// For PreventTitleFadeIn plugin
+window.Scene_GameExit = Scene_GameExit;
+
 for (const scene of [
         Scene_Menu,
         Scene_GameEnd,
         Scene_Options,
-        Scene_Item
+        Scene_Item,
+        Scene_GameExit
 ]) {
     const _scene_update = scene.prototype.update;
     scene.prototype.update = function() {
@@ -520,4 +535,6 @@ Scene_Map.prototype.start = function() {
         action();
     }
     mapStartActions = [];
+
+    removeMenuBackdrop();
 }
