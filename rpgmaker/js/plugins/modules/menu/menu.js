@@ -62,7 +62,13 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
         }
     },
     OPTIONS: { text: 'Options', explanation: "Adjust the game's settings" },
-    SAVE: { text: 'Save', explanation: 'Save your progress' },
+    SAVE: {
+        text: 'Save',
+        explanation: 'Save your progress',
+        isEnabled() {
+            return $gameSystem.isSaveEnabled();
+        }
+    },
     BACK: { text: 'Back to the game', explanation: 'Close this menu, and return to the game' },
     EXIT: { text: 'Exit', explanation: 'Exit the game, and return to the title screen' }
 });
