@@ -33,9 +33,11 @@ const $characterLabels = { };
     labelsContainer.id = 'labels-container';
     const baseTransform = /*css*/`translate(-50%, -50%)`;
 
+    const DAMAGE_LABEL_CSS_CLASS = 'damage-label';
+
     const style = document.createElement('style');
     style.innerHTML = /*css*/`
-        #labels-container {
+        #${labelsContainer.id} {
             position: absolute;
             left: 50%;
             top: 50%;
@@ -44,12 +46,26 @@ const $characterLabels = { };
             z-index: 97;
         }
 
-        #labels-container > * {
+        #${labelsContainer.id} > * {
             font-size: 16px;
             color: #ffffff;
             font-family: GameFont;
             -webkit-text-stroke: #000000 0.25em;
             paint-order: stroke fill;
+            position: absolute;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+        }
+
+        #${labelsContainer.id} > .${DAMAGE_LABEL_CSS_CLASS} {
+            transition: margin-top 0.5s ease;
+            margin-top: -1lh;
+            margin-left: 1em;
+            color: yellow;
+
+            @starting-style {
+                margin-top: 0px;
+            }
         }
     `;
     document.body.append(style, labelsContainer);
@@ -64,6 +80,7 @@ const $characterLabels = { };
 
     function clearLabels() {
         labelsContainer.innerHTML = '';
+        damageLabels = [];
     }
     $characterLabels.clear = clearLabels;
 
@@ -76,22 +93,23 @@ const $characterLabels = { };
 
         if (this.textLabel && !this.textLabelElement) {
             this.textLabelElement = document.createElement('span');
-            this.textLabelElement.style.position = 'absolute';
-            this.textLabelElement.style.transform = 'translate(-50%, -100%)';
-            this.textLabelElement.style.whiteSpace = 'nowrap';
             labelsContainer.appendChild(this.textLabelElement);
         }
 
         if (this.textLabelElement) {
             if (this.textLabel) {
                 this.textLabelElement.innerHTML = this.textLabel;
-                this.textLabelElement.style.left = `${this.screenX()}px`;
-                this.textLabelElement.style.top = `${this.screenY() - $gameMap.tileHeight()}px`;
+                setLabelElementLeftTop(this, this.textLabelElement);
             } else {
                 labelsContainer.removeChild(this.textLabelElement);
                 delete this.textLabelElement;
             }
         }
+    }
+
+    function setLabelElementLeftTop(character, element) {
+        element.style.left = `${character.screenX()}px`;
+        element.style.top = `${character.screenY() - $gameMap.tileHeight()}px`;
     }
 
     const _Game_Event_erase = Game_Event.prototype.erase;
@@ -100,6 +118,7 @@ const $characterLabels = { };
         if (this.textLabelElement) {
             labelsContainer.removeChild(this.textLabelElement);
         }
+
     }
 
     const _Scene_Base_update = Scene_Base.prototype.update;
@@ -148,6 +167,36 @@ const $characterLabels = { };
     Graphics._modifyExistingElements = function() {
         modifyFunction();
         labelsContainer.style.removeProperty('z-index');
+    }
+
+    let damageLabels = [];
+    function addDamageLabel(character, content, cssClass) {
+        const element = document.createElement('span');
+        element.classList.add(DAMAGE_LABEL_CSS_CLASS);
+        if (cssClass) {
+            element.classList.add(cssClass);
+        }
+        element.innerHTML = content;
+        element.addEventListener('transitionend', event => {
+            if (event.target !== element) {
+                return;
+            }
+            labelsContainer.removeChild(element);
+            damageLabels = damageLabels.filter(label => label.element !== element);
+        });
+
+        setLabelElementLeftTop(character, element);
+        damageLabels.push({ element, character });
+        labelsContainer.appendChild(element);
+    }
+    $characterLabels.addDamageLabel = addDamageLabel;
+
+    const _Scene_Map_update = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function() {
+        _Scene_Map_update.call(this);
+        for (const { element, character } of damageLabels) {
+            setLabelElementLeftTop(character, element);
+        }
     }
 
 })();
