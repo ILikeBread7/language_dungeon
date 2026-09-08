@@ -428,10 +428,6 @@ Scene_Title.prototype.createCommandWindow = function() {
 
 class Scene_GameExit extends Scene_MenuBase {
     
-    constructor() {
-        super();
-    }
-
     async start() {
         super.start();
         addMenuBackdrop();
@@ -445,7 +441,6 @@ class Scene_GameExit extends Scene_MenuBase {
             ],
             explanation: 'Are you sure you want to exit the game?'
         });
-        console.log(playerConfirm, playerConfirm.id === ARE_YOU_SURE_IDS.YES)
 
         if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
             SceneManager.exit();
