@@ -1,0 +1,22 @@
+<style>
+    body {
+        margin: 0px;
+    }
+
+    dungeon-hud-component {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+
+        & .hp-bar::before {
+            transition-property: width, background;
+            transition-duration: 0.5s;
+            background: linear-gradient(
+                to right,
+                hsl(from hsl(90, 95%, 40%) calc(h * pow(var(--hp-proportion), 0.7)) s l),
+                hsl(from hsl(90, 95%, 50%) calc(h * pow(var(--hp-proportion), 0.7)) s l)
+            );
+        }
+    }
+</style>
+<script type="module" src="game_test.js"></script>
