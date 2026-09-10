@@ -47,7 +47,6 @@ const $characterLabels = { };
         }
 
         #${labelsContainer.id} > * {
-            font-size: 16px;
             color: #ffffff;
             font-family: GameFont;
             -webkit-text-stroke: #000000 0.25em;
