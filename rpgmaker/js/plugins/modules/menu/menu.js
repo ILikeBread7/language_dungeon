@@ -272,10 +272,13 @@ function createItemChoices() {
         const iconX = iconIndex % ICON_COLUMNS;
         const iconY = Math.floor(iconIndex / ICON_COLUMNS);
 
+        const amount = getItemAmounts(item);
         return {
-            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${getItemAmounts(item)}`,
+            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${amount}`,
             explanation: item.description,
             id: item.id,
+            amount,
+            consumable: $dataItems[item.id].consumable,
             canUse: () => true,
             canPickUp: () => sceneItemType === SCENE_ITEM_TYPES.FLOOR,
             canDrop: () => sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item

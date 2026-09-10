@@ -6,9 +6,9 @@ import { AreYouSureComponent } from './are_you_sure.js';
  * @type {Object<string,import('./items_menu.js').ItemChoice>}
  */
 export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
-    PICK_UP: { text: 'Pick up (1)' },
-    USE: { text: 'Use (1)' },
-    DROP: { text: 'Drop (1)' },
+    PICK_UP: { text: 'Pick up' },
+    USE: { text: 'Use' },
+    DROP: { text: 'Drop' },
     CANCEL: { text: 'Cancel' }
 });
 addChoiceIds(ITEM_DIALOG_CHOICES);
@@ -30,10 +30,20 @@ export class ItemUseDialogComponent extends BaseComponent {
     /**
      * 
      * @param {string} explanation 
+     * @param {import('./items_menu.js').ItemInfo} itemInfo
      * @returns 
      */
-    async itemUseDialogStart(explanation, ) {
-        const choices = Object.values(ITEM_DIALOG_CHOICES);
+    async itemUseDialogStart(explanation, itemInfo) {
+        let choices = Object.values(ITEM_DIALOG_CHOICES);
+        if (itemInfo.consumable && itemInfo.amount > 1) {
+            choices = choices
+                .map(choice => {
+                    if (choice.id === ITEM_DIALOG_CHOICES.CANCEL.id) {
+                        return choice;
+                    }
+                    return { ...choice, text: `${choice.text} (1)` };
+                });
+        }
 
         const choicePromise = this._dialog.areYouSureTakeChoice({
             explanation,

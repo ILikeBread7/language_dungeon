@@ -6,8 +6,9 @@ import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/compone
 import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.js';
 
 /**
+ * @typedef { { name: string, amount: number, consumable: boolean } } ItemInfo
  * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean } } ItemUseOptions
- * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions } ItemChoice
+ * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions & ItemInfo } ItemChoice
  */
 
 const ITEM_USE_DIALOG_CSS_CLASS = 'item-use-dialog';
@@ -75,14 +76,14 @@ export class ItemsMenuComponent extends BaseComponent {
              */
             const option = event.detail.option;
             
-            const itemName = option.text;
+            const itemOptionText = option.text;
             const itemId = option.id;
 
             this._listWithExplanation.choicesList.choicesListDeactivate();
             this._itemUseDialog.showAndOpen();
 
             this._itemUseDialog.element.itemsUseDialogSetShowChoiceFunctions(option);
-            const choice = await this._itemUseDialog.element.itemUseDialogStart(itemName);
+            const choice = await this._itemUseDialog.element.itemUseDialogStart(itemOptionText, option);
             this._dispatchItemEvent(choice, itemId)
 
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
