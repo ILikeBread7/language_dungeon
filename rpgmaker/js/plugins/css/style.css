@@ -139,3 +139,24 @@ openable-component[data-target-state="closed"] main-menu-component .explanation 
     background-image: url('../../../img/system/IconSet.png');
     background-position: calc(-32px * var(--icon-x)) calc(-32px * var(--icon-y));
 }
+
+hideable-component:has(dungeon-hud-component) {
+    z-index: -1;
+}
+
+dungeon-hud-component {
+    color: #ffffff;
+    font-family: GameFont;
+    -webkit-text-stroke: #000000 0.25em;
+    paint-order: stroke fill;
+
+    & .hp-bar::before {
+        transition-property: width, background;
+        transition-duration: 0.5s;
+        background: linear-gradient(
+            to right,
+            hsl(from hsl(90, 95%, 40%) calc(h * pow(var(--hp-proportion), 0.7)) s l),
+            hsl(from hsl(90, 95%, 50%) calc(h * pow(var(--hp-proportion), 0.7)) s l)
+        );
+    }
+}

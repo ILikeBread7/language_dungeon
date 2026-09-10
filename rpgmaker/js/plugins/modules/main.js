@@ -1,3 +1,4 @@
+import { initializeGame } from './game/game.js';
 import { initializeMainMenu } from './menu/menu.js';
 import { initializeAll } from './message/message.js';
 
@@ -10,6 +11,7 @@ setTimeout(adjustContainerDimensions, 100);
 
 initializeAll(componentsContainer);
 initializeMainMenu(componentsContainer);
+initializeGame(componentsContainer);
 
 function adjustContainerDimensions() {
     componentsContainer.style.setProperty('--scale', Math.ceil(Graphics._realScale * 100) / 100);
