@@ -7,8 +7,31 @@ import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/compone
  */
 
 /**
- * @typedef { ChoiceListChoice & { explanation: string, value: string, goBack?: boolean, setValue?: () => void, setNextValue?: () => void, setPreviousValue?: () => void } } OptionsListEntry
+
 */
+
+/**
+ * @template T
+ * @typedef {[{ value: T, text: string }]} RadioValues
+ * @typedef {[{ min: number, max: number, step: number }]} SliderValues
+ * @typedef { ChoiceListChoice & {
+ *  explanation: string,
+ *  value: T,
+ *  input: {
+ *      type: OptionInputType,
+ *      values?: RadioValues|SliderValues
+ *  }
+ * } } OptionsListEntry
+*/
+
+export const INPUT_TYPE = /** @type {const} */ Object.freeze({
+    RADIO: 1,
+    SLIDER: 2,
+    BACK: 3
+});
+/**
+ * @typedef { Enum<INPUT_TYPE> } OptionInputType
+ */
 
 const VALUE_SPAN_CSS_CLASS = 'value';
 
@@ -36,9 +59,7 @@ export class OptionsMenuComponent extends BaseComponent {
 
     constructor() {
         super();
-        this._listWithExplanation = new ListWithExplanation();
-        this.choicesList.classList.add('choices-list');
-        this._listWithExplanation.appendAll(this);
+        
     }
 
     /**
@@ -46,110 +67,15 @@ export class OptionsMenuComponent extends BaseComponent {
      */
     optionsMenuSetOptions(options) {
         this._options = options;
-        this._listWithExplanation.setChoices(options);
-
-        this.choicesList.choicesListSetChoices(this._options);
-        for (let i = 0; i < this._options.length; i++) {
-            const option = options[i];
-            if (option.goBack) {
-                continue;
-            }
-            const displayedOption = this.choicesList.choicesListDisplayedOptions[i];
-            displayedOption.element.innerHTML += /* html */` <span class="${VALUE_SPAN_CSS_CLASS}"></span>`;
-        }
-        this._listWithExplanation.selectChoice();
-        this.optionsMenuUpdateOptionValues();
-    }
-
-    optionsMenuUpdateOptionValues() {
-        const displayedOptions = this.choicesList.choicesListDisplayedOptions;
-        for (let i = 0; i < this._options.length; i++) {
-            const option = this._options[i];
-            if (option.goBack) {
-                continue;
-            }
-
-            const element = displayedOptions[i].element;
-            this._updateOptionValue(option, element);
-        }
+        
     }
 
     async optionsMenuStart() {
-        this.choicesList.choicesListActivate();
 
-        do {
-            const choice = await this.choicesList.choicesListTakeChoice();
-            if (choice.cancelled) {
-                break;
-            }
-
-            const option = this._options[choice.index];
-            if (option.goBack) {
-                break;
-            }
-
-            if (option.setValue) {
-                option.setValue();
-            } else if (option.setNextValue) {
-                option.setNextValue();
-            } else {
-                continue;
-            }
-
-            this._updateOptionValue(option, choice.element);
-        } while(true);
-
-        this.choicesList.choicesListDeactivate();
     }
 
-    optionsMenuSetNextValue() {
-        const currentlySelectedOption = this.choicesList.choicesListCurrentlySelectedOption;
-        if (currentlySelectedOption) {
-            const option = this._options[currentlySelectedOption.index];
-            
-            if (option.setNextValue) {
-                option.setNextValue();
-            } else if (option.setValue) {
-                option.setValue();
-            } else {
-                return;
-            }
+    optionsMenuCancel() {
 
-            const element = currentlySelectedOption.option.element;
-            this._updateOptionValue(option, element);
-        }
-    }
-
-    optionsMenuSetPreviousValue() {
-        const currentlySelectedOption = this.choicesList.choicesListCurrentlySelectedOption;
-        if (currentlySelectedOption) {
-            const option = this._options[currentlySelectedOption.index];
-
-            if (option.setPreviousValue) {
-                option.setPreviousValue();
-            } else if (option.setValue) {
-                option.setValue();
-            } else {
-                return;
-            }
-
-            const element = currentlySelectedOption.option.element;
-            this._updateOptionValue(option, element);
-        }
-    }
-
-    /**
-     * 
-     * @param {OptionsListEntry} option 
-     * @param {HTMLElement} element 
-     */
-    _updateOptionValue(option, element) {
-        const valueElement = element.getElementsByClassName(VALUE_SPAN_CSS_CLASS)[0];
-        valueElement.innerHTML = option.value;
-    }
-
-    get choicesList() {
-        return this._listWithExplanation.choicesList;
     }
 
 }

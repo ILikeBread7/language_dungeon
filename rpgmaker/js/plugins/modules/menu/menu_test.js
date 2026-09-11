@@ -7,7 +7,7 @@ import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
-import { OptionsMenuComponent } from './components/options_menu.js';
+import { INPUT_TYPE, OptionsMenuComponent } from './components/options_menu.js';
 import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
@@ -129,66 +129,42 @@ const tests = {
             {
                 text: 'Always Dash',
                 explanation: 'Make the character always run, without holding the run button.',
-                get value() { return mapToOnOff(ConfigManager.alwaysDash); },
-                setValue() {
-                    ConfigManager.alwaysDash = !ConfigManager.alwaysDash;
-                }
+                input: { type: INPUT_TYPE.RADIO, values: [ { value: true, text: 'ON'}, { value: false, text: 'OFF'} ] },
+                get value() { return ConfigManager.alwaysDash; },
+                set value(val) { ConfigManager.alwaysDash = val; }
             },
             {
                 text: 'BGM Volume',
                 explanation: 'Volume of the background music.',
-                get value() { return mapToPercentage(ConfigManager.bgmVolume) },
-                setNextValue() {
-                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.bgmVolume = (ConfigManager.bgmVolume - step + mod) % mod;
-                }
+                input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+                get value() { return ConfigManager.bgmVolume },
+                set value(val) { ConfigManager.bgmVolume = val }
             },
             {
                 text: 'BGS Volume',
                 explanation: 'Volume of the background sounds.',
-                get value() { return mapToPercentage(ConfigManager.bgsVolume); },
-                setNextValue() {
-                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.bgsVolume = (ConfigManager.bgsVolume - step + mod) % mod;
-                }
+                input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+                get value() { return ConfigManager.bgsVolume },
+                set value(val) { ConfigManager.bgsVolume = val }
             },
             {
                 text: 'ME Volume',
                 explanation: 'Volume of the musical effects.',
-                get value() { return mapToPercentage(ConfigManager.meVolume); },
-                setNextValue() {
-                    ConfigManager.meVolume = (ConfigManager.meVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.meVolume = (ConfigManager.meVolume - step + mod) % mod;
-                }
+                input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+                get value() { return ConfigManager.meVolume },
+                set value(val) { ConfigManager.meVolume = val }
             },
             {
                 text: 'SE Volume',
                 explanation: 'Volume of the sound effects.',
-                get value() { return mapToPercentage(ConfigManager.seVolume); },
-                setNextValue() {
-                    ConfigManager.seVolume = (ConfigManager.seVolume + step + mod) % mod;
-                },
-                setPreviousValue() {
-                    ConfigManager.seVolume = (ConfigManager.seVolume - step + mod ) % mod;
-                }
+                input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+                get value() { return ConfigManager.seVolume },
+                set value(val) { ConfigManager.seVolume = val }
             },
             {
                 text: 'Go back',
                 explanation: 'Save changes, and go back to the game.',
-                goBack: true
-            },
-            {
-                text: 'Return to title',
-                cssClass: 'danger',
-                explanation: 'Exit the game, and return to the title screen.',
-                goBack: true,
-                returnToTitle: true
+                input: { type: INPUT_TYPE.BACK }
             }
         ];
 
@@ -247,7 +223,7 @@ const tests = {
         }
     }
 };
-tests.items();
+tests.options();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => selectable.selectDown() ],
@@ -263,11 +239,3 @@ document.addEventListener('keydown', event => {
         action();
     }
 });
-
-function mapToOnOff(boolValue) {
-    return boolValue ? 'ON' : 'OFF';
-}
-
-function mapToPercentage(value) {
-    return `${value}%`;
-}
