@@ -68,6 +68,10 @@ export class OpenableComponent extends BaseComponent {
      * @returns {Promise<void>}
      */
     async _openableChangeState(currentState, targetState) {
+        if (targetState === this.dataset.currentState) {
+            return;
+        }
+
         return new Promise((resolve) => {
             this.dataset.currentState = currentState;
             this.dataset.targetState = targetState;
