@@ -1,5 +1,7 @@
 import { SCROLLABLE_LIST_EVENTS, ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
+import { SelectableScrollableList } from '../common/helpers/selectable_scrollable_list.js';
 import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
@@ -42,13 +44,13 @@ const titleMenu = new HideableOpenable(new TitleMenuComponent());
 const title = titleMenu.element;
 
 /**
- * @type {import('../message/components/choices_list.js').ChoicesListComponent}
+ * @type {import('../common/helpers/selectable_interface.js').SelectableInterface}
  */
-let choicesList;
+let selectable;
 
 const tests = {
     async menu() {
-        choicesList = mainMenu.element.choicesList;
+        selectable = new SelectableChoicesList(mainMenu.element.choicesList);
         document.body.appendChild(mainMenu.topElement);
         menu.mainMenuSetOptions(Object.values(MAIN_MENU_CHOICES));
         mainMenu.showAndOpen();
@@ -62,7 +64,7 @@ const tests = {
     },
 
     async areYouSure() {
-        choicesList = areYouSure.element.choicesList;
+        selectable =  new SelectableChoicesList(areYouSure.element.choicesList);
         document.body.appendChild(areYouSure.topElement);
 
         let playerChoice;
@@ -88,7 +90,7 @@ const tests = {
 
         items.itemsMenuStartOpenFirst(itemChoices);
         itemsMenu.showAndOpen();
-        choicesList = items.choicesList;
+        selectable =  new SelectableScrollableList(items.choicesList);
 
         // for (const eventName of [ ...Object.values(CHOICES_LIST_EVENTS), ...Object.values(SCROLLABLE_LIST_EVENTS) ]) {
         //     items.choicesList.addEventListener(eventName, event => {
@@ -99,13 +101,15 @@ const tests = {
         for (const list of [ items._listWithExplanation.choicesList, items._itemUseDialog.element.choicesList ]) {
             list.addEventListener(CHOICES_LIST_EVENTS.ACTIVATED, () => {
                 console.log('activated', list)
-                choicesList = list;
+                selectable = (list instanceof ScrollableListComponent)
+                    ? new SelectableScrollableList(list)
+                    : new SelectableChoicesList(list);
             });
         }
     },
 
     async options() {
-        choicesList = optionsMenu.choicesList;
+        selectable =  new SelectableChoicesList(optionsMenu.choicesList);
         document.body.appendChild(optionsMenuHideableOpenable.topElement);
 
         const ConfigManager = globalThis.ConfigManager || {
@@ -196,7 +200,7 @@ const tests = {
     },
 
     async title() {
-        choicesList = title.choicesList;
+        selectable =  new SelectableChoicesList(title.choicesList);
         document.body.appendChild(titleMenu.topElement);
         document.body.appendChild(areYouSure.topElement);
 
@@ -219,7 +223,7 @@ const tests = {
         do {
             choice = await title.titleMenuTakeChoice(Object.values(choices));
             if (choice.id === choices.EXIT.id) {
-                choicesList = areYouSure.element.choicesList;
+                selectable =  new SelectableChoicesList(areYouSure.element.choicesList);
                 titleMenu.closeAndHide();
                 areYouSure.showAndOpen();
                 const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
@@ -233,7 +237,7 @@ const tests = {
                 if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
                     break;
                 } else {
-                    choicesList = title.choicesList;
+                    selectable =  new SelectableChoicesList(title.choicesList);
                     titleMenu.showAndOpen();
                 }
             }
@@ -243,29 +247,15 @@ const tests = {
         }
     }
 };
-tests.title();
+tests.items();
 
 const keyActionMap = new Map([
-    [ 'ArrowDown', () => choicesList.choicesListSelectNextOption() ],
-    [ 'ArrowUp', () => choicesList.choicesListSelectPreviousOption() ],
-    [ 'Enter', () => choicesList.choicesListConfirmCurrentOption() ],
-    [ 'Escape', () => choicesList.choicesListCancel() ],
-    [ 'ArrowRight', () => {
-        optionsMenu.optionsMenuSetNextValue();
-        if (choicesList instanceof ScrollableListComponent) {
-            choicesList.scrollableListNextPage();
-        } else {
-            choicesList.choicesListGoToBottom();
-        }
-    } ],
-    [ 'ArrowLeft', () => {
-        optionsMenu.optionsMenuSetPreviousValue();
-        if (choicesList instanceof ScrollableListComponent) {
-            choicesList.scrollableListPreviousPage();
-        } else {
-            choicesList.choicesListGoToTop();
-        }
-    } ]
+    [ 'ArrowDown', () => selectable.selectDown() ],
+    [ 'ArrowUp', () => selectable.selectUp() ],
+    [ 'Enter', () => selectable.confirmCurrent() ],
+    [ 'Escape', () => selectable.cancel() ],
+    [ 'ArrowRight', () => selectable.selectRight()],
+    [ 'ArrowLeft', () => selectable.selectLeft()]
 ]);
 document.addEventListener('keydown', event => {
     const action = keyActionMap.get(event.key);
