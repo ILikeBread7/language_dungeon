@@ -1,0 +1,96 @@
+import { BaseComponent } from '../../../common/components/base_component.js';
+
+/**
+ * @template T
+ * @typedef { { value: T, text: string } } RadioValue
+ */
+
+const SELECTED_DATA_VALUE = 'selected';
+
+export class RadioComponent extends BaseComponent {
+
+    static get componentDefaultTagName() {
+        return 'radio-component';
+    }
+
+    /**
+     * @template T
+     * @param {[RadioValue<T>]} values 
+     * @param {T} defaultValue 
+     */
+    constructor(values, defaultValue) {
+        super();
+        this._values = values;
+        this._currentlySelectedValue = defaultValue;
+        this._currentlySelectedIndex = values.findIndex(value => value.value === defaultValue);
+
+        const radioGroup = document.createElement('ul');
+        radioGroup.classList.add('radio-group');
+
+        this._radios = values
+            .map((value, index) => this._mapToRadio(value, index, defaultValue));
+        radioGroup.append(...this._radios);
+
+        this.appendChild(radioGroup);
+    }
+
+    get radioComponentValue() {
+        return this._currentlySelectedValue;
+    }
+
+    radioComponentSelectNextValue() {
+        this._selectRadio((this._currentlySelectedIndex + 1) % this._values.length);
+    }
+
+    radioComponentSelectPreviousValue() {
+        if (this._currentlySelectedIndex === -1) {
+            this._currentlySelectedIndex = this._values.length;
+        }
+        this._selectRadio((this._currentlySelectedIndex - 1 + this._values.length) % this._values.length);
+    }
+
+    /**
+     * @template T
+     * @param {RadioValue<T>} value 
+     * @param {number} index 
+     * @param {T} defaultValue 
+     */
+    _mapToRadio(value, index, defaultValue) {
+        const radio = document.createElement('li');
+        radio.classList.add('radio');
+        radio.innerHTML = value.text;
+        radio.dataset.index = index;
+    
+        if (value.value === defaultValue) {
+            radio.dataset.selected = SELECTED_DATA_VALUE;
+        }
+
+        this._addRadioEventListeners(radio);
+    
+        return radio;
+    }
+
+    /**
+     * 
+     * @param {HTMLElement} radio 
+     */
+    _addRadioEventListeners(radio) {
+        radio.addEventListener('click', () => {
+            const index = Number(radio.dataset.index);
+            this._selectRadio(index);
+        });
+    }
+
+    /**
+     * 
+     * @param {number} index 
+     */
+    _selectRadio(index) {
+        for (const radio of this._radios) {
+            radio.removeAttribute('data-selected');
+        }
+        this._radios[index].dataset.selected = SELECTED_DATA_VALUE;
+        this._currentlySelectedValue = this._values[index].value;
+        this._currentlySelectedIndex = index;
+    }
+}

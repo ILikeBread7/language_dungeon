@@ -1,0 +1,30 @@
+<style>
+    .radio-group {
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+        display: inline-block;
+
+        --border-width: 0.1em;
+        border: solid var(--border-width);
+
+        --border-radius: 20%;
+        border-top-left-radius: var(--border-radius);
+        border-top-right-radius: var(--border-radius);
+
+        .radio {
+            display: inline;
+            background: gray;
+            cursor: pointer;
+
+            &:not(:last-child) {
+                border-right: solid var(--border-width);
+            }
+
+            &[data-selected="selected"] {
+                background: green;
+            }
+        }
+    }
+</style>
+<script type="module" src="option_components_test.js"></script>
