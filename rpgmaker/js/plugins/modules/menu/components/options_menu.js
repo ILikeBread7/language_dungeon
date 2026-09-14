@@ -20,7 +20,8 @@ import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/compone
  *  input: {
  *      type: OptionInputType,
  *      values?: RadioValues|SliderValues
- *  }
+ *  },
+ *  cssClass: string
  * } } OptionsListEntry
 */
 
