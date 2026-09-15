@@ -1,7 +1,7 @@
 import { BaseComponent } from '../../../common/components/base_component.js';
 
 /**
- * @typedef {[{ value?: number, min?: number, max?: number, step?: number }]} SliderProperties
+ * @typedef {{ value?: number, min?: number, max?: number, step?: number }} SliderProperties
  */
 
 const SLIDER_CSS_CLASS_NAME = 'slider';
@@ -59,7 +59,7 @@ export class SliderComponent extends BaseComponent {
      */
     _addSliderInputEventListeners(slider) {
         slider.addEventListener('change', this._setValue.bind(this));
-        slider.addEventListener('focus', () => slider.blur());
+        slider.addEventListener('pointerup', () => slider.blur());
     }
 
     _setValue() {
