@@ -6,6 +6,8 @@ import { BaseComponent } from '../../../common/components/base_component.js';
  */
 
 const SELECTED_DATA_VALUE = 'selected';
+const RADIO_GROUP_CSS_CLASS = 'radio-group';
+const RADIO_CSS_CLASS = 'radio';
 
 export const RADIO_EVENTS = /** @type {const} */ Object.freeze({
     VALUE_CHANGE: 'valuechange'
@@ -15,6 +17,27 @@ export class RadioComponent extends BaseComponent {
 
     static get componentDefaultTagName() {
         return 'radio-component';
+    }
+
+    get componentCssStyle() {
+        return /*css*/`
+            ${this.componentTagName} .${RADIO_GROUP_CSS_CLASS} {
+                list-style-type: none;
+                padding: 0px;
+                margin: 0px;
+                display: inline-block;
+
+                .radio {
+                    display: inline;
+                    background: gray;
+                    cursor: pointer;
+
+                    &[data-selected="selected"] {
+                        background: green;
+                    }
+                }
+            }
+        `;
     }
 
     /**
@@ -29,7 +52,7 @@ export class RadioComponent extends BaseComponent {
         this._currentlySelectedIndex = values.findIndex(value => value.value === defaultValue);
 
         const radioGroup = document.createElement('ul');
-        radioGroup.classList.add('radio-group');
+        radioGroup.classList.add(RADIO_GROUP_CSS_CLASS);
 
         this._radios = values
             .map((value, index) => this._mapToRadio(value, index, defaultValue));
@@ -61,7 +84,7 @@ export class RadioComponent extends BaseComponent {
      */
     _mapToRadio(value, index, defaultValue) {
         const radio = document.createElement('li');
-        radio.classList.add('radio');
+        radio.classList.add(RADIO_CSS_CLASS);
         radio.innerHTML = value.text;
         radio.dataset.index = index;
     
