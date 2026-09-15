@@ -49,6 +49,10 @@ export class SliderComponent extends BaseComponent {
         this._setValue();
     }
 
+    get sliderComponentValue() {
+        return this._properties.value;
+    }
+
     /**
      * 
      * @param {HTMLInputElement} slider 
