@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../../common/components/base_component.js';
+import { INPUT_EVENTS, InputComponent } from './input.js';
 
 /**
  * @typedef {{ value?: number, min?: number, max?: number, step?: number }} SliderProperties
@@ -6,11 +7,7 @@ import { BaseComponent } from '../../../common/components/base_component.js';
 
 const SLIDER_CSS_CLASS_NAME = 'slider';
 
-export const SLIDER_EVENTS = /** @type {const} */ Object.freeze({
-    VALUE_CHANGE: 'valuechange'
-});
-
-export class SliderComponent extends BaseComponent {
+export class SliderComponent extends InputComponent {
 
     static get componentDefaultTagName() {
         return 'slider-component';
@@ -39,12 +36,12 @@ export class SliderComponent extends BaseComponent {
         this._slider = slider;
     }
 
-    sliderComponentSetNextValue() {
+    inputComponentSetNextValue() {
         this._slider.stepUp();
         this._setValue();
     }
 
-    sliderComponentSetPreviousValue() {
+    inputComponentSetPreviousValue() {
         this._slider.stepDown();
         this._setValue();
     }
@@ -69,7 +66,7 @@ export class SliderComponent extends BaseComponent {
         }
 
         this._properties.value = newValue;
-        this.dispatchEvent(new CustomEvent(SLIDER_EVENTS.VALUE_CHANGE, { detail: { value: newValue } }));
+        this.dispatchEvent(new CustomEvent(INPUT_EVENTS.VALUE_CHANGE, { detail: { value: newValue } }));
     }
 
 }

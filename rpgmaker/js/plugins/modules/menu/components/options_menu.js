@@ -1,9 +1,10 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
-import { isElementSelectable, refreshOptionAvailability } from '../../message/components/utils.js';
-import { RADIO_EVENTS, RadioComponent } from './options/radio.js';
-import { SLIDER_EVENTS, SliderComponent } from './options/slider.js';
+import { findElement, isActiveOptionElement, isElementSelectable, refreshOptionAvailability } from '../../message/components/utils.js';
+import { INPUT_EVENTS, InputComponent } from './options/input.js';
+import { RadioComponent } from './options/radio.js';
+import { SliderComponent } from './options/slider.js';
 
 /**
  * @typedef {import('../../message/components/choices_list.js').ChoiceListChoice} ChoiceListChoice
@@ -38,10 +39,13 @@ export const INPUT_TYPE = /** @type {const} */ Object.freeze({
  */
 
 const VALUE_SPAN_CSS_CLASS = 'value';
+const OPTIONS_CONTAINER_CSS_CLASS_NAME = 'options-container';
 const OPTION_CONTAINER_CSS_CLASS_NAME = 'option-container';
 const OPTION_TEXT_CSS_CLASS_NAME = 'option-text';
 const OPTION_BACK_CSS_CLASS_NAME = 'option-back';
 const OPTION_CSS_CLASS_NAME = 'option';
+const INPUT_CSS_CLASS_NAME = 'input';
+const EXPLANATION_CSS_CLASS_NAME = 'explanation';
 
 export class OptionsMenuComponent extends BaseComponent {
 
@@ -51,29 +55,29 @@ export class OptionsMenuComponent extends BaseComponent {
 
     get componentCssStyle() {
         return /*css*/`
-           ${this.componentTagName} .choices-list {
-                anchor-name: --choices-list;
+           ${this.componentTagName} .${OPTIONS_CONTAINER_CSS_CLASS_NAME} {
+                anchor-name: --container;
             }
 
-           ${this.componentTagName} .explanation {
+           ${this.componentTagName} .${EXPLANATION_CSS_CLASS_NAME} {
                 text-align: center;
                 width: 100%;
                 height: 100%;
                 position: absolute;
-                top: anchor(--choices-list bottom);
+                top: anchor(--container bottom);
             }
 
-            ${this.componentTagName} .${OPTION_CONTAINER_CSS_CLASS_NAME} {
-                &> *[data-disabled="disabled"] {
+            ${this.componentTagName} .${OPTION_CSS_CLASS_NAME} {
+                &[data-disabled="disabled"] {
                     pointer-events: none;
                     opacity: 0.6;
                 }
     
-                &> *[data-hidden="hidden"] {
+                &[data-hidden="hidden"] {
                     display: none;
                 }
     
-                &> *[data-selected="selected"] {
+                &[data-selected="selected"] {
                     background: blue;
                     color: white;
                 }
@@ -88,7 +92,12 @@ export class OptionsMenuComponent extends BaseComponent {
         SliderComponent.register();
 
         this._optionsContainer = document.createElement('div');
-        this.appendChild(this._optionsContainer);
+        this._optionsContainer.classList.add(OPTIONS_CONTAINER_CSS_CLASS_NAME);
+
+        this._explanationDiv = document.createElement('div');
+        this._explanationDiv.classList.add(EXPLANATION_CSS_CLASS_NAME);
+        
+        this.append(this._optionsContainer, this._explanationDiv);
     }
 
     /**
@@ -98,12 +107,24 @@ export class OptionsMenuComponent extends BaseComponent {
         this._options = options;
         this._optionsContainer.innerHTML = '';
 
-        for (const option of options) {
+        const optionComponents = options.map((option, index) => {
             const subcomponent = this._createSubcomponent(option);
+            subcomponent.dataset.index = index;
             subcomponent.classList.add(OPTION_CSS_CLASS_NAME);
             refreshOptionAvailability(option, subcomponent);
-            this._optionsContainer.appendChild(subcomponent);
-        }
+
+            subcomponent.addEventListener('pointerenter', () => {
+                if (!isElementSelectable(subcomponent)) {
+                    return;
+                }
+                this._selectOption(subcomponent);
+            });
+
+            return subcomponent;
+        });
+
+        this._optionsContainer.append(...optionComponents);
+        this.optionsMenuSelectNextOption();
     }
 
     async optionsMenuStart() {
@@ -119,7 +140,51 @@ export class OptionsMenuComponent extends BaseComponent {
         }
     }
 
-    
+    optionsMenuRefreshVisibleAndEnabledOptions() {
+        this._allOptions.forEach(refreshOptionAvailability);
+    }
+
+    optionsMenuSelectNextOption() {
+        const options = this._displayedOptions;
+        const currentOptionIndex = this._displayedOptions.findIndex(optionElement => optionElement === this._currentlySelectedOptionElement);
+        const optionToSelect = options[(currentOptionIndex + 1) % options.length];
+        this._selectOption(optionToSelect);
+    }
+
+    optionsMenuSelectPreviousOption() {
+        const options = this._displayedOptions;
+        let currentOptionIndex = this._displayedOptions.findIndex(optionElement => optionElement === this._currentlySelectedOptionElement);
+        if (currentOptionIndex === -1) {
+            currentOptionIndex = options.length;
+        }
+        const optionToSelect = options[(currentOptionIndex - 1 + options.length) % options.length];
+        this._selectOption(optionToSelect);
+    }
+
+    optionsMenuConfirm() {
+        const currentOptionElement = this._currentlySelectedOptionElement;
+        currentOptionElement.click();
+    }
+
+    optionsMenuSetNextValue() {
+        /** @type {InputComponent?} */
+        const input = this._currentInputComponent;
+        if (!input) {
+            return;
+        }
+
+        input.inputComponentSetNextValue();
+    }
+
+    optionsMenuSetPreviousValue() {
+        /** @type {InputComponent?} */
+        const input = this._currentInputComponent;
+        if (!input) {
+            return;
+        }
+
+        input.inputComponentSetPreviousValue();
+    }
 
     /**
      * @param {OptionsListEntry<T,V>} option 
@@ -140,7 +205,8 @@ export class OptionsMenuComponent extends BaseComponent {
         const container = this._createOptionContainerWithText(option);
 
         const radio = new RadioComponent(option.input.values, option.value);
-        radio.addEventListener(RADIO_EVENTS.VALUE_CHANGE, event => option.value = event.detail.value);
+        radio.classList.add(INPUT_CSS_CLASS_NAME);
+        radio.addEventListener(INPUT_EVENTS.VALUE_CHANGE, event => option.value = event.detail.value);
         container.appendChild(radio);
 
         return container;
@@ -153,7 +219,8 @@ export class OptionsMenuComponent extends BaseComponent {
         const container = this._createOptionContainerWithText(option);
 
         const slider = new SliderComponent({ value: option.value, ...option.input.values });
-        slider.addEventListener(SLIDER_EVENTS.VALUE_CHANGE, event => option.value = event.detail.value);
+        slider.classList.add(INPUT_CSS_CLASS_NAME);
+        slider.addEventListener(INPUT_EVENTS.VALUE_CHANGE, event => option.value = event.detail.value);
         container.appendChild(slider);
 
         return container;
@@ -191,9 +258,39 @@ export class OptionsMenuComponent extends BaseComponent {
         return button;
     }
 
+    /**
+     * 
+     * @param {HTMLElement} optionElement 
+     */
+    _selectOption(optionElement) {
+        this._allOptions.forEach(option => option.removeAttribute('data-selected'));
+        optionElement.dataset.selected = 'selected';
+        const index = Number(optionElement.dataset.index);
+        this._explanationDiv.innerHTML = this._options[index].explanation;
+    }
+
+    /**
+     * 
+     * @param {HTMLElement} element 
+     */
+    _isOptionElement(element) {
+        return element.classList.contains(OPTION_CSS_CLASS_NAME);
+    }
+
     get _displayedOptions() {
-        return [...this.getElementsByClassName(OPTION_CSS_CLASS_NAME)]
-            .filter(isElementSelectable);
+        return this._allOptions.filter(isElementSelectable);
+    }
+
+    get _allOptions() {
+        return [...this.getElementsByClassName(OPTION_CSS_CLASS_NAME)];
+    }
+
+    get _currentlySelectedOptionElement() {
+        return this.querySelector(`.${OPTION_CSS_CLASS_NAME}[data-selected="selected"]`);
+    }
+
+    get _currentInputComponent() {
+        return this.querySelector(`.${OPTION_CSS_CLASS_NAME}[data-selected="selected"] .input`);
     }
 
 }

@@ -1,6 +1,7 @@
 import { SCROLLABLE_LIST_EVENTS, ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
+import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
 import { SelectableScrollableList } from '../common/helpers/selectable_scrollable_list.js';
 import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
@@ -109,7 +110,7 @@ const tests = {
     },
 
     async options() {
-        selectable =  new SelectableChoicesList(optionsMenu.choicesList);
+        selectable =  new SelectableOptionsMenu(optionsMenu);
         document.body.appendChild(optionsMenuHideableOpenable.topElement);
 
         const ConfigManager = globalThis.ConfigManager || {

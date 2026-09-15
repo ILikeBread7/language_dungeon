@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../../common/components/base_component.js';
+import { INPUT_EVENTS, InputComponent } from './input.js';
 
 /**
  * @template T
@@ -9,11 +10,7 @@ const SELECTED_DATA_VALUE = 'selected';
 const RADIO_GROUP_CSS_CLASS = 'radio-group';
 const RADIO_CSS_CLASS = 'radio';
 
-export const RADIO_EVENTS = /** @type {const} */ Object.freeze({
-    VALUE_CHANGE: 'valuechange'
-});
-
-export class RadioComponent extends BaseComponent {
+export class RadioComponent extends InputComponent {
 
     static get componentDefaultTagName() {
         return 'radio-component';
@@ -65,11 +62,11 @@ export class RadioComponent extends BaseComponent {
         return this._currentlySelectedValue;
     }
 
-    radioComponentSelectNextValue() {
+    inputComponentSetNextValue() {
         this._selectRadio((this._currentlySelectedIndex + 1) % this._values.length);
     }
 
-    radioComponentSelectPreviousValue() {
+    inputComponentSetPreviousValue() {
         if (this._currentlySelectedIndex === -1) {
             this._currentlySelectedIndex = this._values.length;
         }
@@ -124,6 +121,6 @@ export class RadioComponent extends BaseComponent {
         this._currentlySelectedValue = this._values[index].value;
         this._currentlySelectedIndex = index;
 
-        this.dispatchEvent(new CustomEvent(RADIO_EVENTS.VALUE_CHANGE, { detail: { value: this._currentlySelectedValue } }));
+        this.dispatchEvent(new CustomEvent(INPUT_EVENTS.VALUE_CHANGE, { detail: { value: this._currentlySelectedValue } }));
     }
 }

@@ -1,5 +1,6 @@
-import { RADIO_EVENTS, RadioComponent } from './radio.js';
-import { SLIDER_EVENTS, SliderComponent } from './slider.js';
+import { INPUT_EVENTS } from './input.js';
+import { RadioComponent } from './radio.js';
+import { SliderComponent } from './slider.js';
 
 let keyActionMap;
 const tests = {
@@ -16,7 +17,7 @@ const tests = {
             }
         ], false);
         
-        radio.addEventListener(RADIO_EVENTS.VALUE_CHANGE, event => console.log(event.detail.value));
+        radio.addEventListener(INPUT_EVENTS.VALUE_CHANGE, event => console.log(event.detail.value));
         
         document.body.appendChild(radio);
         
@@ -30,7 +31,7 @@ const tests = {
         SliderComponent.register();
         const slider = new SliderComponent();
         document.body.appendChild(slider);
-        slider.addEventListener(SLIDER_EVENTS.VALUE_CHANGE, event => console.log(event.detail.value));
+        slider.addEventListener(INPUT_EVENTS.VALUE_CHANGE, event => console.log(event.detail.value));
 
         keyActionMap = new Map([
             [ 'ArrowRight', () => slider.sliderComponentSetNextValue()],
