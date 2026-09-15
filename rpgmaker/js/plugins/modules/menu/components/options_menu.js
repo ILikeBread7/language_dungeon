@@ -7,10 +7,6 @@ import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/compone
  */
 
 /**
-
-*/
-
-/**
  * @template T
  * @typedef {[{ value: T, text: string }]} RadioValues
  * @typedef {[{ min: number, max: number, step: number }]} SliderValues
