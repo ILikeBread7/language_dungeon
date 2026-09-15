@@ -170,3 +170,35 @@ export function addChoiceIds(choices) {
     Object.values(choices)
         .forEach((choice, index) => choice.id = index + 1);
 }
+
+
+/**
+ * 
+ * @param {HTMLElement} element 
+ */
+export function isElementSelectable(element) {
+    return (
+        element
+        && !element.dataset.disabled
+        && !element.dataset.hidden
+    );
+}
+
+/**
+ * 
+ * @param {import('./choices_list.js').ChoiceListOption} option 
+ * @param {HTMLElement} [optionElement=option.element] 
+ */
+export function refreshOptionAvailability(option, optionElement = option.element) {
+    if (option.isVisible && !option.isVisible()) {
+        optionElement.dataset.hidden = 'hidden';
+    } else {
+        optionElement.removeAttribute('data-hidden');
+    }
+
+    if (option.isEnabled && !option.isEnabled()) {
+        optionElement.dataset.disabled = 'disabled';
+    } else {
+        optionElement.removeAttribute('data-disabled');
+    }
+}

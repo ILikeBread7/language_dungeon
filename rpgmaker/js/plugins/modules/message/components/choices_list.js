@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../common/components/base_component.js';
+import { isElementSelectable, refreshOptionAvailability } from './utils.js';
 
 /**
  * @typedef { {
@@ -121,19 +122,7 @@ export class ChoicesListComponent extends BaseComponent {
     }
 
     choicesListRefreshVisibleAndEnabledOptions() {
-        for (const option of this._displayedOptions) {
-            const optionElement = option.element;
-            if (option.isVisible && !option.isVisible()) {
-                optionElement.dataset.hidden = 'hidden';
-            } else {
-                optionElement.removeAttribute('data-hidden');
-            }
-            if (option.isEnabled && !option.isEnabled()) {
-                optionElement.dataset.disabled = 'disabled';
-            } else {
-                optionElement.removeAttribute('data-disabled');
-            }
-        }
+        this._displayedOptions.forEach(refreshOptionAvailability);
 
         const currentOption = this._displayedOptions[this._selectedIndex];
         if (!currentOption || currentOption.element.dataset.disabled || currentOption.element.dataset.hidden) {
@@ -325,12 +314,7 @@ export class ChoicesListComponent extends BaseComponent {
         }
 
         const option = this._displayedOptions[index];
-        if (
-            !option
-            || !option.element
-            || option.element.dataset.disabled
-            || option.element.dataset.hidden
-        ) {
+        if (!option || !isElementSelectable(option.element)) {
             return;
         }
 
