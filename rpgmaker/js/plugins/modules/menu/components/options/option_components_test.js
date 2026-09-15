@@ -1,4 +1,4 @@
-import { RadioComponent } from './radio.js';
+import { RADIO_EVENTS, RadioComponent } from './radio.js';
 
 RadioComponent.register();
 const radio = new RadioComponent([
@@ -11,6 +11,8 @@ const radio = new RadioComponent([
         value: false
     }
 ], false);
+
+radio.addEventListener(RADIO_EVENTS.VALUE_CHANGE, event => console.log(event.detail.value));
 
 document.body.appendChild(radio);
 

@@ -7,6 +7,10 @@ import { BaseComponent } from '../../../common/components/base_component.js';
 
 const SELECTED_DATA_VALUE = 'selected';
 
+export const RADIO_EVENTS = /** @type {const} */ Object.freeze({
+    VALUE_CHANGE: 'valuechange'
+});
+
 export class RadioComponent extends BaseComponent {
 
     static get componentDefaultTagName() {
@@ -86,11 +90,17 @@ export class RadioComponent extends BaseComponent {
      * @param {number} index 
      */
     _selectRadio(index) {
+        if (index === this._currentlySelectedIndex) {
+            return;
+        }
+
         for (const radio of this._radios) {
             radio.removeAttribute('data-selected');
         }
         this._radios[index].dataset.selected = SELECTED_DATA_VALUE;
         this._currentlySelectedValue = this._values[index].value;
         this._currentlySelectedIndex = index;
+
+        this.dispatchEvent(new CustomEvent(RADIO_EVENTS.VALUE_CHANGE, { detail: { value: this._currentlySelectedValue } }));
     }
 }
