@@ -1,10 +1,13 @@
 import { ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
+import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
+import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
+import { selectableNonCancellable } from '../common/helpers/selectable_restricted.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
-import { OptionsMenuComponent } from './components/options_menu.js';
+import { INPUT_TYPE, OptionsMenuComponent } from './components/options_menu.js';
 import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
@@ -39,9 +42,9 @@ let sceneItemType = SCENE_ITEM_TYPES.ITEMS;
 let titleMenu;
 
 /**
- * @type {import('../message/components/choices_list.js').ChoicesListComponent}
+ * @type {import('../common/helpers/selectable_interface.js').SelectableInterface}
  */
-let choicesList;
+let selectable;
 
 /**
  * @type {HTMLElement}
@@ -81,59 +84,42 @@ const OPTIONS_MENU_CHOICES = [
     {
         text: 'Always Dash',
         explanation: 'Make the character always run, without holding the run button.',
-        get value() { return mapToOnOff(configManager.alwaysDash); },
-        setValue() {
-            configManager.alwaysDash = !configManager.alwaysDash;
-        }
+        input: { type: INPUT_TYPE.RADIO, values: [ { value: true, text: 'ON'}, { value: false, text: 'OFF'} ] },
+        get value() { return ConfigManager.alwaysDash; },
+        set value(val) { ConfigManager.alwaysDash = val; }
     },
     {
         text: 'BGM Volume',
         explanation: 'Volume of the background music.',
-        get value() { return mapToPercentage(configManager.bgmVolume) },
-        setNextValue() {
-            configManager.bgmVolume = (configManager.bgmVolume + step + mod) % mod;
-        },
-        setPreviousValue() {
-            configManager.bgmVolume = (configManager.bgmVolume - step + mod) % mod;
-        }
+        input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+        get value() { return ConfigManager.bgmVolume },
+        set value(val) { ConfigManager.bgmVolume = val }
     },
     {
         text: 'BGS Volume',
         explanation: 'Volume of the background sounds.',
-        get value() { return mapToPercentage(configManager.bgsVolume); },
-        setNextValue() {
-            configManager.bgsVolume = (configManager.bgsVolume + step + mod) % mod;
-        },
-        setPreviousValue() {
-            configManager.bgsVolume = (configManager.bgsVolume - step + mod) % mod;
-        }
+        input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+        get value() { return ConfigManager.bgsVolume },
+        set value(val) { ConfigManager.bgsVolume = val }
     },
     {
         text: 'ME Volume',
         explanation: 'Volume of the musical effects.',
-        get value() { return mapToPercentage(configManager.meVolume); },
-        setNextValue() {
-            configManager.meVolume = (configManager.meVolume + step + mod) % mod;
-        },
-        setPreviousValue() {
-            configManager.meVolume = (configManager.meVolume - step + mod) % mod;
-        }
+        input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+        get value() { return ConfigManager.meVolume },
+        set value(val) { ConfigManager.meVolume = val }
     },
     {
         text: 'SE Volume',
         explanation: 'Volume of the sound effects.',
-        get value() { return mapToPercentage(configManager.seVolume); },
-        setNextValue() {
-            configManager.seVolume = (configManager.seVolume + step + mod) % mod;
-        },
-        setPreviousValue() {
-            configManager.seVolume = (configManager.seVolume - step + mod ) % mod;
-        }
+        input: { type: INPUT_TYPE.SLIDER, min: 0, max: 100, step: 10 },
+        get value() { return ConfigManager.seVolume },
+        set value(val) { ConfigManager.seVolume = val }
     },
     {
         text: 'Go back',
         explanation: 'Save changes, and go back to the game.',
-        goBack: true
+        input: { type: INPUT_TYPE.BACK }
     }
 ];
 
@@ -176,7 +162,7 @@ Scene_Menu.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     const gameTemp = window.$gameTemp;
     const f = window.$f;
-    choicesList = mainMenu.element.choicesList;
+    selectable = new SelectableChoicesList(mainMenu.element.choicesList);
 
     addMenuBackdrop();
     mainMenu.showAndOpen();
@@ -211,7 +197,7 @@ Scene_Menu.prototype.start = function() {
 
 Scene_GameEnd.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
-    choicesList = areYouSure.element.choicesList;
+    selectable = new selectableNonCancellable(SelectableChoicesList, areYouSure.element.choicesList);
 
     takeAreYouSure(areYouSure, {
         explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br>All unsaved progress will be lost.`,
@@ -233,7 +219,7 @@ Scene_GameEnd.prototype.start = function() {
 Scene_Options.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     addMenuBackdrop();
-    choicesList = optionsMenu.element.choicesList;
+    selectable = new SelectableOptionsMenu(optionsMenu.element);
     handleOptionsMenu().then(() => {
         configManager.save();
         this.popScene();
@@ -410,7 +396,7 @@ Scene_Title.prototype.start = function() {
 async function takeTitleChoiceAsync() {
     const title = titleMenu.element;
     const choices = Object.values(TITLE_CHOICES);
-    choicesList = title.choicesList;
+    selectable = new selectableNonCancellable(SelectableChoicesList, title.choicesList);
     
     titleMenu.showAndOpen();
     const choice = await title.titleMenuTakeChoice(choices);
@@ -435,7 +421,7 @@ class Scene_GameExit extends Scene_MenuBase {
         super.start();
         addMenuBackdrop();
 
-        choicesList = areYouSure.element.choicesList;
+        selectable = new SelectableChoicesList(areYouSure.element.choicesList);
         areYouSure.showAndOpen();
         const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
             choices: [
@@ -478,7 +464,7 @@ for (const scene of [
 
 const _Scene_Item_update = Scene_Item.prototype.update;
 Scene_Item.prototype.update = function() {
-    choicesList = itemsMenu.element.choicesList;
+    selectable = new SelectableChoicesList(itemsMenu.element.choicesList);
     _Scene_Item_update.call(this);
 }
 
@@ -487,31 +473,17 @@ function handleMenuInputs(scene) {
     const touchInput = window.TouchInput;
 
     if (input.isTriggered('up')) {
-        choicesList.choicesListSelectPreviousOption();
+        selectable.selectUp();
     } else if (input.isTriggered('down')) {
-        choicesList.choicesListSelectNextOption();
+        selectable.selectDown();
     } else if (input.isTriggered('ok')) {
-        choicesList.choicesListConfirmCurrentOption();
+        selectable.confirmCurrent();
     } else if (input.isTriggered('cancel') || touchInput.isCancelled()) {
-        if (scene !== Scene_Title || areYouSure.hideable.hideableIsShown) {
-            choicesList.choicesListCancel();
-        }
+        selectable.cancel();
     } if (input.isTriggered('right')) {
-        if (scene === Scene_Options) {
-            optionsMenu.element.optionsMenuSetNextValue();
-        } else if (choicesList instanceof ScrollableListComponent) {
-            choicesList.scrollableListNextPage();
-        } else {
-            choicesList.choicesListGoToBottom();
-        }
+        selectable.selectRight();
     } else if (input.isTriggered('left')) {
-        if (scene === Scene_Options) {
-            optionsMenu.element.optionsMenuSetPreviousValue();
-        } else if (choicesList instanceof ScrollableListComponent) {
-            choicesList.scrollableListPreviousPage();
-        } else {
-            choicesList.choicesListGoToTop();
-        }
+        selectable.selectLeft();
     }
 }
 

@@ -1,7 +1,7 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
-import { findElement, isActiveOptionElement, isElementSelectable, refreshOptionAvailability } from '../../message/components/utils.js';
+import { findElement, isActiveOptionElement, isElementSelectable, refreshOptionAvailability, setOptionElementAvailability } from '../../message/components/utils.js';
 import { INPUT_EVENTS, InputComponent } from './options/input.js';
 import { RadioComponent } from './options/radio.js';
 import { SliderComponent } from './options/slider.js';
@@ -111,7 +111,7 @@ export class OptionsMenuComponent extends BaseComponent {
             const subcomponent = this._createSubcomponent(option);
             subcomponent.dataset.index = index;
             subcomponent.classList.add(OPTION_CSS_CLASS_NAME);
-            refreshOptionAvailability(option, subcomponent);
+            setOptionElementAvailability(option, subcomponent);
 
             subcomponent.addEventListener('pointerenter', () => {
                 if (!isElementSelectable(subcomponent)) {
@@ -221,7 +221,7 @@ export class OptionsMenuComponent extends BaseComponent {
     _createSlider(option) {
         const container = this._createOptionContainerWithText(option);
 
-        const slider = new SliderComponent({ value: option.value, ...option.input.values });
+        const slider = new SliderComponent({ value: option.value, ...option.input });
         slider.classList.add(INPUT_CSS_CLASS_NAME);
         slider.addEventListener(INPUT_EVENTS.VALUE_CHANGE, event => option.value = event.detail.value);
         container.appendChild(slider);

@@ -187,18 +187,26 @@ export function isElementSelectable(element) {
 /**
  * 
  * @param {import('./choices_list.js').ChoiceListOption} option 
- * @param {HTMLElement} [optionElement=option.element] 
  */
-export function refreshOptionAvailability(option, optionElement = option.element) {
+export function refreshOptionAvailability(option) {
+    setOptionElementAvailability(option, option.element);
+}
+
+/**
+ * 
+ * @param {import('./choices_list.js').ChoiceListChoice} option 
+ * @param {HTMLElement} element
+ */
+export function setOptionElementAvailability(option, element) {
     if (option.isVisible && !option.isVisible()) {
-        optionElement.dataset.hidden = 'hidden';
+        element.dataset.hidden = 'hidden';
     } else {
-        optionElement.removeAttribute('data-hidden');
+        element.removeAttribute('data-hidden');
     }
 
     if (option.isEnabled && !option.isEnabled()) {
-        optionElement.dataset.disabled = 'disabled';
+        element.dataset.disabled = 'disabled';
     } else {
-        optionElement.removeAttribute('data-disabled');
+        element.removeAttribute('data-disabled');
     }
 }

@@ -2,13 +2,6 @@ import { BaseComponent } from '../../common/components/base_component.js';
 import { isElementSelectable, refreshOptionAvailability } from './utils.js';
 
 /**
- * @typedef { {
- *  text: string,
- *  element: HTMLElement,
- *  isVisible?: boolean,
- *  isEnabled?: boolean,
- *  id?: number
- * } } ChoiceListOption
  * @typedef { { 
  *  text: string,
  *  isVisible?: boolean,
@@ -16,6 +9,9 @@ import { isElementSelectable, refreshOptionAvailability } from './utils.js';
  *  cssClass?: string,
  *  id?: number
  *  } } ChoiceListChoice
+ * @typedef { ChoiceListChoice & {
+ *  element: HTMLElement,
+ * } } ChoiceListOption
  * @typedef { {
  *  index: number,
  *  text: string,
