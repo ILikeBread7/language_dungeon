@@ -197,7 +197,7 @@ Scene_Menu.prototype.start = function() {
 
 Scene_GameEnd.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
-    selectable = new selectableNonCancellable(SelectableChoicesList, areYouSure.element.choicesList);
+    selectable = new SelectableChoicesList(areYouSure.element.choicesList);
 
     takeAreYouSure(areYouSure, {
         explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br>All unsaved progress will be lost.`,
