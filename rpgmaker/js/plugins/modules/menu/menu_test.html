@@ -187,6 +187,7 @@
             flex-direction: row;
             min-height: 1.5lh;
             align-items: center;
+            gap: 0.25em;
         }
 
         --text-width: 20%;
@@ -203,6 +204,37 @@
 
     .slider {
         width: 100%;
+    }
+
+    .radio {
+        display: inline;
+        --base-color: hsl(0, 0%, 50%);
+        background: linear-gradient(
+            hsl(from var(--base-color) h s calc(l * 0.5)),
+            var(--base-color)
+        );
+        cursor: pointer;
+        color: darkgray;
+        padding: 0.1em 0.15em;
+        
+        &[data-selected="selected"] {
+            --base-color: hsl(120, 50%, 60%);
+            color: whitesmoke;
+        }
+
+        --border-radius: 25%;
+
+        &:first-of-type {
+            border-top-left-radius: var(--border-radius);
+        }
+
+        &:last-of-type {
+            border-top-right-radius: var(--border-radius);
+        }
+
+        &:not(:last-of-type) {
+            border-right: solid 1px black; 
+        }
     }
 </style>
 <script type="module" src="menu_test.js"></script>
