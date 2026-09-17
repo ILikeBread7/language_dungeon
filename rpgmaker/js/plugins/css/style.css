@@ -161,3 +161,7 @@ dungeon-hud-component {
         );
     }
 }
+
+options-menu-component .option-text::after {
+    content: ':';
+}
