@@ -146,18 +146,21 @@ export class OptionsMenuComponent extends BaseComponent {
 
     optionsMenuSelectNextOption() {
         const options = this._displayedOptions;
-        const currentOptionIndex = this._displayedOptions.findIndex(optionElement => optionElement === this._currentlySelectedOptionElement);
+        const currentOptionElement = this._currentlySelectedOptionElement;
+        const currentOptionIndex = currentOptionElement ? 
+            Number(currentOptionElement.dataset.index)
+            : -1;
         const optionToSelect = options[(currentOptionIndex + 1) % options.length];
         this._selectOption(optionToSelect);
     }
 
     optionsMenuSelectPreviousOption() {
         const options = this._displayedOptions;
-        let currentOptionIndex = this._displayedOptions.findIndex(optionElement => optionElement === this._currentlySelectedOptionElement);
-        if (currentOptionIndex === -1) {
-            currentOptionIndex = options.length;
-        }
-        const optionToSelect = options[(currentOptionIndex - 1 + options.length) % options.length];
+        const currentOptionElement = this._currentlySelectedOptionElement;
+        const currentOptionIndex = currentOptionElement ? 
+            Number(currentOptionElement.dataset.index)
+            : options.length;
+            const optionToSelect = options[(currentOptionIndex - 1 + options.length) % options.length];
         this._selectOption(optionToSelect);
     }
 
