@@ -172,5 +172,37 @@
     options-menu-component .option-text::after {
         content: ':';
     }
+
+    options-menu-component {
+        & .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5lh;
+            width: 50%;
+            margin: auto;
+        }
+
+        & .option-container {
+            display: flex;
+            flex-direction: row;
+            min-height: 1.5lh;
+            align-items: center;
+        }
+
+        --text-width: 20%;
+
+        & .option-text {
+            flex-basis: var(--text-width);
+            text-align: right;
+        }
+
+        & .input {
+            flex-basis: calc(100% - var(--text-width));
+        }
+    }
+
+    .slider {
+        width: 100%;
+    }
 </style>
 <script type="module" src="menu_test.js"></script>
