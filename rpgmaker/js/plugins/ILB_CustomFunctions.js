@@ -1592,4 +1592,22 @@ var $f = $f || {};
         }
     }
 
+    const _Game_Player_canMove = Game_Player.prototype.canMove;
+    Game_Player.prototype.canMove = function() {
+        return !isDungeonWaiting() && _Game_Player_canMove.call(this);
+    }
+
+    const _Scene_Map_callMenu = Scene_Map.prototype.callMenu;
+    Scene_Map.prototype.callMenu = function() {
+        if (isDungeonWaiting()) {
+            this.menuCalling = false;
+            return;
+        }
+        _Scene_Map_callMenu.call(this);
+    }
+
+    function isDungeonWaiting() {
+        const waitButton = 'control';
+        return Input.isPressed(waitButton);
+    }
 })();
