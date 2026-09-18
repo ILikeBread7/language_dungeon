@@ -215,7 +215,7 @@ options-menu-component {
         color: whitesmoke;
     }
 
-    --border-radius: 25%;
+    --border-radius: 0.5em;
 
     &:first-of-type {
         border-top-left-radius: var(--border-radius);
