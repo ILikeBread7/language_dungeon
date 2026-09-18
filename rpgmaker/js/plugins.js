@@ -20,5 +20,6 @@ var $plugins =
 {"name":"PMD_HUD","status":false,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene (ES6 version)","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
 {"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}},
-{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}}
+{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}},
+{"name":"ILB_HideCursor","status":true,"description":"Hides the mouse cursor after a specific time with no movement","parameters":{"Time":"1000"}}
 ];
