@@ -1555,7 +1555,13 @@ var $f = $f || {};
     const _Scene_Boot_start = Scene_Boot.prototype.start;
     Scene_Boot.prototype.start = function() {
         _Scene_Boot_start.call(this);
-        setTimeout($f.adjustDimensions, 100);
+        setTimeout(adjustDimensions, 100);
+    }
+
+    const _Graphics__switchFullScreen = Graphics._switchFullScreen;
+    Graphics._switchFullScreen = function() {
+        _Graphics__switchFullScreen.call(this);
+        setTimeout(adjustDimensions, 100);
     }
 
 })();
