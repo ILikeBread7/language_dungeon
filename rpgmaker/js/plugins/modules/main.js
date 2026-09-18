@@ -18,6 +18,7 @@ function adjustContainerDimensions() {
     componentsContainer.style.width = `${Graphics.boxWidth}px`;
     componentsContainer.style.height = `${Graphics.boxHeight}px`;
 }
+window.$adjustContainerDimensions = adjustContainerDimensions;
 
 const modifyFunction = Graphics._modifyExistingElements;
 Graphics._modifyExistingElements = function() {

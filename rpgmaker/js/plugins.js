@@ -19,5 +19,6 @@ var $plugins =
 {"name":"PMD_HUD","status":false,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene (ES6 version)","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
 {"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}},
-{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}}
+{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}},
+{"name":"$MUSH_MenuOptionScreenResolution_P1","status":true,"description":"[v.1.03] Adds the screen resolution option.","parameters":{"Resolution Command Name":"Screen Resolution","Resolution Options":"[ [1280, 720], [1920, 1080] ]","Scale Graphics":"false","Reposition Sprites":"false"}}
 ];

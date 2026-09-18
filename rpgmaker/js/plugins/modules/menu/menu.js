@@ -80,7 +80,24 @@ addChoiceIds(MAIN_MENU_CHOICES);
 const configManager = window.ConfigManager;
 const step = 10;
 const mod = 100 + step;
+const resolutions = $mushFeatures.params['MOSR_ResolutionOptions'];
 const OPTIONS_MENU_CHOICES = [
+    {
+        text: 'Screen resolution',
+        explanation: 'Adjusts the screen resolution',
+        input: {
+            type: INPUT_TYPE.RADIO,
+            values: resolutions
+                .map(([ width, height ], index) => ({ value: index, text: `${width}x${height}` }))
+        },
+        get value() { return ConfigManager['mosr_screenResolution']; },
+        set value(index) {
+            const [ width, height ] = resolutions[index];
+            SceneManager.mush_changeGraphicResolution(width, height);
+            ConfigManager['mosr_screenResolution'] = index;
+            setTimeout($f.adjustDimensions, 100);
+        }
+    },
     {
         text: 'Always Dash',
         explanation: 'Make the character always run, without holding the run button.',

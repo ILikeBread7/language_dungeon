@@ -1546,4 +1546,16 @@ var $f = $f || {};
         }
     }
 
+    function adjustDimensions() {
+        $characterLabels.adjustDimensions();
+        $adjustContainerDimensions();
+    }
+    $f.adjustDimensions = adjustDimensions;
+
+    const _Scene_Boot_start = Scene_Boot.prototype.start;
+    Scene_Boot.prototype.start = function() {
+        _Scene_Boot_start.call(this);
+        setTimeout($f.adjustDimensions, 100);
+    }
+
 })();

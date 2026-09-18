@@ -76,6 +76,7 @@ const $characterLabels = { };
         labelsContainer.style.width = `${Graphics.boxWidth}px`;
         labelsContainer.style.height = `${Graphics.boxHeight}px`;
     }
+    $characterLabels.adjustDimensions = adjustLabelsDivDimensions;
 
     function clearLabels() {
         labelsContainer.innerHTML = '';
