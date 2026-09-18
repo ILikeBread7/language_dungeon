@@ -3,6 +3,7 @@
 var $plugins =
 [
 {"name":"MAC_High_Hz_Fixes","status":true,"description":"Fixed various issues on high refresh rate monitors","parameters":{}},
+{"name":"$MUSH_MenuOptionScreenResolution_P1","status":true,"description":"[v.1.03] Adds the screen resolution option.","parameters":{"Resolution Command Name":"Screen Resolution","Resolution Options":"[ [1280, 720], [1920, 1080] ]","Scale Graphics":"true","Reposition Sprites":"false"}},
 {"name":"ILB_NamedVariables","status":true,"description":"Exposes global objects $nv $ns $nc for named variables, switches and common events respectively","parameters":{}},
 {"name":"ILB_ES6Modules","status":true,"description":"Allows you to load and use es6 modules.","parameters":{"Main module path":"js/plugins/modules/main.js"}},
 {"name":"ILB_CssFile","status":true,"description":"Allows you to load a custom css file.","parameters":{"Main css file path":"js/plugins/css/style.css"}},
@@ -19,6 +20,5 @@ var $plugins =
 {"name":"PMD_HUD","status":false,"description":"Pokemon Mystery Dungeon-style HUD (Top of screen) for Map Scene (ES6 version)","parameters":{"Floor Variable ID":"22"}},
 {"name":"ILB_CustomWebStorageKey","status":true,"description":"Adds a prefix to the web storage key","parameters":{"Key":"ilb_language_dungeon"}},
 {"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}},
-{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}},
-{"name":"$MUSH_MenuOptionScreenResolution_P1","status":true,"description":"[v.1.03] Adds the screen resolution option.","parameters":{"Resolution Command Name":"Screen Resolution","Resolution Options":"[ [1280, 720], [1920, 1080] ]","Scale Graphics":"false","Reposition Sprites":"false"}}
+{"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}}
 ];

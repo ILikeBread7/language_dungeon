@@ -81,7 +81,27 @@ const configManager = window.ConfigManager;
 const step = 10;
 const mod = 100 + step;
 const resolutions = $mushFeatures.params['MOSR_ResolutionOptions'];
+const MODES = {
+    FULLSCREEN: 1,
+    WINDOW: 2
+};
 const OPTIONS_MENU_CHOICES = [
+    {
+        text: 'Window mode',
+        explanation: 'Sets the game to fullscreen or window',
+        input: {
+            type: INPUT_TYPE.RADIO,
+            values: [
+                { value: MODES.FULLSCREEN, text: 'Fullscreen' },
+                { value: MODES.WINDOW, text: 'Window' }
+            ]
+        },
+        get value() { return ConfigManager.screenMode; },
+        set value(mode) {
+            ConfigManager.screenMode = mode;
+            Graphics._switchFullScreen();
+        }
+    },
     {
         text: 'Screen resolution',
         explanation: 'Adjusts the screen resolution',

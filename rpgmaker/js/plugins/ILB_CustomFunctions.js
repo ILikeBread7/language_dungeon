@@ -1558,10 +1558,38 @@ var $f = $f || {};
         setTimeout(adjustDimensions, 100);
     }
 
-    const _Graphics__switchFullScreen = Graphics._switchFullScreen;
-    Graphics._switchFullScreen = function() {
-        _Graphics__switchFullScreen.call(this);
+    const _Graphics__requestFullScreen = Graphics._requestFullScreen;
+    Graphics._requestFullScreen = function() {
+        _Graphics__requestFullScreen.call(this);
         setTimeout(adjustDimensions, 100);
+    }
+
+    const _Graphics__cancelFullScreen = Graphics._cancelFullScreen;
+    Graphics._cancelFullScreen = function() {
+        _Graphics__cancelFullScreen.call(this);
+        setTimeout(adjustDimensions, 100);
+    }
+
+    const _ConfigManager_makeData = ConfigManager.makeData;
+    ConfigManager.makeData = function() {
+        const config = _ConfigManager_makeData.call(this);
+        config.screenMode = this.screenMode;
+        return config;
+    }
+        
+    const fullscreenMode = 1;
+    const _ConfigManager_applyData = ConfigManager.applyData;
+    ConfigManager.applyData = function(config) {
+        _ConfigManager_applyData.call(this, config);
+        this.screenMode = Number(config.screenMode || fullscreenMode);
+    }
+
+    const _SceneManager_mush_changeGraphicResolution = SceneManager.mush_changeGraphicResolution;
+    SceneManager.mush_changeGraphicResolution = function(width, height) {
+        _SceneManager_mush_changeGraphicResolution.call(this, width, height);
+        if (ConfigManager.screenMode === fullscreenMode) {
+            setTimeout(() => Graphics._requestFullScreen(), 500)
+        }
     }
 
 })();
