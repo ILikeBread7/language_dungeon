@@ -7,7 +7,7 @@ import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.j
 
 /**
  * @typedef { { name: string, amount: number, consumable: boolean } } ItemInfo
- * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean } } ItemUseOptions
+ * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean, canSwap: () => boolean } } ItemUseOptions
  * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions & ItemInfo } ItemChoice
  */
 
@@ -17,7 +17,8 @@ const ITEMS_LIST_CSS_CLASS = 'items-list';
 export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
     ITEM_USED: 'itemused',
     ITEM_DROPPED: 'itemdropped',
-    ITEM_PICKED_UP: 'itempickedup'
+    ITEM_PICKED_UP: 'itempickedup',
+    ITEM_SWAP: 'itemswap'
 });
 /**
  * @typedef { Enum<ITEMS_MENU_EVENTS> } ItemsMenuEvent
@@ -84,7 +85,7 @@ export class ItemsMenuComponent extends BaseComponent {
 
             this._itemUseDialog.element.itemsUseDialogSetShowChoiceFunctions(option);
             const choice = await this._itemUseDialog.element.itemUseDialogStart(itemOptionText, option);
-            this._dispatchItemEvent(choice, itemId)
+            this._dispatchItemEvent(choice, itemId);
 
             this._itemUseDialog.element.choicesList.choicesListDeactivate();
             this._itemUseDialog.closeAndHide();
@@ -141,6 +142,9 @@ export class ItemsMenuComponent extends BaseComponent {
             break;
             case ITEM_DIALOG_CHOICES.PICK_UP.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, { detail: { itemId } }));
+            break;
+            case ITEM_DIALOG_CHOICES.SWAP.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_SWAP, { detail: { itemId } }));
             break;
             default: // No event
         }

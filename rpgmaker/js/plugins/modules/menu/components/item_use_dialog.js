@@ -9,6 +9,7 @@ export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
     PICK_UP: { text: 'Pick up' },
     USE: { text: 'Use' },
     DROP: { text: 'Drop' },
+    SWAP: { text: 'Swap' },
     CANCEL: { text: 'Cancel' }
 });
 addChoiceIds(ITEM_DIALOG_CHOICES);
@@ -61,6 +62,7 @@ export class ItemUseDialogComponent extends BaseComponent {
         ITEM_DIALOG_CHOICES.USE.isVisible = itemUseOptions.canUse;
         ITEM_DIALOG_CHOICES.DROP.isVisible = itemUseOptions.canDrop;
         ITEM_DIALOG_CHOICES.PICK_UP.isVisible = itemUseOptions.canPickUp;
+        ITEM_DIALOG_CHOICES.SWAP.isVisible = itemUseOptions.canSwap;
     }
 
     get choicesList() {

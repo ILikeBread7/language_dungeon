@@ -3,6 +3,7 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
 import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
 import { selectableNonCancellable } from '../common/helpers/selectable_restricted.js';
+import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
@@ -35,6 +36,8 @@ const SCENE_ITEM_TYPES = Object.freeze({
     FLOOR: 2
 });
 let sceneItemType = SCENE_ITEM_TYPES.ITEMS;
+let isItemSwap = false;
+const swapItems = {};
 
 /**
  * @type {HideableOpenable<TitleMenuComponent>}
@@ -217,6 +220,7 @@ Scene_Menu.prototype.start = function() {
             break;
             case MAIN_MENU_CHOICES.ITEMS.id:
                 sceneItemType = SCENE_ITEM_TYPES.ITEMS;
+                isItemSwap = false;
                 SceneManager.push(Scene_Item);
             break;
             case MAIN_MENU_CHOICES.FLOOR.id:
@@ -274,6 +278,14 @@ Scene_Item.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
     addMenuBackdrop();
 
+    if (SceneManager.isPreviousScene(Scene_GameExit)) {
+        return;
+    }
+
+    if (SceneManager.isPreviousScene(Scene_Item)) {
+        toggleSceneItemType();
+    }
+
     const choices = createItemChoices();
     itemsMenu.showAndOpen();
 
@@ -302,9 +314,10 @@ function createItemChoices() {
             id: item.id,
             amount,
             consumable: $dataItems[item.id].consumable,
-            canUse: () => true,
-            canPickUp: () => sceneItemType === SCENE_ITEM_TYPES.FLOOR,
-            canDrop: () => sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item
+            canUse: () => !isItemSwap,
+            canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
+            canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
+            canSwap: () => !!item.meta.item
         }
     });
 }
@@ -348,32 +361,68 @@ function createItemsMenuEventListeners() {
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_DROPPED, event => {
         goBackFromItemsMenu();
-
-        mapStartActions.push(() => {
-            const itemId = event.detail.itemId;
-            const itemData = $dataItems[itemId];
-
-            f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
-            $gameParty.loseItem(itemData, 1);
-            f.moveEnemies();
-        });
+        const itemId = event.detail.itemId;
+        dropItem(itemId);
+        moveEnemies();
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_PICKED_UP, event => {
         goBackFromItemsMenu();
+        const itemId = event.detail.itemId;
+        pickUpItem(itemId);
+        moveEnemies();
+    });
 
-        mapStartActions.push(() => {
-            const itemId = event.detail.itemId;
-            const x = $gamePlayer.x;
-            const y = $gamePlayer.y;
-            const itemData = $dataItems[itemId];
-    
-            const itemEvent = $gameMap.eventsXy(x, y)
-                .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
-            itemEvent.erase();
-            $gameParty.gainItem(itemData, 1);
-            f.moveEnemies();
-        });
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_SWAP, event => {
+        const itemId = event.detail.itemId;
+        if (sceneItemType === SCENE_ITEM_TYPES.FLOOR) {
+            swapItems.floorItemId = itemId;
+        } else {
+            swapItems.bagItemId = itemId;
+        }
+        
+        if (isItemSwap) {
+            goBackFromItemsMenu();
+            dropItem(swapItems.bagItemId);
+            pickUpItem(swapItems.floorItemId);
+            moveEnemies();
+            return;
+        }
+
+        isItemSwap = true;
+        SceneManager.push(Scene_Item);
+    });
+
+    itemsMenu.element.itemsChoicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
+        isItemSwap = false;
+    });
+}
+
+function dropItem(itemId) {
+    mapStartActions.push(() => {
+        const itemData = $dataItems[itemId];
+
+        $f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
+        $gameParty.loseItem(itemData, 1);
+    });
+}
+
+function pickUpItem(itemId) {
+    mapStartActions.push(() => {
+        const x = $gamePlayer.x;
+        const y = $gamePlayer.y;
+        const itemData = $dataItems[itemId];
+
+        const itemEvent = $gameMap.eventsXy(x, y)
+            .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
+        itemEvent.erase();
+        $gameParty.gainItem(itemData, 1);
+    });
+}
+
+function moveEnemies() {
+    mapStartActions.push(() => {
+        $f.moveEnemies();
     });
 }
 
@@ -382,6 +431,7 @@ function showFloor() {
         return;
     }
     sceneItemType = SCENE_ITEM_TYPES.FLOOR;
+    isItemSwap = false;
     SceneManager.push(Scene_Item);
 }
 
@@ -556,4 +606,10 @@ Scene_Map.prototype.start = function() {
     mapStartActions = [];
 
     removeMenuBackdrop();
+}
+
+function toggleSceneItemType() {
+    const types = Object.values(SCENE_ITEM_TYPES);
+    const lastType = types[types.length - 1];
+    sceneItemType = lastType + 1 - sceneItemType;
 }
