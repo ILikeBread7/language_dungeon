@@ -237,7 +237,7 @@ Scene_GameEnd.prototype.start = function() {
     selectable = new SelectableChoicesList(areYouSure.element.choicesList);
 
     takeAreYouSure(areYouSure, {
-        explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br>All unsaved progress will be lost.`,
+        explanation: /*html*/`Are you sure you want to exit the game and return to the title screen?<br><span class="danger">All unsaved progress will be lost.</span>`,
         choices: [
             { text: 'Return to title', id: ARE_YOU_SURE_IDS.YES },
             { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO }
@@ -459,13 +459,18 @@ class Scene_GameExit extends Scene_MenuBase {
         addMenuBackdrop();
 
         selectable = new SelectableChoicesList(areYouSure.element.choicesList);
+        areYouSure.topElement.dataset.exit = 'exit';
         areYouSure.showAndOpen();
+        let explanation = 'Are you sure you want to exit the game?';
+        if (SceneManager._stack.some(scene => scene === Scene_Map)) {
+            explanation += /*html*/`<br><span class="danger">All unsaved progress will be lost.</span>`;
+        }
         const playerConfirm = await areYouSure.element.areYouSureTakeChoice({
             choices: [
                 { text: 'Exit the game', id: ARE_YOU_SURE_IDS.YES },
                 { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO },
             ],
-            explanation: 'Are you sure you want to exit the game?'
+            explanation
         });
 
         if (playerConfirm.id === ARE_YOU_SURE_IDS.YES) {
@@ -474,6 +479,7 @@ class Scene_GameExit extends Scene_MenuBase {
         }
 
         areYouSure.closeAndHide();
+        areYouSure.topElement.removeAttribute('data-exit');
         this.popScene();
     }
 

@@ -229,3 +229,11 @@ options-menu-component {
         border-right: solid 1px black; 
     }
 }
+
+#components-container:has([data-exit="exit"]) hideable-component:not([data-exit="exit"]) {
+    display: none;
+}
+
+.danger {
+    color: red;
+}

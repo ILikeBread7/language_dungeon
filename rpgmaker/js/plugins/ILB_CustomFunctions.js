@@ -1610,4 +1610,12 @@ var $f = $f || {};
         const waitButton = 'control';
         return Input.isPressed(waitButton);
     }
+
+    if (Utils.isNwjs()) {
+        const gui = require('nw.gui');
+        const win = gui.Window.get();
+        win.on('close', () => {
+            SceneManager.push(Scene_GameExit);
+        });
+    }
 })();
