@@ -317,7 +317,7 @@ function createItemChoices() {
             canUse: () => !isItemSwap,
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
-            canSwap: () => !!item.meta.item
+            canSwap: () => !!item.meta.item && (isItemSwap || $f.isFloorItem())
         }
     });
 }
