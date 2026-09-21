@@ -40,6 +40,10 @@ hideable-component:has(items-menu-component) {
 message-box-component.whole-screen {
     --box-height: 100%;
     --lines-per-screen: 32;
+
+    & .message-box {
+        background: rgba(0, 0, 0, 0.6);
+    }
 }
 
 .centered {
