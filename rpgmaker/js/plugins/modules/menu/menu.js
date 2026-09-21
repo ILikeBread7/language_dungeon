@@ -393,8 +393,15 @@ function createItemsMenuEventListeners() {
         SceneManager.push(Scene_Item);
     });
 
-    itemsMenu.element.itemsChoicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
+    const itemsList = itemsMenu.element.itemsChoicesList;
+    itemsList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
         isItemSwap = false;
+    });
+
+    itemsMenu.element.dialogChoicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
+        if (sceneItemType === SCENE_ITEM_TYPES.FLOOR && itemsList.choicesListDisplayedOptions.length === 1) {
+            goBackFromItemsMenu();
+        }
     });
 }
 
