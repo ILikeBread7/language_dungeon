@@ -1615,7 +1615,12 @@ var $f = $f || {};
         const gui = require('nw.gui');
         const win = gui.Window.get();
         win.on('close', () => {
-            SceneManager.push(Scene_GameExit);
+            const error = document.getElementById('ErrorPrinter');
+            if (error.innerHTML) {
+                win.close(true);
+            } else {
+                SceneManager.push(Scene_GameExit);
+            }
         });
     }
 })();
