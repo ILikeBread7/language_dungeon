@@ -80,15 +80,17 @@ export class SliderComponent extends InputComponent {
         const datalist = document.createElement('datalist');
         datalist.id = this._datalistId;
 
-        // Scale is used to make decimal values, like 0.3, work correctly
-        const stepLog = Math.log10(this._properties.step);
-        const scale = stepLog < 0 ? Math.pow(10, -stepLog) : 1;
+        // Precision is used to make decimal values, like 0.3, work correctly
+        const stepLog = Math.log10(1 / this._properties.step);
+        const precision = stepLog > 0 ? Math.ceil(stepLog) : 0;
+        const multiplier = Math.pow(10, precision);
+        console.log(stepLog,precision)
         for (
-            let current = this._properties.min * scale;
-            current <= this._properties.max * scale;
-            current += this._properties.step * scale
+            let current = this._properties.min * multiplier;
+            current <= this._properties.max * multiplier;
+            current += this._properties.step * multiplier
         ) {
-            const value = current / scale;
+            const value = current / multiplier;
             const option = document.createElement('option');
             option.value = value;
             datalist.appendChild(option);
