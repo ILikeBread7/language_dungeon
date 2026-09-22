@@ -30,10 +30,13 @@ export class SliderComponent extends InputComponent {
         const slider = document.createElement('input');
         Object.assign(slider, this._properties);
         slider.type = 'range';
+        slider.setAttribute('list', this._datalistId);
         slider.classList.add(SLIDER_CSS_CLASS_NAME);
         this._addSliderInputEventListeners(slider);
-        this.appendChild(slider);
         this._slider = slider;
+
+        const datalist = this._createDatalist();
+        this.append(slider, datalist);
     }
 
     inputComponentSetNextValue() {
@@ -67,6 +70,31 @@ export class SliderComponent extends InputComponent {
 
         this._properties.value = newValue;
         this.dispatchEvent(new CustomEvent(INPUT_EVENTS.VALUE_CHANGE, { detail: { value: newValue } }));
+    }
+
+    get _datalistId() {
+        return `slider_datalist_${this._properties.min}_${this._properties.max}_${this._properties.step}`;
+    }
+
+    _createDatalist() {
+        const datalist = document.createElement('datalist');
+        datalist.id = this._datalistId;
+
+        // Scale is used to make decimal values, like 0.3, work correctly
+        const stepLog = Math.log10(this._properties.step);
+        const scale = stepLog < 0 ? Math.pow(10, -stepLog) : 1;
+        for (
+            let current = this._properties.min * scale;
+            current <= this._properties.max * scale;
+            current += this._properties.step * scale
+        ) {
+            const value = current / scale;
+            const option = document.createElement('option');
+            option.value = value;
+            datalist.appendChild(option);
+        }
+
+        return datalist;
     }
 
 }
