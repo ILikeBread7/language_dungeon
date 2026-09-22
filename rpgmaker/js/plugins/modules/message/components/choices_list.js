@@ -135,9 +135,18 @@ export class ChoicesListComponent extends BaseComponent {
      * @returns {Promise<ChoiceListPlayerChoice>}
      */
     async choicesListTakeChoice() {
-        return new Promise(resolve => {
-            this._choicesResolve = resolve;
+        this.choicesListReject();
+
+        return new Promise((resolve, reject) => {
+            this._promiseResolve = { resolve, reject };
         });
+    }
+
+    choicesListReject() {
+        if (this._promiseResolve) {
+            this._promiseResolve.reject('Rejected correctly, this is not an error');
+            this._promiseResolve = null;
+        }
     }
 
     /**
@@ -282,9 +291,9 @@ export class ChoicesListComponent extends BaseComponent {
             return;
         }
 
-        if (this._choicesResolve) {
-            this._choicesResolve({ index, text: option.text, id: option.id, element: option.element });
-            delete this._choicesResolve;
+        if (this._promiseResolve) {
+            this._promiseResolve.resolve({ index, text: option.text, id: option.id, element: option.element });
+            this._promiseResolve = null;
         }
         option.element.dataset.chosen = 'chosen';
         
@@ -338,9 +347,9 @@ export class ChoicesListComponent extends BaseComponent {
             return false;
         }
 
-        if (this._choicesResolve) {
-            this._choicesResolve({ index: -1, cancelled: true });
-            delete this._choicesResolve;
+        if (this._promiseResolve) {
+            this._promiseResolve.resolve({ index: -1, cancelled: true });
+            this._promiseResolve = null;
         }
         
         return true;

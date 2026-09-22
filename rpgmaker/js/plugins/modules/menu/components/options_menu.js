@@ -128,15 +128,24 @@ export class OptionsMenuComponent extends BaseComponent {
     }
 
     async optionsMenuStart() {
-        return new Promise(resolve => {
-            this._resolve = resolve;
+        this.optionsMenuReject();
+
+        return new Promise((resolve, reject) => {
+            this._promiseResolve = { resolve, reject };
         });
     }
 
+    optionsMenuReject() {
+        if (this._promiseResolve) {
+            this._promiseResolve.reject('Rejected correctly, this is not an error');
+            this._promiseResolve = null;
+        }
+    }
+
     optionsMenuCancel() {
-        if (this._resolve) {
-            this._resolve();
-            this._resolve = null;
+        if (this._promiseResolve) {
+            this._promiseResolve.resolve();
+            this._promiseResolve = null;
         }
     }
 

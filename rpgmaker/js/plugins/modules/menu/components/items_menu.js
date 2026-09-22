@@ -93,9 +93,9 @@ export class ItemsMenuComponent extends BaseComponent {
         });
 
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
-            if (this._resolve) {
-                this._resolve();
-                this._resolve = null;
+            if (this._promiseResolve) {
+                this._promiseResolve.resolve();
+                this._promiseResolve = null;
             }
         });
     }
@@ -106,13 +106,15 @@ export class ItemsMenuComponent extends BaseComponent {
      * @returns {Promise<void>}
      */
     async itemsMenuStart(items) {
-        return new Promise(resolve => {
+        this.itemsMenuReject();
+
+        return new Promise((resolve, reject) => {
             this._listWithExplanation.setChoices(items);
             this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
             this._listWithExplanation.selectFirstActiveChoice()
             this.choicesList.choicesListActivate();
 
-            this._resolve = resolve;
+            this._promiseResolve = { resolve, reject };
         });
     }
 
@@ -125,6 +127,13 @@ export class ItemsMenuComponent extends BaseComponent {
         const promise = this.itemsMenuStart(items);
         this.choicesList.choicesListConfirmCurrentOption();
         return await promise;
+    }
+
+    itemsMenuReject() {
+        if (this._promiseResolve) {
+            this._promiseResolve.reject('Rejected correctly, this is not an error');
+            this._promiseResolve = null;
+        }
     }
 
     /**
