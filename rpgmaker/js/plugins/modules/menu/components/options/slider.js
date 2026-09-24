@@ -1,4 +1,5 @@
 import { BaseComponent } from '../../../common/components/base_component.js';
+import { countDecimals } from '../../../message/components/utils.js';
 import { INPUT_EVENTS, InputComponent } from './input.js';
 
 /**
@@ -80,15 +81,15 @@ export class SliderComponent extends InputComponent {
         const datalist = document.createElement('datalist');
         datalist.id = this._datalistId;
 
+        const { min, max, step } = this._properties;
+
         // Precision is used to make decimal values, like 0.3, work correctly
-        const stepLog = Math.log10(1 / this._properties.step);
-        const precision = stepLog > 0 ? Math.ceil(stepLog) : 0;
-        const multiplier = Math.pow(10, precision);
-        console.log(stepLog,precision)
+        const precision = countDecimals(step);
+        const multiplier = 10 ** precision;
         for (
-            let current = this._properties.min * multiplier;
-            current <= this._properties.max * multiplier;
-            current += this._properties.step * multiplier
+            let current = min * multiplier;
+            current <= max * multiplier;
+            current += step * multiplier
         ) {
             const value = current / multiplier;
             const option = document.createElement('option');

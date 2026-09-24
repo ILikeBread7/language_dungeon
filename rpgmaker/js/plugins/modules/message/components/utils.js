@@ -210,3 +210,11 @@ export function setOptionElementAvailability(option, element) {
         element.removeAttribute('data-disabled');
     }
 }
+
+/**
+ * 
+ * @param {number} value 
+ */
+export function countDecimals(value) {
+    return String(value).split('.')[1]?.length || 0;
+}
