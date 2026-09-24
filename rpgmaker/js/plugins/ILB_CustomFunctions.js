@@ -240,7 +240,10 @@ var $f = $f || {};
         }
 
         this.quiz.isAttacking = false;
-        if ($ns.attackCancelled) { 
+        if ($ns.arrowHit) {
+            $ns.arrowHit = false;
+            moveEnemies();
+        } else if ($ns.attackCancelled) { 
             $ns.attackCancelled = false;
         } else {
             moveEnemies();
@@ -1297,7 +1300,7 @@ var $f = $f || {};
         spriteset._tilemap.addChild(sprite);
     }
 
-    $f.enemyHit = enemyEvent => {
+    $f.enemyHit = (enemyEvent, isArrowHit) => {
         if (enemyEvent.quiz.answeredWrong.length === 0) {
             $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
         } else {
@@ -1313,7 +1316,7 @@ var $f = $f || {};
             $gameMap.eraseEvent(enemyEvent.eventId());
 
         } else {
-            enemyEvent.quiz.isStunned = true;
+            enemyEvent.quiz.isStunned = !isArrowHit;
             enemyEvent.quiz.isHit = true;
             $f.setEnemyText(enemyEvent);
         }
