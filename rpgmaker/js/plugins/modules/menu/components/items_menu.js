@@ -2,6 +2,7 @@ import { BaseComponent } from '../../common/components/base_component.js';
 import { ScrollableListComponent } from '../../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../../common/helpers/hideable_openable.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
+import { PromiseResolve } from '../../common/helpers/promise_resolve.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.js';
 
@@ -63,6 +64,8 @@ export class ItemsMenuComponent extends BaseComponent {
         ScrollableListComponent.register();
         ItemUseDialogComponent.register();
 
+        this._promiseResolve = new PromiseResolve();
+
         this._itemUseDialog = new HideableOpenable(new ItemUseDialogComponent());
         this._itemUseDialog.topElement.classList.add(ITEM_USE_DIALOG_CSS_CLASS);
         this.appendChild(this._itemUseDialog.topElement);
@@ -93,10 +96,7 @@ export class ItemsMenuComponent extends BaseComponent {
         });
 
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
-            if (this._promiseResolve) {
-                this._promiseResolve.resolve();
-                this._promiseResolve = null;
-            }
+            this._promiseResolve.resolve();
         });
     }
 
@@ -114,7 +114,7 @@ export class ItemsMenuComponent extends BaseComponent {
             this._listWithExplanation.selectFirstActiveChoice()
             this.choicesList.choicesListActivate();
 
-            this._promiseResolve = { resolve, reject };
+            this._promiseResolve.setResolve(resolve, reject);
         });
     }
 
@@ -130,10 +130,7 @@ export class ItemsMenuComponent extends BaseComponent {
     }
 
     itemsMenuReject() {
-        if (this._promiseResolve) {
-            this._promiseResolve.reject('Rejected correctly, this is not an error');
-            this._promiseResolve = null;
-        }
+        this._promiseResolve.reject();
     }
 
     /**

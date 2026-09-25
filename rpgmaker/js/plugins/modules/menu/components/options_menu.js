@@ -1,5 +1,6 @@
 import { BaseComponent } from '../../common/components/base_component.js';
 import { ListWithExplanation } from '../../common/helpers/list_with_explanation.js';
+import { PromiseResolve } from '../../common/helpers/promise_resolve.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/components/choices_list.js';
 import { findElement, isActiveOptionElement, isElementSelectable, refreshOptionAvailability, setOptionElementAvailability } from '../../message/components/utils.js';
 import { INPUT_EVENTS, InputComponent } from './options/input.js';
@@ -91,6 +92,8 @@ export class OptionsMenuComponent extends BaseComponent {
         RadioComponent.register();
         SliderComponent.register();
 
+        this._promiseResolve = new PromiseResolve();
+
         this._optionsContainer = document.createElement('div');
         this._optionsContainer.classList.add(OPTIONS_CONTAINER_CSS_CLASS_NAME);
 
@@ -131,22 +134,16 @@ export class OptionsMenuComponent extends BaseComponent {
         this.optionsMenuReject();
 
         return new Promise((resolve, reject) => {
-            this._promiseResolve = { resolve, reject };
+            this._promiseResolve.setResolve(resolve, reject);
         });
     }
 
     optionsMenuReject() {
-        if (this._promiseResolve) {
-            this._promiseResolve.reject('Rejected correctly, this is not an error');
-            this._promiseResolve = null;
-        }
+        this._promiseResolve.reject();
     }
 
     optionsMenuCancel() {
-        if (this._promiseResolve) {
-            this._promiseResolve.resolve();
-            this._promiseResolve = null;
-        }
+        this._promiseResolve.resolve();
     }
 
     optionsMenuRefreshVisibleAndEnabledOptions() {
