@@ -148,6 +148,7 @@ export class ScrollableListComponent extends ChoicesListComponent {
         );
 
         window.addEventListener('resize', this._adjustScrollAfterResize.bind(this));
+        this.scrollableListSwitchToVertical();
     }
 
     static observedAttributes = [ 'style', 'class' ];
@@ -412,7 +413,10 @@ export class ScrollableListComponent extends ChoicesListComponent {
      * @param {DOMRect} containerDimensions 
      */
     _calculateMaxScroll(listDimensions, containerDimensions) {
-        return this._getHeight(listDimensions) - this._getHeight(containerDimensions);
+        return Math.max(
+            0,
+            this._getHeight(listDimensions) - this._getHeight(containerDimensions)
+        );
     }
 
     /**

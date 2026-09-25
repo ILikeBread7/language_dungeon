@@ -9,6 +9,7 @@ import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure
 import { ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { INPUT_TYPE, OptionsMenuComponent } from './components/options_menu.js';
+import { SaveMenuComponent } from './components/save_menu.js';
 import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
@@ -43,6 +44,10 @@ const items = itemsMenu.element;
 TitleMenuComponent.register();
 const titleMenu = new HideableOpenable(new TitleMenuComponent());
 const title = titleMenu.element;
+
+SaveMenuComponent.register();
+const saveMenu = new HideableOpenable(new SaveMenuComponent());
+const save = saveMenu.element;
 
 /**
  * @type {import('../common/helpers/selectable_interface.js').SelectableInterface}
@@ -222,9 +227,23 @@ const tests = {
         if (titleMenu.hideable.hideableIsShown) {
             titleMenu.closeAndHide();
         }
+    },
+    async save() {
+        selectable = new SelectableScrollableList(save.choicesList);
+        document.body.appendChild(saveMenu.topElement);
+
+        const saveFiles = [];
+        for (let i = 1; i <= 20; i++) {
+            saveFiles.push({ title: `Save ${i} File`, playTime: '12:34' });
+        }
+
+        saveMenu.showAndOpen();
+        const choice = await save.saveMenuStart(saveFiles);
+        console.log(choice);
+        saveMenu.closeAndHide();
     }
 };
-tests.options();
+tests.save();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => selectable.selectDown() ],
