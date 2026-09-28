@@ -203,7 +203,6 @@ export function initializeMainMenu(container = document.body) {
     saveMenu.element.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
         const id = event.detail.option.id;
         selectedSavefileId = id;
-        console.log(selectedSavefileId)
     });
 
     container.append(
@@ -583,9 +582,15 @@ Scene_File.prototype.savefileId = function() {
     return selectedSavefileId;
 }
 
-const _Scene_Save_start = Scene_Save.prototype.start;
-Scene_Save.prototype.start = function() {
+const INACTIVE_CSS_CLASS = 'inactive';
+Scene_File.prototype.start = function() {
     Scene_MenuBase.prototype.start.call(this);
+    saveMenu.element.classList.remove(INACTIVE_CSS_CLASS);
+    addMenuBackdrop();
+}
+
+Scene_Save.prototype.start = function() {
+    Scene_File.prototype.start.call(this);
 
     const saveFiles = findSaveFiles();
     for (const file of saveFiles) {
@@ -593,41 +598,47 @@ Scene_Save.prototype.start = function() {
     }
 
     saveMenu.showAndOpen();
-    saveMenuAsync(saveFiles, this).then(() => {
+    saveMenuAsync(saveFiles, this).then(choice => {
+        if (!choice.cancelled) {
+            this.onSavefileOk();
+        }
         saveMenu.closeAndHide();
         this.popScene();
     });
 }
 
-const INACTIVE_CSS_CLASS = 'inactive';
 /**
  * 
  * @param {import('./components/save_menu.js').SaveFile[]} saveFiles 
- * @param {Scene_Save} sceneSave 
+ * @param {Scene_Save|Scene_Load} scene 
  * @returns 
  */
-async function saveMenuAsync(saveFiles, sceneSave) {
+async function saveMenuAsync(saveFiles, scene) {
     const menuSelectable = new SelectableScrollableList(saveMenu.element.choicesList);
     const confirmationSelectable = new SelectableChoicesList(areYouSure.element.choicesList);
 
     do {
         selectable = menuSelectable;
-        const choice = await saveMenu.element.saveMenuStart(saveFiles, sceneSave.firstSavefileIndex());
+        const choice = await saveMenu.element.saveMenuStart(saveFiles, scene.firstSavefileIndex());
         if (choice.cancelled) {
-            return;
+            return choice;
         }
         const chosenFile = saveFiles[choice.index];
 
         if (!chosenFile.empty) {
+            const confirmText = scene instanceof Scene_Save
+                ? 'Overwrite'
+                : 'Load';
+
             selectable = confirmationSelectable;
             areYouSure.showAndOpen();
             saveMenu.element.classList.add(INACTIVE_CSS_CLASS);
             const confirmation = await areYouSure.element.areYouSureTakeChoice({
                 choices: [
-                    { text: 'Overwrite', id: ARE_YOU_SURE_IDS.YES },
+                    { text: confirmText, id: ARE_YOU_SURE_IDS.YES },
                     { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO }
                 ],
-                explanation: /*html*/`Are you sure you want to overwrite the current savefile?<br>${choice.text}`
+                explanation: /*html*/`Are you sure you want to ${confirmText.toLowerCase()} this savefile?<br>${choice.text}`
             });
             areYouSure.closeAndHide();
             saveMenu.element.classList.remove(INACTIVE_CSS_CLASS);
@@ -636,16 +647,27 @@ async function saveMenuAsync(saveFiles, sceneSave) {
             }
         }
     
-        sceneSave.onSavefileOk();
-
-        return;
+        return choice;
     } while (true);
 }
 
-const _Scene_Load_start = Scene_Load.prototype.start;
 Scene_Load.prototype.start = function() {
-    Scene_MenuBase.prototype.start.call(this);
-    
+    Scene_File.prototype.start.call(this);
+
+    const saveFiles = findSaveFiles();
+    for (const file of saveFiles) {
+        file.selectable = !file.empty && file.valid;
+    }
+
+    saveMenu.showAndOpen();
+    saveMenuAsync(saveFiles, this).then(choice => {
+        if (choice.cancelled) {
+            this.popScene();
+        } else {
+            this.onSavefileOk();
+        }
+        saveMenu.closeAndHide();
+    });
 }
 
 function findSaveFiles() {
