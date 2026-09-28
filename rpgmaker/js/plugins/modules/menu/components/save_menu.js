@@ -5,7 +5,10 @@ import { PromiseResolve } from '../../common/helpers/promise_resolve.js';
 /**
  * @typedef {{
  *  title: string,
- *  playTime: string
+ *  playtime: string,
+ *  selectable: boolean,
+ *  empty: boolean,
+ *  valid: boolean
  * }} SaveFile
  */
 
@@ -30,7 +33,7 @@ export class SaveMenuComponent extends BaseComponent {
 
     /**
      * 
-     * @param {[SaveFile]} saveFiles 
+     * @param {[SaveFile?]} saveFiles 
      * @param {number} [defaultIndex=0] 
      * @returns {Promise<import('../../message/components/choices_list.js').ChoiceListPlayerChoice>}
      */
@@ -38,10 +41,20 @@ export class SaveMenuComponent extends BaseComponent {
         const choices = saveFiles.map((file, index) => {
             const id = index + 1;
 
-            return {
-                text: /*html*/`<span class="save-id">${id}</span><span class="save-title">${file.title}</span><span class="save-playtime">${file.playTime}</span>`,
-                id
-            }
+            /** @type {} */
+            const saveSlot = {
+                id,
+                isEnabled: () => file.selectable,
+                text: /*html*/`<span class="save-id">${id}</span><span class="save-title">${file?.title || 'Empty'}</span><span class="save-playtime">${file?.playtime || ''}</span>`,
+                cssClass: [
+                    { condition: file.empty, class: 'save-empty' },
+                    { condition: file.valid, class: 'save-valid' }
+                ].filter(css => css.condition)
+                    .map(css => css.class)
+                    .join(' ')
+            };
+
+            return saveSlot;
         });
 
         return await this._list.choicesListTakeOneChoice(choices, defaultIndex);

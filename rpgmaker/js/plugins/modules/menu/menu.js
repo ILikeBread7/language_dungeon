@@ -3,12 +3,14 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
 import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
 import { selectableNonCancellable } from '../common/helpers/selectable_restricted.js';
-import { CHOICES_LIST_EVENTS } from '../message/components/choices_list.js';
+import { SelectableScrollableList } from '../common/helpers/selectable_scrollable_list.js';
+import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
 import { ITEMS_MENU_EVENTS, ItemsMenuComponent } from './components/items_menu.js';
 import { MainMenuComponent } from './components/main_menu.js';
 import { INPUT_TYPE, OptionsMenuComponent } from './components/options_menu.js';
+import { SaveMenuComponent } from './components/save_menu.js';
 import { TitleMenuComponent } from './components/title_menu.js';
 
 /**
@@ -43,6 +45,11 @@ const swapItems = {};
  * @type {HideableOpenable<TitleMenuComponent>}
  */
 let titleMenu;
+
+/**
+ * @type {HideableOpenable<SaveMenuComponent>}
+ */
+let saveMenu;
 
 /**
  * @type {import('../common/helpers/selectable_interface.js').SelectableInterface}
@@ -163,6 +170,8 @@ const OPTIONS_MENU_CHOICES = [
     }
 ];
 
+let selectedSavefileId = null;
+
 /**
  * 
  * @param {HTMLElement} [container] 
@@ -189,12 +198,21 @@ export function initializeMainMenu(container = document.body) {
     titleMenu = new HideableOpenable(new TitleMenuComponent());
     titleMenu.topElement.classList.add('vertical-center');
 
+    SaveMenuComponent.register();
+    saveMenu = new HideableOpenable(new SaveMenuComponent());
+    saveMenu.element.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_SELECT, event => {
+        const id = event.detail.option.id;
+        selectedSavefileId = id;
+        console.log(selectedSavefileId)
+    });
+
     container.append(
         mainMenu.topElement,
         areYouSure.topElement,
         optionsMenu.topElement,
         itemsMenu.topElement,
-        titleMenu.topElement
+        titleMenu.topElement,
+        saveMenu.topElement
     );
 }
 
@@ -274,7 +292,19 @@ async function handleOptionsMenu() {
     await optionsMenu.closeAndHide();
 }
 
+/**
+ * @typedef {import('../common/helpers/selectable_interface.js').SelectableInterface} SelectableInterface
+ * @type { {items: SelectableInterface, itemUse: SelectableInterface} }
+ */
+let itemSelectables;
 Scene_Item.prototype.start = function() {
+    if (!itemSelectables) {
+        itemSelectables = {
+            items: new SelectableScrollableList(itemsMenu.element.itemsChoicesList),
+            itemUse: new SelectableChoicesList(itemsMenu.element.dialogChoicesList)
+        }
+    }
+
     Scene_MenuBase.prototype.start.call(this);
     addMenuBackdrop();
 
@@ -544,12 +574,105 @@ class Scene_GameExit extends Scene_MenuBase {
 // For PreventTitleFadeIn plugin
 window.Scene_GameExit = Scene_GameExit;
 
+const _DataManager_lastAccessedSavefileId = DataManager.lastAccessedSavefileId;
+DataManager.lastAccessedSavefileId = function() {
+    return selectedSavefileId ?? _DataManager_lastAccessedSavefileId.call(this);
+}
+
+Scene_File.prototype.savefileId = function() {
+    return selectedSavefileId;
+}
+
+const _Scene_Save_start = Scene_Save.prototype.start;
+Scene_Save.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+
+    const saveFiles = findSaveFiles();
+    for (const file of saveFiles) {
+        file.selectable = file.empty || file.valid;
+    }
+
+    saveMenu.showAndOpen();
+    saveMenuAsync(saveFiles, this).then(() => {
+        saveMenu.closeAndHide();
+        this.popScene();
+    });
+}
+
+const INACTIVE_CSS_CLASS = 'inactive';
+/**
+ * 
+ * @param {import('./components/save_menu.js').SaveFile[]} saveFiles 
+ * @param {Scene_Save} sceneSave 
+ * @returns 
+ */
+async function saveMenuAsync(saveFiles, sceneSave) {
+    const menuSelectable = new SelectableScrollableList(saveMenu.element.choicesList);
+    const confirmationSelectable = new SelectableChoicesList(areYouSure.element.choicesList);
+
+    do {
+        selectable = menuSelectable;
+        const choice = await saveMenu.element.saveMenuStart(saveFiles, sceneSave.firstSavefileIndex());
+        if (choice.cancelled) {
+            return;
+        }
+        const chosenFile = saveFiles[choice.index];
+
+        if (!chosenFile.empty) {
+            selectable = confirmationSelectable;
+            areYouSure.showAndOpen();
+            saveMenu.element.classList.add(INACTIVE_CSS_CLASS);
+            const confirmation = await areYouSure.element.areYouSureTakeChoice({
+                choices: [
+                    { text: 'Overwrite', id: ARE_YOU_SURE_IDS.YES },
+                    { text: 'Cancel', id: ARE_YOU_SURE_IDS.NO }
+                ],
+                explanation: /*html*/`Are you sure you want to overwrite the current savefile?<br>${choice.text}`
+            });
+            areYouSure.closeAndHide();
+            saveMenu.element.classList.remove(INACTIVE_CSS_CLASS);
+            if (confirmation.cancelled || confirmation.id === ARE_YOU_SURE_IDS.NO) {
+                continue;
+            }
+        }
+    
+        sceneSave.onSavefileOk();
+
+        return;
+    } while (true);
+}
+
+const _Scene_Load_start = Scene_Load.prototype.start;
+Scene_Load.prototype.start = function() {
+    Scene_MenuBase.prototype.start.call(this);
+    
+}
+
+function findSaveFiles() {
+    const result = [];
+    
+    for (let i = 1; i <= DataManager.maxSavefiles(); i++) {
+        /** @type {import('./components/save_menu.js').SaveFile} */
+        const fileInfo = DataManager.loadSavefileInfo(i);
+        
+        const saveInfo = fileInfo || { title: '', playtime: '' };
+        saveInfo.id = i;
+        saveInfo.valid = DataManager.isThisGameFile(i);
+        saveInfo.empty = !fileInfo;
+
+        result.push(saveInfo);
+    }
+
+    return result;
+}
+
 for (const scene of [
         Scene_Menu,
         Scene_GameEnd,
         Scene_Options,
         Scene_Item,
-        Scene_GameExit
+        Scene_GameExit,
+        Scene_File
 ]) {
     const _scene_update = scene.prototype.update;
     scene.prototype.update = function() {
@@ -564,7 +687,12 @@ for (const scene of [
 
 const _Scene_Item_update = Scene_Item.prototype.update;
 Scene_Item.prototype.update = function() {
-    selectable = new SelectableChoicesList(itemsMenu.element.choicesList);
+    if (itemsMenu.element.itemsChoicesList.choicesListActive) {
+        selectable = itemSelectables.items;
+    } else {
+        selectable = itemSelectables.itemUse;
+    }
+
     _Scene_Item_update.call(this);
 }
 

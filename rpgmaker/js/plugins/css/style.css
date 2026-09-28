@@ -241,3 +241,11 @@ options-menu-component {
 .danger {
     color: red;
 }
+
+hideable-component:has(are-you-sure-component) {
+    z-index: 99;
+}
+
+.inactive {
+    filter: brightness(60%);
+}
