@@ -164,11 +164,11 @@ export class ChoicesListComponent extends BaseComponent {
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
             const optionElement = document.createElement('li');
-            optionElement.part = 'choice-item';
+            optionElement.classList.add('choice-item');
             optionElement.innerHTML = option.text;
             optionElement.dataset.index = i;
             if (option.cssClass) {
-                optionElement.className = option.cssClass;
+                optionElement.classList.add(option.cssClass);
             }
             this._list.appendChild(optionElement);
             this._displayedOptions.push({ ...option, element: optionElement });

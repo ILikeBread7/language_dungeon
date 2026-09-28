@@ -248,4 +248,8 @@ hideable-component:has(are-you-sure-component) {
 
 .inactive {
     filter: brightness(60%);
+
+    & .choice-item {
+        cursor: default;
+    }
 }
