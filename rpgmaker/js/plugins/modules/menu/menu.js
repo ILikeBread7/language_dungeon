@@ -335,6 +335,7 @@ function createItemChoices() {
         const iconIndex = item.iconIndex;
         const iconX = iconIndex % ICON_COLUMNS;
         const iconY = Math.floor(iconIndex / ICON_COLUMNS);
+        const itemData = $dataItems[item.id];
 
         const amount = getItemAmounts(item);
         return {
@@ -342,7 +343,8 @@ function createItemChoices() {
             explanation: item.description,
             id: item.id,
             amount,
-            consumable: $dataItems[item.id].consumable,
+            consumable: itemData.consumable,
+            multiple: itemData.meta.multiple,
             canUse: () => !isItemSwap,
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
@@ -381,7 +383,11 @@ function createItemsMenuEventListeners() {
                 const y = $gamePlayer.y;
                 const itemEvent = $gameMap.eventsXy(x, y)
                     .findLast(event => event && !event._erased && event.event()?.meta?.item === itemData.meta.item);
-                itemEvent.erase();
+                if (itemData.meta.multiple && itemEvent.itemAmount > 1) {
+                    itemEvent.itemAmount--;
+                } else {
+                    itemEvent.erase();
+                }
                 f.useFloorItem(itemId);
             break;
             default: f.useInventoryItem(itemId);
@@ -412,8 +418,21 @@ function createItemsMenuEventListeners() {
         
         if (isItemSwap) {
             goBackFromItemsMenu();
-            dropItem(swapItems.bagItemId);
-            pickUpItem(swapItems.floorItemId);
+            if (swapItems.bagItemId === swapItems.floorItemId) {
+                const itemId = swapItems.bagItemId;
+                const itemData = $dataItems[itemId];
+                if (itemData.meta.multiple) {
+                    const bagItemAmount = $gameParty.numItems(itemData);
+                    const floorItemEvent = $gameMap.eventsXy($gamePlayer.x, $gamePlayer.y)
+                        .findLast(event => floorItemFilter(event, itemData));
+                    const floorItemAmount = floorItemEvent.itemAmount;
+                    $gameParty.gainItem(itemData, floorItemAmount - bagItemAmount);
+                    floorItemEvent.itemAmount += bagItemAmount - floorItemAmount;
+                }
+            } else {
+                dropItem(swapItems.bagItemId);
+                pickUpItem(swapItems.floorItemId);
+            }
             moveEnemies();
             return;
         }
@@ -437,9 +456,12 @@ function createItemsMenuEventListeners() {
 function dropItem(itemId) {
     mapStartActions.push(() => {
         const itemData = $dataItems[itemId];
+        const itemAmount = itemData?.meta?.multiple
+            ? $gameParty.numItems(itemData)
+            : 1;
 
-        $f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item);
-        $gameParty.loseItem(itemData, 1);
+        $f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item, itemAmount);
+        $gameParty.loseItem(itemData, itemAmount);
     });
 }
 
@@ -449,11 +471,21 @@ function pickUpItem(itemId) {
         const y = $gamePlayer.y;
         const itemData = $dataItems[itemId];
 
-        const itemEvent = $gameMap.eventsXy(x, y)
-            .findLast(event => !event._erased && itemData.meta.item === event.event()?.meta?.item);
-        itemEvent.erase();
-        $gameParty.gainItem(itemData, 1);
+        const floorEvents = $gameMap.eventsXy(x, y);
+        const filterFunction = event => floorItemFilter(event, itemData);
+        const itemEvents = itemData.meta.multiple
+            ? floorEvents.filter(filterFunction)
+            : [ floorEvents.findLast(filterFunction) ];
+
+        for (const itemEvent of itemEvents) {
+            itemEvent.erase();
+            $gameParty.gainItem(itemData, itemEvent.itemAmount || 1);
+        }
     });
+}
+
+function floorItemFilter(event, itemData) {
+    return !event._erased && itemData.meta.item === event.event()?.meta?.item;
 }
 
 function moveEnemies() {

@@ -42,7 +42,10 @@ export class ItemUseDialogComponent extends BaseComponent {
                     if (choice.id === ITEM_DIALOG_CHOICES.CANCEL.id) {
                         return choice;
                     }
-                    return { ...choice, text: `${choice.text} (1)` };
+                    const amount = itemInfo.multiple && choice.id !== ITEM_DIALOG_CHOICES.USE.id
+                        ? itemInfo.amount
+                        : 1;
+                    return { ...choice, text: `${choice.text} (${amount})` };
                 });
         }
 

@@ -1275,7 +1275,7 @@ var $f = $f || {};
         $f.placeItemEvent(x, y, 'portal');
     };
 
-    $f.placeItemEvent = (x, y, itemName) => {
+    $f.placeItemEvent = (x, y, itemName, itemAmount) => {
         const eventData = $dataMap.events.find(event => event?.meta?.item === itemName);
         if (!eventData) {
             console.warn(`No item event with tag: <item:${itemName}>!`);
@@ -1283,6 +1283,9 @@ var $f = $f || {};
         }
 
         const event = new Game_Event($gameMap.mapId(), eventData.id);
+        if (itemAmount) {
+            event.itemAmount = itemAmount;
+        }
         addEvent(event, x, y);
     }
 
@@ -1358,32 +1361,12 @@ var $f = $f || {};
             .reduce((acc, event) => {
                 const key = event.event().meta.item;
                 const value = acc.get(key) || 0;
-                acc.set(key, value + 1);
+                acc.set(key, value + (event.itemAmount || 1));
                 return acc;
             }, new Map());
 
             return [...itemEventsMap.entries()]
                 .map(([ itemName, amount ]) => ({ ...$dataItems.find(item => itemName === item?.meta?.item), amount }));
-    }
-
-    $f.triggerFloorItemEvents = () => {
-        const items = $f.getFloorItems();
-        helper(0);
-
-        function helper(index) {
-            const item = items[index];
-
-            if (index < items.length - 1) {    // Do for all but the last element
-                const baseUnlock = item.unlock;
-                item.unlock = () => {
-                    item.unlock = baseUnlock;
-                    baseUnlock.call(item);
-                    helper(index + 1);
-                };
-            }
-
-            item.start();
-        }
     }
 
     const _Game_Switches_value = Game_Switches.prototype.value;
@@ -1626,4 +1609,17 @@ var $f = $f || {};
             }
         });
     }
+
+    $f.setMultipleItemsAmounts = () => {
+        for (const event of $gameMap.events()) {
+            if (!event || event._erased || !event.event().meta.multiple) {
+                continue;
+            }
+
+            const [ rangeMin, rangeMax ] = JSON.parse(event.event().meta.multiple);
+            const spread = rangeMax - rangeMin;
+            const amount = Math.floor(Math.random() * spread) + rangeMin;
+            event.itemAmount = amount;
+        }
+    };
 })();

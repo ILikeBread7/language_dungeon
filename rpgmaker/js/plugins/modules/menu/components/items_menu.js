@@ -7,7 +7,7 @@ import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../../message/compone
 import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.js';
 
 /**
- * @typedef { { name: string, amount: number, consumable: boolean } } ItemInfo
+ * @typedef { { name: string, amount: number, consumable: boolean, multiple: boolean } } ItemInfo
  * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean, canSwap: () => boolean } } ItemUseOptions
  * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions & ItemInfo } ItemChoice
  */
