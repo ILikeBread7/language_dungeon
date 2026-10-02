@@ -18,14 +18,13 @@ export class GamelogComponent extends BaseComponent {
 
             ${this.componentTagName} .${SCROLL_CONTAINER_CSS_CLASS} {
                 overflow: hidden;
-                white-space: pre-wrap;
                 height: 100%;
             }
-
+            
             ${this.componentTagName} .${TEXT_CONTAINER_CSS_CLASS} {
                 position: relative;
                 top: calc(-1 * var(--scroll));
-
+                white-space: pre-wrap;
                 transition: top 1s;
             }
         `;

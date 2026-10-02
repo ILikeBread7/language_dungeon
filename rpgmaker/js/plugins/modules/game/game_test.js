@@ -1,3 +1,4 @@
+import { FullGamelogComponent } from '../common/components/full_gamelog_component.js';
 import { GamelogComponent } from '../common/components/gamelog_component.js';
 import { DungeonHudComponent } from './components/dungeon_hud.js';
 
@@ -27,3 +28,16 @@ document.body.appendChild(log);
         await log.gamelogComponentAddLog('Test');
     }
 })();
+
+
+FullGamelogComponent.register();
+const fullLog = new FullGamelogComponent();
+document.body.appendChild(fullLog);
+
+const text = [];
+for (let i = 1; i <= 20; i++) {
+    text.push(`Test line #${i}`);
+}
+fullLog.fullGamelogComponentShow(text.join('\n'));
+
+setInterval(() => fullLog.fullGamelogComponentScrollUp())

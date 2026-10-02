@@ -36,6 +36,10 @@ export class PromiseResolve {
         }
     }
 
+    isUnresolved() {
+        return !!this._resolve;
+    }
+
     _clear() {
         this._resolve = null;
         this._reject = null;
