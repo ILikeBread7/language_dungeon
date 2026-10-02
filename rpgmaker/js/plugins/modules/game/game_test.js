@@ -22,8 +22,8 @@ document.body.appendChild(log);
 //     }
 // }, 1000);
 
-for (let i = 1; i <= 10; i++) {
-    setTimeout(() => {
-        log.gamelogComponentAddLog('Test');
-    }, i * 1000);
-}
+(async () => {
+    for (let i = 1; i <= 10; i++) {
+        await log.gamelogComponentAddLog('Test');
+    }
+})();

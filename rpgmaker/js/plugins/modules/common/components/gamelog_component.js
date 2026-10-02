@@ -41,6 +41,7 @@ export class GamelogComponent extends BaseComponent {
         this._textContainer.classList.add(TEXT_CONTAINER_CSS_CLASS);
 
         this._scrollContainer.appendChild(this._textContainer);
+        this._scroll = 0;
         
         this.appendChild(this._scrollContainer);
     }
@@ -58,7 +59,24 @@ export class GamelogComponent extends BaseComponent {
         const textHeight = this._textContainer.scrollHeight;
         const scrollContainerHeight = this._scrollContainer.clientHeight;
         const scroll = Math.max(0, textHeight - scrollContainerHeight);
-        this.style.setProperty('--scroll', `${scroll}px`);
+        if (scroll === this._scroll) {
+            return;
+        }
+
+        return new Promise(resolve => {
+            this._scroll = scroll;
+            this.style.setProperty('--scroll', `${scroll}px`);
+
+            const listener = event => {
+                if (event.target !== this._textContainer) {
+                    return;
+                }
+
+                this._textContainer.removeEventListener('transitionend', listener);
+                resolve();
+            }
+            this._textContainer.addEventListener('transitionend', listener);
+        });
     }
 
     gamelogComponentClear() {
