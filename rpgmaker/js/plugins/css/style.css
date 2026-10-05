@@ -253,3 +253,26 @@ hideable-component:has(are-you-sure-component) {
         cursor: default;
     }
 }
+
+gamelog-component {
+    background: hsla(180deg, 100%, 50%, 0.6);
+    height: 2lh;
+    width: 90%;
+    display: inline-block;
+}
+
+openable-component:has(gamelog-component) {
+    --transition-time: 0.5s;
+}
+
+hideable-component:has(gamelog-component) {
+    position: absolute;
+    bottom: 5lh;
+    text-align: center;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#components-container.menu-backdrop gamelog-component {
+    visibility: hidden;
+}

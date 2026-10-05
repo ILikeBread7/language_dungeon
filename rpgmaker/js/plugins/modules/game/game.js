@@ -1,3 +1,5 @@
+import { FullGamelogComponent } from '../common/components/full_gamelog_component.js';
+import { GamelogComponent } from '../common/components/gamelog_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { DungeonHudComponent } from './components/dungeon_hud.js';
 
@@ -5,6 +7,16 @@ import { DungeonHudComponent } from './components/dungeon_hud.js';
  * @type {HideableOpenable<DungeonHudComponent>}
  */
 let dungeonHud;
+
+/**
+ * @type {HideableOpenable<GamelogComponent>}
+ */
+let gamelog;
+
+/**
+ * @type {HideableOpenable<FullGamelogComponent>}
+ */
+let fullGamelog;
 
 /**
  * 
@@ -23,6 +35,31 @@ export function initializeGame(container = document.body) {
             const player = $gameParty.leader();
             updateHp(player);
         }
+    };
+
+    GamelogComponent.register();
+    gamelog = new HideableOpenable(new GamelogComponent());
+    container.appendChild(gamelog.topElement);
+
+    const LOG_SHOW_TIME = 5000;
+    let addLogTimeout = null;
+    window.$gamelog = {
+        add(logText) {
+            if (addLogTimeout) {
+                clearTimeout(addLogTimeout);
+            }
+
+            gamelog.showAndOpen();
+            gamelog.element.gamelogComponentAddLog(logText);
+            addLogTimeout = setTimeout(() => gamelog.closeAndHide(), LOG_SHOW_TIME);
+        },
+        close() {
+            if (addLogTimeout) {
+                clearTimeout(addLogTimeout);
+            }
+            gamelog.closeAndHide();
+        },
+        clear: () => gamelog.element.gamelogComponentClear(),
     };
 }
 

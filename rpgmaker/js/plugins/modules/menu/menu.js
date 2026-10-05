@@ -265,6 +265,7 @@ Scene_GameEnd.prototype.start = function() {
         ]
     }).then(playerChoice => {
         if (playerChoice.id === ARE_YOU_SURE_IDS.YES) {
+            $gamelog.close();
             removeMenuBackdrop();
             this.fadeOutAll();
             SceneManager.goto(Scene_Title);
@@ -428,6 +429,11 @@ function createItemsMenuEventListeners() {
                     const floorItemAmount = floorItemEvent.itemAmount;
                     $gameParty.gainItem(itemData, floorItemAmount - bagItemAmount);
                     floorItemEvent.itemAmount += bagItemAmount - floorItemAmount;
+                    if (floorItemAmount > bagItemAmount) {
+                        addItemPickUpLog(itemData.name, floorItemAmount - bagItemAmount);
+                    } else if (floorItemAmount < bagItemAmount) {
+                        addItemDropLog(itemData.name, bagItemAmount - floorItemAmount);
+                    }
                 }
             } else {
                 dropItem(swapItems.bagItemId);
@@ -462,6 +468,7 @@ function dropItem(itemId) {
 
         $f.placeItemEvent($gamePlayer.x, $gamePlayer.y, itemData?.meta?.item, itemAmount);
         $gameParty.loseItem(itemData, itemAmount);
+        addItemDropLog(itemData.name, itemAmount);
     });
 }
 
@@ -477,11 +484,30 @@ function pickUpItem(itemId) {
             ? floorEvents.filter(filterFunction)
             : [ floorEvents.findLast(filterFunction) ];
 
+        let totalAmount = 0;
         for (const itemEvent of itemEvents) {
             itemEvent.erase();
-            $gameParty.gainItem(itemData, itemEvent.itemAmount || 1);
+            totalAmount += (itemEvent.itemAmount || 1);
         }
+        $gameParty.gainItem(itemData, totalAmount);
+        addItemPickUpLog(itemData.name, totalAmount);
     });
+}
+
+function addItemPickUpLog(name, amount) {
+    addItemLog('Picked up', name, amount);
+}
+
+function addItemDropLog(name, amount) {
+    addItemLog('Dropped', name, amount);
+}
+
+function addItemLog(title, name, amount) {
+    if (amount > 1) {
+        $gamelog.add(`${title} ${name} (x${amount}).`);;
+    } else {
+        $gamelog.add(`${title} ${name}.`);;
+    }
 }
 
 function floorItemFilter(event, itemData) {
