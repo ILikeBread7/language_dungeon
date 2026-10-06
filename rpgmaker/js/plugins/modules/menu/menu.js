@@ -1,9 +1,11 @@
 import { ScrollableListComponent } from '../common/components/scrollable_list_component.js';
 import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
+import { SelectableFullGamelog } from '../common/helpers/selectable_full_gamelog.js';
 import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
 import { selectableNonCancellable } from '../common/helpers/selectable_restricted.js';
 import { SelectableScrollableList } from '../common/helpers/selectable_scrollable_list.js';
+import { fullGamelog } from '../game/game.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
 import { ARE_YOU_SURE_IDS, AreYouSureComponent } from './components/are_you_sure.js';
@@ -80,6 +82,13 @@ const MAIN_MENU_CHOICES = /** @type {const} */ Object.freeze({
         explanation: 'Save your progress',
         isEnabled() {
             return $gameSystem.isSaveEnabled();
+        }
+    },
+    LOG: {
+        text: 'Log',
+        explanation: 'Show the full gamelog',
+        isVisible() {
+            return $dataMap?.meta.dungeon;
         }
     },
     BACK: { text: 'Back to the game', explanation: 'Close this menu, and return to the game' },
@@ -248,6 +257,9 @@ Scene_Menu.prototype.start = function() {
             break;
             case MAIN_MENU_CHOICES.SAVE.id:
                 SceneManager.push(Scene_Save);
+            break;
+            case MAIN_MENU_CHOICES.LOG.id:
+                SceneManager.push(Scene_FullGamelog);
             break;
         }
     });
@@ -587,7 +599,7 @@ async function takeTitleChoiceAsync() {
 
 Scene_Title.prototype.update = function() {
     Scene_Base.prototype.update.call(this);
-    handleMenuInputs(Scene_Title);
+    handleMenuInputs();
 }
 
 Scene_Title.prototype.isBusy = Scene_Base.prototype.isBusy;
@@ -757,7 +769,7 @@ for (const scene of [
     const _scene_update = scene.prototype.update;
     scene.prototype.update = function() {
         _scene_update.call(this);
-        handleMenuInputs(scene);
+        handleMenuInputs();
     }
 
     scene.prototype.create = Scene_MenuBase.prototype.create;
@@ -776,7 +788,7 @@ Scene_Item.prototype.update = function() {
     _Scene_Item_update.call(this);
 }
 
-function handleMenuInputs(scene) {
+function handleMenuInputs() {
     const input = window.Input;
     const touchInput = window.TouchInput;
 
@@ -827,4 +839,32 @@ function toggleSceneItemType() {
     const types = Object.values(SCENE_ITEM_TYPES);
     const lastType = types[types.length - 1];
     sceneItemType = lastType + 1 - sceneItemType;
+}
+
+export class Scene_FullGamelog extends Scene_MenuBase {
+
+    constructor() {
+        super();
+    }
+
+    start() {
+        this.createBackground();
+        addMenuBackdrop();
+
+        fullGamelog.showAndOpen();
+        fullGamelog.element.fullGamelogComponentShow($gamelog.text);
+        selectable = new SelectableFullGamelog(
+            fullGamelog.element,
+            () => {
+                removeMenuBackdrop();
+                fullGamelog.closeAndHide();
+                this.popScene();
+            }
+        );
+    }
+
+    update() {
+        handleMenuInputs();
+    }
+
 }

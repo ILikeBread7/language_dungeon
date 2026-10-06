@@ -53,6 +53,8 @@ export class FullGamelogComponent extends BaseComponent {
      * @param {string} logText 
      */
     fullGamelogComponentShow(logText) {
+        this._promiseResolve.reject();
+
         this._saveCssVariables();
         this._textContainer.innerHTML = logText;
         this._scrollContainer.style.setProperty('scroll-behavior', 'auto');
@@ -84,12 +86,20 @@ export class FullGamelogComponent extends BaseComponent {
      * @param {number} scrollAmount 
      */
     async _scrollBy(scrollAmount) {
-        if (this._promiseResolve.isUnresolved()) {
+        this._promiseResolve.resolve();
+
+        const textHeight = this._textContainer.scrollHeight;
+        const oldScroll = this._scrollContainer.scrollTop;
+        const newScroll = this._scrollContainer.scrollTop + scrollAmount;
+
+        // No scrolling is needed
+        if (
+            (newScroll > oldScroll && oldScroll >= textHeight - this._scrollContainerHeight)
+            || (newScroll < oldScroll && oldScroll <= 0)
+        ) {
             return;
         }
 
-        const textHeight = this._textContainer.scrollHeight;
-        const newScroll = this._scrollContainer.scrollTop + scrollAmount;
         this._scrollContainer.scrollTop = newScroll;
         this._applyScrollCssClasses(textHeight, newScroll);
 
@@ -119,7 +129,6 @@ export class FullGamelogComponent extends BaseComponent {
      * @param {number} newScroll 
      */
     _applyScrollCssClasses(textHeight, newScroll) {
-        console.log(textHeight, newScroll)
         this.classList.remove(SCROLL_TOP_CSS_CLASS, SCROLL_BOTTOM_CSS_CLASS);
         if (textHeight > this._scrollContainerHeight) {
             if (newScroll > 0) {

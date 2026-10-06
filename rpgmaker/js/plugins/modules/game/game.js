@@ -16,7 +16,7 @@ let gamelog;
 /**
  * @type {HideableOpenable<FullGamelogComponent>}
  */
-let fullGamelog;
+export let fullGamelog;
 
 /**
  * 
@@ -60,7 +60,14 @@ export function initializeGame(container = document.body) {
             gamelog.closeAndHide();
         },
         clear: () => gamelog.element.gamelogComponentClear(),
+        get text() {
+            return gamelog.element.innerHTML;
+        }
     };
+
+    FullGamelogComponent.register();
+    fullGamelog = new HideableOpenable(new FullGamelogComponent());
+    container.appendChild(fullGamelog.topElement);
 }
 
 const _Game_Actor_setHp = Game_Actor.prototype.setHp;

@@ -276,3 +276,16 @@ hideable-component:has(gamelog-component) {
 #components-container.menu-backdrop gamelog-component {
     visibility: hidden;
 }
+
+hideable-component:has(full-gamelog-component) {
+    height: 100%;
+
+    & openable-component {
+        height: 100%;
+    }
+}
+
+full-gamelog-component {
+    height: 100%;
+    background: hsla(180deg, 100%, 50%, 0.6);
+}
