@@ -40,4 +40,4 @@ for (let i = 1; i <= 20; i++) {
 }
 fullLog.fullGamelogComponentShow(text.join('\n'));
 
-setInterval(() => fullLog.fullGamelogComponentScrollUp())
+// setInterval(() => fullLog.fullGamelogComponentScrollUp())

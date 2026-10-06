@@ -6,6 +6,8 @@ const SCROLL_CONTAINER_CSS_CLASS = 'scroll-container';
 const TEXT_CONTAINER_CSS_CLASS = 'text-container';
 const SCROLL_TOP_CSS_CLASS = 'scroll-top';
 const SCROLL_BOTTOM_CSS_CLASS = 'scroll-bottom';
+const SCROLL_UP_INDICATOR_CSS_CLASS = 'scroll-up-indicator';
+const SCROLL_DOWN_INDICATOR_CSS_CLASS = 'scroll-down-indicator';
 
 export class FullGamelogComponent extends BaseComponent {
 
@@ -30,6 +32,11 @@ export class FullGamelogComponent extends BaseComponent {
                 white-space: pre-wrap;
                 line-height: 1lh;
             }
+
+            ${this.componentTagName}:not(.${SCROLL_TOP_CSS_CLASS}) .${SCROLL_UP_INDICATOR_CSS_CLASS},
+            ${this.componentTagName}:not(.${SCROLL_BOTTOM_CSS_CLASS}) .${SCROLL_DOWN_INDICATOR_CSS_CLASS} {
+                display: none;
+            }
         `;
     }
 
@@ -44,8 +51,20 @@ export class FullGamelogComponent extends BaseComponent {
         this._textContainer.classList.add(TEXT_CONTAINER_CSS_CLASS);
 
         this._scrollContainer.appendChild(this._textContainer);
+
+        this._scrollUpIndicator = document.createElement('div');
+        this._scrollUpIndicator.classList.add(SCROLL_UP_INDICATOR_CSS_CLASS);
+        this._scrollUpIndicator.addEventListener('click', () => this.fullGamelogComponentPageUp());
         
-        this.appendChild(this._scrollContainer);
+        this._scrollDownIndicator = document.createElement('div');
+        this._scrollDownIndicator.classList.add(SCROLL_DOWN_INDICATOR_CSS_CLASS);
+        this._scrollDownIndicator.addEventListener('click', () => this.fullGamelogComponentPageDown());
+        
+        this.append(
+            this._scrollContainer,
+            this._scrollUpIndicator,
+            this._scrollDownIndicator
+        );
     }
 
     /**

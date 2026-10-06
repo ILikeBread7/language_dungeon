@@ -35,6 +35,79 @@
         position: absolute;
         top: 300px;
         width: 100%;
+
+        & .scroll-up-indicator,
+        & .scroll-down-indicator {
+            position: absolute;
+            --triangle-side-length: 0.75lh;
+            --triangle-height: calc(var(--triangle-side-length) * 0.87);
+            --circle-diameter: 1.2lh;
+
+            width: var(--circle-diameter);
+            height: var(--circle-diameter);
+            border-radius: 100%;
+
+            left: 50%;
+            background: red;
+            opacity: 0.6;
+            transition: opacity 0.1s;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 1;
+            }
+
+            &::before {
+                content: '';
+                width: var(--triangle-side-length);
+                height: var(--triangle-height);
+                position: absolute;
+                background: yellow;
+                left: calc((var(--circle-diameter) - var(--triangle-side-length)) / 2);
+                top: calc((var(--circle-diameter) - var(--triangle-height)) / 2);
+            }
+        }
+
+        & .scroll-down-indicator {
+            bottom: 0px;
+
+            &::before {
+                clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+                animation: floating-up 0.75s linear alternate infinite;
+            }
+        }
+        
+        & .scroll-up-indicator {
+            top: 0px;
+            &::before {
+                clip-path: polygon(0% 100%, 100% 100%, 50% 0%);
+                animation: floating-down 0.75s linear alternate infinite;
+            }
+        }
+    }
+    
+    @keyframes floating-down {
+        0% {
+            transform: translateY(-33%);
+        }
+        50% {
+            transform: translateY(16%);
+        }
+        100% {
+            transform: translateY(-33%);
+        }
+    }
+
+    @keyframes floating-up {
+        0% {
+            transform: translateY(33%);
+        }
+        50% {
+            transform: translateY(-16%);
+        }
+        100% {
+            transform: translateY(33%);
+        }
     }
 </style>
 <script type="module" src="game_test.js"></script>
