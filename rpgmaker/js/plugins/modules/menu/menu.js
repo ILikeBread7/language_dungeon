@@ -329,12 +329,13 @@ Scene_Item.prototype.start = function() {
     }
 
     const choices = createItemChoices();
+    const bagInfo = createBagInfo();
     itemsMenu.showAndOpen();
 
     (
         sceneItemType === SCENE_ITEM_TYPES.FLOOR && choices.length === 1
-            ? itemsMenu.element.itemsMenuStartOpenFirst(choices)
-            : itemsMenu.element.itemsMenuStart(choices)
+            ? itemsMenu.element.itemsMenuStartOpenFirst(choices, bagInfo)
+            : itemsMenu.element.itemsMenuStart(choices, bagInfo)
     ).then(async () => {
         await itemsMenu.closeAndHide();
         this.popScene();
@@ -379,6 +380,17 @@ function getItemAmounts(item) {
         case SCENE_ITEM_TYPES.FLOOR: return item.amount;
         default: return $gameParty.numItems($dataItems[item.id]);
     }
+}
+
+function createBagInfo() {
+    const itemsCount = $f.calculateBagItemsCount();
+    const bagLimit = $f.getBagLimit();
+    const isBagFull = itemsCount >= bagLimit;
+    const bagFullCssClass = isBagFull ? 'bag-full' : '';
+
+    return /*html*/`
+        <span class="${bagFullCssClass}">Items: <span class="bag-items-count">${itemsCount}</span> / <span class="bag-limit">${bagLimit}</span></span>
+    `;
 }
 
 function createItemsMenuEventListeners() {

@@ -362,3 +362,7 @@ full-gamelog-component {
         transform: translateY(33%);
     }
 }
+
+.bag-full {
+    color: red;
+}
