@@ -14,6 +14,7 @@ import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.j
 
 const ITEM_USE_DIALOG_CSS_CLASS = 'item-use-dialog';
 const ITEMS_LIST_CSS_CLASS = 'items-list';
+const BAG_INFO_CSS_CLASS = 'bag-info';
 
 export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
     ITEM_USED: 'itemused',
@@ -47,6 +48,13 @@ export class ItemsMenuComponent extends BaseComponent {
                 display: block;
             }
 
+            ${this.componentTagName} .${BAG_INFO_CSS_CLASS} {
+                position: absolute;
+                bottom: 0px;
+                left: 50%;
+            }
+
+
             ${this.componentTagName} .${ITEM_USE_DIALOG_CSS_CLASS} {
                 position: absolute;
                 top: 50%;
@@ -73,7 +81,11 @@ export class ItemsMenuComponent extends BaseComponent {
         this._listWithExplanation = new ListWithExplanation({ choicesList: new ScrollableListComponent() });
         this._listWithExplanation.choicesList.classList.add(ITEMS_LIST_CSS_CLASS);
         this._listWithExplanation.appendAll(this);
-        
+
+        this._bagInfo = document.createElement('div');
+        this._bagInfo.classList.add(BAG_INFO_CSS_CLASS);
+        this.appendChild(this._bagInfo);
+
         this._listWithExplanation.choicesList.addEventListener(CHOICES_LIST_EVENTS.OPTION_CONFIRM, async event => {
             /**
              * @type {ItemChoice}
@@ -103,12 +115,14 @@ export class ItemsMenuComponent extends BaseComponent {
     /**
      * 
      * @param {[ItemChoice]} items 
+     * @param {string} [bagInfo] 
      * @returns {Promise<void>}
      */
-    async itemsMenuStart(items) {
+    async itemsMenuStart(items, bagInfo) {
         this.itemsMenuReject();
 
         return new Promise((resolve, reject) => {
+            this._bagInfo.innerHTML = bagInfo ?? '';
             this._listWithExplanation.setChoices(items);
             this.choicesList.choicesListRefreshVisibleAndEnabledOptions();
             this._listWithExplanation.selectFirstActiveChoice()
@@ -121,10 +135,11 @@ export class ItemsMenuComponent extends BaseComponent {
     /**
      * 
      * @param {[ItemChoice]} items 
+     * @param {string} [bagInfo] 
      * @returns {Promise<void>}
      */
-    async itemsMenuStartOpenFirst(items) {
-        const promise = this.itemsMenuStart(items);
+    async itemsMenuStartOpenFirst(items, bagInfo) {
+        const promise = this.itemsMenuStart(items, bagInfo);
         this.choicesList.choicesListConfirmCurrentOption();
         return await promise;
     }

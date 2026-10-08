@@ -94,7 +94,7 @@ const tests = {
             });
         }
 
-        items.itemsMenuStartOpenFirst(itemChoices);
+        items.itemsMenuStartOpenFirst(itemChoices, 'Bag info');
         itemsMenu.showAndOpen();
         selectable =  new SelectableScrollableList(items.choicesList);
 
@@ -243,7 +243,7 @@ const tests = {
         saveMenu.closeAndHide();
     }
 };
-tests.save();
+tests.items();
 
 const keyActionMap = new Map([
     [ 'ArrowDown', () => selectable.selectDown() ],
