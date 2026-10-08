@@ -65,6 +65,7 @@ export class ItemUseDialogComponent extends BaseComponent {
         ITEM_DIALOG_CHOICES.USE.isVisible = itemUseOptions.canUse;
         ITEM_DIALOG_CHOICES.DROP.isVisible = itemUseOptions.canDrop;
         ITEM_DIALOG_CHOICES.PICK_UP.isVisible = itemUseOptions.canPickUp;
+        ITEM_DIALOG_CHOICES.PICK_UP.isEnabled = itemUseOptions.enabledPickUp;
         ITEM_DIALOG_CHOICES.SWAP.isVisible = itemUseOptions.canSwap;
     }
 

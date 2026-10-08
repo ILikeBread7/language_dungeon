@@ -360,6 +360,7 @@ function createItemChoices() {
             multiple: itemData.meta.multiple,
             canUse: () => !isItemSwap,
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
+            enabledPickUp: () => !$f.isBagFull() || (itemData.meta.multiple && $gameParty.hasItem(itemData)),
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
             canSwap: () => !!item.meta.item && (isItemSwap || $f.isFloorItem())
         }

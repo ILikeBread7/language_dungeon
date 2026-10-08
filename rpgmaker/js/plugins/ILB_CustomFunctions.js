@@ -1622,4 +1622,29 @@ var $f = $f || {};
             event.itemAmount = amount;
         }
     };
+
+    $f.calculateBagItemsCount = () => {
+        return $gameParty.items().reduce(
+            (acc, item) => acc + getItemAmountForBagLimit(item),
+            0
+        );
+    }
+
+    function getItemAmountForBagLimit(item) {
+        if (item.itypeId === 2) {   // 2 = Key item
+            return 0;
+        }
+        if (item.meta.multiple) {
+            return 1;
+        }
+        return $gameParty.numItems($dataItems[item.id]);
+    }
+
+    $f.isBagFull = () => {
+        return $f.calculateBagItemsCount() >= $f.getBagLimit();
+    }
+
+    $f.getBagLimit = () => {
+        return 3;
+    }
 })();
