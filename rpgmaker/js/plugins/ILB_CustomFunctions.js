@@ -1326,6 +1326,16 @@ var $f = $f || {};
     }
 
     $f.useFloorItem = itemId => {
+        useItem(itemId);
+        addItemUsedLog($dataItems[itemId]);
+    }
+
+    $f.useInventoryItem = itemId => {
+        useItem(itemId);
+        $gameParty.consumeItem($dataItems[itemId]);
+    }
+
+    function useItem(itemId) {
         const actor = $gameParty.leader();
         const item = $dataItems[itemId];
 
@@ -1337,11 +1347,6 @@ var $f = $f || {};
         actor.startAnimation(item.animationId);
         action.apply(actor);
         action.applyGlobal();
-    }
-
-    $f.useInventoryItem = itemId => {
-        $f.useFloorItem(itemId);
-        $gameParty.consumeItem($dataItems[itemId]);
     }
 
     function isFloorItem() {
@@ -1647,4 +1652,16 @@ var $f = $f || {};
     $f.getBagLimit = () => {
         return 3;
     }
+
+    const _Game_Party_consumeItem = Game_Party.prototype.consumeItem;
+    Game_Party.prototype.consumeItem = function(item) {
+        _Game_Party_consumeItem.call(this, item);
+        addItemUsedLog(item);
+    }
+    
+    function addItemUsedLog(item) {
+        $gamelog.add(`${item.name} used.`);
+    }
+
+    $f.addItemUsedLog = addItemUsedLog;
 })();
