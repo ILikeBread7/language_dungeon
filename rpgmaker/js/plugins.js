@@ -22,5 +22,6 @@ var $plugins =
 {"name":"ILB_CharacterLabelsHtml","status":true,"description":"Adds text labels to characters (events and player)","parameters":{}},
 {"name":"ILB_PreventTitleFadeInFromOptions","status":true,"description":"Prevents the fade-in animation on title screen if coming back from Options","parameters":{"Scenes":"Scene_Options, Scene_GameExit"}},
 {"name":"ILB_HideCursor","status":true,"description":"Hides the mouse cursor after a specific time with no movement","parameters":{"Time":"1000","Show on click":"true"}},
-{"name":"ILB_RememberGameWindowPosition","status":true,"description":"Makes the game window remember its position between restarts.","parameters":{"Debounce time":"1000"}}
+{"name":"ILB_RememberGameWindowPosition","status":true,"description":"Makes the game window remember its position between restarts.","parameters":{"Debounce time":"1000"}},
+{"name":"MapGridOverlay","status":true,"description":"Displays a configurable tile grid overlay on the map.","parameters":{}}
 ];
