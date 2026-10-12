@@ -360,7 +360,9 @@ function createItemChoices() {
             explanation: item.description,
             id: item.id,
             amount,
-            maxAmount: Math.min(amount, maxAmount - partyAmount),
+            maxAmount: sceneItemType === SCENE_ITEM_TYPES.ITEMS
+                ? amount
+                : Math.min(amount, maxAmount - partyAmount),
             consumable: itemData.consumable,
             multiple: itemData.meta.multiple,
             canUse: () => !isItemSwap,
