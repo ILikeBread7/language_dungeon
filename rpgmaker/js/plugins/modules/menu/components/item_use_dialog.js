@@ -43,7 +43,7 @@ export class ItemUseDialogComponent extends BaseComponent {
                         return choice;
                     }
                     const amount = itemInfo.multiple && choice.id !== ITEM_DIALOG_CHOICES.USE.id
-                        ? itemInfo.amount
+                        ? itemInfo.maxAmount
                         : 1;
                     return { ...choice, text: `${choice.text} (${amount})` };
                 });

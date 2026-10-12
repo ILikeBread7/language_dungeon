@@ -352,18 +352,22 @@ function createItemChoices() {
         const itemData = $dataItems[item.id];
 
         const amount = getItemAmounts(item);
+        const maxAmount = $gameParty.maxItems(itemData);
+        const partyAmount = $gameParty.numItems(itemData);
+        const hasFullAmount = partyAmount >= maxAmount;
         return {
             text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${amount}`,
             explanation: item.description,
             id: item.id,
             amount,
+            maxAmount: Math.min(amount, maxAmount - partyAmount),
             consumable: itemData.consumable,
             multiple: itemData.meta.multiple,
             canUse: () => !isItemSwap,
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
-            enabledPickUp: () => !$f.isBagFull() || (itemData.meta.multiple && $gameParty.hasItem(itemData)),
+            enabledPickUp: () => !hasFullAmount && (!$f.isBagFull() || (itemData.meta.multiple && $gameParty.hasItem(itemData))),
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
-            canSwap: () => !!item.meta.item && (isItemSwap || $f.isFloorItem())
+            canSwap: () => !!item.meta.item && (isItemSwap || $f.isFloorItem()) && (sceneItemType === SCENE_ITEM_TYPES.ITEMS || !hasFullAmount)
         }
     });
 }
@@ -509,13 +513,25 @@ function pickUpItem(itemId) {
             ? floorEvents.filter(filterFunction)
             : [ floorEvents.findLast(filterFunction) ];
 
-        let totalAmount = 0;
+        const currentAmount = $gameParty.numItems(itemData);
+        const maxAmount = $gameParty.maxItems(itemData);
+        let totalPickUpAmount = 0;
         for (const itemEvent of itemEvents) {
-            itemEvent.erase();
-            totalAmount += (itemEvent.itemAmount || 1);
+            const itemAmount = (itemEvent.itemAmount || 1);
+            const newAmount = currentAmount + totalPickUpAmount + itemAmount;
+            
+            if (newAmount > maxAmount) {
+                const pickUpAmount = maxAmount - (currentAmount + totalPickUpAmount);
+                totalPickUpAmount += pickUpAmount;
+                itemEvent.itemAmount -= pickUpAmount;
+                break;
+            } else {
+                itemEvent.erase();
+                totalPickUpAmount += itemAmount;
+            }
         }
-        $gameParty.gainItem(itemData, totalAmount);
-        addItemPickUpLog(itemData.name, totalAmount);
+        $gameParty.gainItem(itemData, totalPickUpAmount);
+        addItemPickUpLog(itemData.name, totalPickUpAmount);
     });
 }
 
