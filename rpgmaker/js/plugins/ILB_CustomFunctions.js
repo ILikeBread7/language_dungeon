@@ -240,14 +240,13 @@ var $f = $f || {};
         }
 
         this.quiz.isAttacking = false;
-        if ($ns.arrowHit) {
-            $ns.arrowHit = false;
-            moveEnemies();
-        } else if ($ns.attackCancelled) { 
-            $ns.attackCancelled = false;
-        } else {
+
+        if (!$ns.attackCancelled && !$ns.areaAttack) {
             moveEnemies();
         }
+
+        $ns.arrowHit = false;
+        $ns.attackCancelled = false;
     }
 
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
@@ -1664,4 +1663,36 @@ var $f = $f || {};
     }
 
     $f.addItemUsedLog = addItemUsedLog;
+
+    $f.areaAttack = () => {
+        const playerRoom = $gamePlayer.currentRoom();
+        const enemies = $gameMap.events().filter(
+            event => event && !event._erased && event.event().meta.enemy
+                && (playerRoom && playerRoom === event.currentRoom())
+        );
+
+        $ns.areaAttack = true;
+        for (const enemy of enemies) {
+            enemy.start();
+        }
+        
+        if (enemies.length > 0) {
+            onUnlock(
+                enemies[enemies.length - 1],
+                () => {
+                    $ns.areaAttack = false;
+                    $f.moveEnemies();
+                }
+            );
+        }
+    }
+
+    function onUnlock(event, listener) {
+        const baseUnlock = event.unlock;
+        event.unlock = () => {
+            baseUnlock.call(event);
+            listener();
+            event.unlock = baseUnlock.bind(event);
+        }
+    }
 })();
