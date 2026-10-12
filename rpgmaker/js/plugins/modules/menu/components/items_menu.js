@@ -20,7 +20,8 @@ export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
     ITEM_USED: 'itemused',
     ITEM_DROPPED: 'itemdropped',
     ITEM_PICKED_UP: 'itempickedup',
-    ITEM_SWAP: 'itemswap'
+    ITEM_SWAP: 'itemswap',
+    ITEM_CANCEL: 'itemcancel'
 });
 /**
  * @typedef { Enum<ITEMS_MENU_EVENTS> } ItemsMenuEvent
@@ -167,6 +168,8 @@ export class ItemsMenuComponent extends BaseComponent {
             case ITEM_DIALOG_CHOICES.SWAP.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_SWAP, { detail: { itemId } }));
             break;
+            case ITEM_DIALOG_CHOICES.CANCEL.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_CANCEL));
             default: // No event
         }
     }

@@ -481,11 +481,14 @@ function createItemsMenuEventListeners() {
         isItemSwap = false;
     });
 
-    itemsMenu.element.dialogChoicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, () => {
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_CANCEL, cancelListener);
+    itemsMenu.element.dialogChoicesList.addEventListener(CHOICES_LIST_EVENTS.CHOICES_CANCEL, cancelListener);
+    
+    function cancelListener() {
         if (sceneItemType === SCENE_ITEM_TYPES.FLOOR && itemsList.choicesListDisplayedOptions.length === 1) {
             goBackFromItemsMenu();
         }
-    });
+    }
 }
 
 function dropItem(itemId) {
