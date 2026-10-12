@@ -1664,11 +1664,15 @@ var $f = $f || {};
 
     $f.addItemUsedLog = addItemUsedLog;
 
+    const AREA_ATTACK_DISTANCE = 3;
     $f.areaAttack = () => {
         const playerRoom = $gamePlayer.currentRoom();
         const enemies = $gameMap.events().filter(
             event => event && !event._erased && event.event().meta.enemy
-                && (playerRoom && playerRoom === event.currentRoom())
+                && (
+                    (playerRoom && playerRoom === event.currentRoom())
+                    || (distance($gamePlayer, event) <= AREA_ATTACK_DISTANCE)
+                )
         );
 
         $ns.areaAttack = true;
