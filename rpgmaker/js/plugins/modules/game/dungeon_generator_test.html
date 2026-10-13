@@ -1,0 +1,38 @@
+<script src="dungeon_generator.js"></script>
+<script>
+    const COLORS = new Map([
+        [ 'space', 'blue' ],
+        [ 'room', 'yellow' ],
+        [ 'pass', 'green' ]
+    ]);
+
+    setTimeout(() => {
+        const TILE_SIZE = 10;
+
+        const canvas = document.createElement('canvas');
+        const dungeon = DungeonGenerator.generate({
+            width: 80,
+            height: 50
+        });
+        console.dir(dungeon);
+
+        canvas.width = dungeon.w * TILE_SIZE;
+        canvas.height = dungeon.h * TILE_SIZE;
+
+        document.body.appendChild(canvas);
+        const ctx = canvas.getContext('2d');
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        dungeon.tiles.forEach((row, rowIndex) => {
+            row.forEach((tile, columnIndex) => {
+                ctx.fillStyle = COLORS.get(tile);
+                ctx.fillRect(
+                    columnIndex * TILE_SIZE,
+                    rowIndex * TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE
+                );
+            });
+        });
+    })
+</script>
