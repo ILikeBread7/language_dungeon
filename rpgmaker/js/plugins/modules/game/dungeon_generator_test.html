@@ -7,12 +7,12 @@
     ]);
 
     setTimeout(() => {
-        const TILE_SIZE = 10;
+        const TILE_SIZE = 5;
 
         const canvas = document.createElement('canvas');
         const dungeon = DungeonGenerator.generate({
-            width: 80,
-            height: 50
+            width: 160,
+            height: 100
         });
         console.dir(dungeon);
 
@@ -34,5 +34,24 @@
                 );
             });
         });
+
+        const blocks = DungeonGenerator._createBlocks(
+            dungeon.tiles,
+            12,
+            10
+        );
+        console.dir(blocks);
+        console.log(blocks.filter(block => block.w < 10 || block.h < 10));
+
+        for (const block of blocks) {
+            const color = `hsla(${Math.random() * 360}deg, 50%, ${Math.random() * 50 + 25}%, 75%)`;
+            ctx.fillStyle = color;
+            ctx.fillRect(
+                block.x * TILE_SIZE,
+                block.y * TILE_SIZE,
+                block.w * TILE_SIZE,
+                block.h * TILE_SIZE
+            );
+        }
     })
 </script>
