@@ -22,6 +22,16 @@
 const SPACE = 'space';
 const ROOM = 'room';
 const PASS = 'pass';
+const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
+    NONE: 0,
+    TOP: 8,
+    BOTTOM: 2,
+    LEFT: 4,
+    RIGHT: 6
+});
+/**
+ * @typedef {Enum<BLOCK_ADJACENCY>} BlockAdjacency
+ */
 
 class DungeonGenerator {
 
@@ -87,6 +97,8 @@ class DungeonGenerator {
                 ...newBlocks
             ];
         }
+
+        const blockAdjacency = this._createBlockAdjacencyMap(blocks);
 
         return blocks;
     }
@@ -213,6 +225,78 @@ class DungeonGenerator {
             return randomRatio;
         }
         return 0.5;
+    }
+
+    /**
+     * 
+     * @param {[DungeonSection]} blocks 
+     */
+    static _createBlockAdjacencyMap(blocks) {
+        const map = new Map();
+        const emptyEntryFunction = () => ({
+            top: [],
+            bottom: [],
+            left: [],
+            right: []
+        });
+
+        for (let i = 0; i < blocks.length; i++) {
+            for (let j = i + 1; j < blocks.length; j++) {
+                const block1 = blocks[i];
+                const block2 = blocks[j];
+                const block1Adjacency = map.getOrInsertComputed(block1, emptyEntryFunction);
+                const block2Adjacency = map.getOrInsertComputed(block2, emptyEntryFunction);
+                const adjacency = this._checkBlocksAdjacency(block1, block2);
+                
+                switch(adjacency) {
+                    case BLOCK_ADJACENCY.TOP:
+                        block1Adjacency.top.push(block2);
+                        block2Adjacency.bottom.push(block1);
+                    break;
+                    case BLOCK_ADJACENCY.BOTTOM:
+                        block1Adjacency.bottom.push(block2);
+                        block2Adjacency.top.push(block1);
+                    break;
+                    case BLOCK_ADJACENCY.LEFT:
+                        block1Adjacency.left.push(block2);
+                        block2Adjacency.right.push(block1);
+                    break;
+                    case BLOCK_ADJACENCY.RIGHT:
+                        block1Adjacency.right.push(block2);
+                        block2Adjacency.left.push(block1);
+                    break;
+                    default: // No adjacency, nothing to do
+                }
+            }
+        }
+
+        return map;
+    }
+
+    /**
+     * 
+     * @param {DungeonSection} block1 
+     * @param {DungeonSection} block2 
+     * @returns {BlockAdjacency} Adjacency of the second block relative to the first one
+     */
+    static _checkBlocksAdjacency(block1, block2) {
+        const isAlignedHorizontally = block1.x + block1.w >= block2.x && block1.x <= block2.x + block2.w;
+        if (block1.y === block2.y + block2.h && isAlignedHorizontally) {
+            return BLOCK_ADJACENCY.TOP;
+        }
+        if (block1.y + block1.h === block2.y && isAlignedHorizontally) {
+            return BLOCK_ADJACENCY.BOTTOM;
+        }
+        
+        const isAlignedVertically = block1.y + block1.h >= block2.y && block1.y <= block2.y + block2.h;
+        if (block1.x === block2.x + block2.w && isAlignedVertically) {
+            return BLOCK_ADJACENCY.LEFT;
+        }
+        if (block1.x + block1.w === block2.x && isAlignedVertically) {
+            return BLOCK_ADJACENCY.RIGHT;
+        }
+
+        return BLOCK_ADJACENCY.NONE;
     }
 
 }
