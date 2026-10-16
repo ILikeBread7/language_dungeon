@@ -2,6 +2,8 @@
  * @typedef {{
  *  width: number,
  *  height: number,
+ *  mapWidth: number,
+ *  mapHeight: number,
  *  minRooms: number,
  *  maxRooms: number,
  *  minRoomSize: number,
@@ -33,12 +35,12 @@ class DungeonGenerator {
         const tiles = this._createEmptyDungeon(options);
         const numOfBlocks = Math.floor(Math.random() * (options.maxRooms - options.minRooms)) + options.minRooms;
         const minBlockSize = options.minRoomSize + this.BLOCK_PADDING;
-        const blocks = this._createBlocks(tiles, numOfBlocks);
+        const blocks = this._createBlocks(tiles, options, numOfBlocks, minBlockSize);
 
         return {
             tiles,
-            w: options.width,
-            h: options.height
+            w: options.mapWidth,
+            h: options.mapHeight
         };
     }
 
@@ -49,8 +51,8 @@ class DungeonGenerator {
     static _createEmptyDungeon(options) {
         const tiles = [];
 
-        for (let i = 0; i < options.height; i++) {
-            tiles[i] = Array(options.width).fill(SPACE);
+        for (let i = 0; i < options.mapHeight; i++) {
+            tiles[i] = Array(options.mapWidth).fill(SPACE);
         }
 
         return tiles;
@@ -59,15 +61,16 @@ class DungeonGenerator {
     /**
      * 
      * @param {DungeonTiles} tiles 
+     * @param {DungeonOptions} options 
      * @param {number} numOfBlocks 
      * @param {number} minBlockSize 
      */
-    static _createBlocks(tiles, numOfBlocks, minBlockSize) {
+    static _createBlocks(tiles, options, numOfBlocks, minBlockSize) {
         let blocks = [{
-            x: 0,
-            y: 0,
-            w: tiles[0].length,
-            h: tiles.length
+            x: Math.floor((options.mapWidth - options.width) / 2),
+            y: Math.floor((options.mapHeight - options.height) / 2),
+            w: options.width,
+            h: options.height
         }];
 
         // Start at 1 because we already start with a block
