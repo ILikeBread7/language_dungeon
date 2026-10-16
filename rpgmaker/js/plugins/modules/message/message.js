@@ -45,7 +45,13 @@ export function addMessageBox(container) {
     container.appendChild(messageBox.topElement);
 
     window.$messageBox = messageBox;
-    box.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => SoundManager.playCursor());
+    box.addEventListener(MESSAGE_BOX_EVENTS.CHAR_SHOWN, () => {
+        if (container.classList.contains('menu-backdrop')) {
+            return;
+        }
+
+        SoundManager.playCursor();
+    });
 
     return box;
 }

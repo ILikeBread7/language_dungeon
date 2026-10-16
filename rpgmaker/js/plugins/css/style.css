@@ -235,7 +235,8 @@ options-menu-component {
 }
 
 #components-container:has([data-exit="exit"]) hideable-component:not([data-exit="exit"]) {
-    display: none;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .danger {
