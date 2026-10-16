@@ -35,7 +35,8 @@ const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
 
 class DungeonGenerator {
 
-    static BLOCK_PADDING = 5;
+    static BLOCK_PADDING = 3;
+    static TOTAL_BLOCK_PADDING = this.BLOCK_PADDING * 2;
 
     /**
      * 
@@ -44,8 +45,11 @@ class DungeonGenerator {
     static generate(options) {
         const tiles = this._createEmptyDungeon(options);
         const numOfBlocks = Math.floor(Math.random() * (options.maxRooms - options.minRooms)) + options.minRooms;
-        const minBlockSize = options.minRoomSize + this.BLOCK_PADDING;
+        const minBlockSize = options.minRoomSize + this.TOTAL_BLOCK_PADDING;
         const blocks = this._createBlocks(tiles, options, numOfBlocks, minBlockSize);
+        const blockAdjacencyMap = this._createBlockAdjacencyMap(blocks);
+        const rooms = this._createRooms(blocks, options);
+        this._applyRoomsToTiles(rooms, tiles);
 
         return {
             tiles,
@@ -97,8 +101,6 @@ class DungeonGenerator {
                 ...newBlocks
             ];
         }
-
-        const blockAdjacency = this._createBlockAdjacencyMap(blocks);
 
         return blocks;
     }
@@ -197,7 +199,7 @@ class DungeonGenerator {
         if (splitRatio > 0.5) {
             splitRatio = 1 - splitRatio;
         }
-        return Math.floor(block.w * splitRatio) - this.BLOCK_PADDING >= minBlockSize;
+        return Math.floor(block.w * splitRatio) - this.TOTAL_BLOCK_PADDING >= minBlockSize;
     }
 
     /**
@@ -210,7 +212,7 @@ class DungeonGenerator {
         if (splitRatio > 0.5) {
             splitRatio = 1 - splitRatio;
         }
-        return Math.floor(block.h * splitRatio) - this.BLOCK_PADDING >= minBlockSize;
+        return Math.floor(block.h * splitRatio) - this.TOTAL_BLOCK_PADDING >= minBlockSize;
     }
 
     /**
@@ -297,6 +299,56 @@ class DungeonGenerator {
         }
 
         return BLOCK_ADJACENCY.NONE;
+    }
+
+    /**
+     * 
+     * @param {[DungeonSection]} blocks
+     * @param {DungeonOptions} options  
+     */
+    static _createRooms(blocks, options) {
+        return blocks.map(block => {
+            const maxWidth = Math.min(options.maxRoomSize, block.w - this.TOTAL_BLOCK_PADDING);
+            const maxHeight = Math.min(options.maxRoomSize, block.h - this.TOTAL_BLOCK_PADDING);
+            const width = this._randomInRange(options.minRoomSize, maxWidth);
+            const height = this._randomInRange(options.minRoomSize, maxHeight);
+            
+            const maxX = Math.floor((block.w - width) / 2) - this.BLOCK_PADDING;
+            const roomX = this._randomInRange(this.BLOCK_PADDING, maxX);
+            const maxY = Math.floor((block.h - height) / 2) - this.BLOCK_PADDING;
+            const roomY = this._randomInRange(this.BLOCK_PADDING, maxY);
+
+            return {
+                x: roomX + block.x,
+                y: roomY + block.y,
+                w: width,
+                h: height
+            };
+        });
+    }
+
+    /**
+     * 
+     * @param {number} rangeStart 
+     * @param {number} rangeEnd 
+     */
+    static _randomInRange(rangeStart, rangeEnd) {
+        return Math.floor(Math.random() * (rangeEnd - rangeStart)) + rangeStart;
+    }
+
+    /**
+     * 
+     * @param {[DungeonSection]} rooms 
+     * @param {DungeonTiles} tiles 
+     */
+    static _applyRoomsToTiles(rooms, tiles) {
+        for (const room of rooms) {
+            for (let y = room.y; y < room.y + room.h; y++) {
+                for (let x = room.x; x < room.x + room.w; x++) {
+                    tiles[y][x] = ROOM;
+                }
+            }
+        }
     }
 
 }

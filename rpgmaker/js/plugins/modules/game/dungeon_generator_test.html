@@ -14,7 +14,11 @@
             width: 160,
             height: 100,
             mapWidth: 180,
-            mapHeight: 120
+            mapHeight: 120,
+            minRooms: 8,
+            maxRooms: 12,
+            minRoomSize: 10,
+            maxRoomSize: 80
         };
         const dungeon = DungeonGenerator.generate(options);
         console.dir(dungeon);
@@ -38,24 +42,24 @@
             });
         });
 
-        const blocks = DungeonGenerator._createBlocks(
-            dungeon.tiles,
-            options,
-            12,
-            10
-        );
-        console.dir(blocks);
-        console.log(blocks.filter(block => block.w < 10 || block.h < 10));
+        // const blocks = DungeonGenerator._createBlocks(
+        //     dungeon.tiles,
+        //     options,
+        //     12,
+        //     10
+        // );
+        // console.dir(blocks);
+        // console.log(blocks.filter(block => block.w < 10 || block.h < 10));
 
-        for (const block of blocks) {
-            const color = `hsla(${Math.random() * 360}deg, 50%, ${Math.random() * 50 + 25}%, 75%)`;
-            ctx.fillStyle = color;
-            ctx.fillRect(
-                block.x * TILE_SIZE,
-                block.y * TILE_SIZE,
-                block.w * TILE_SIZE,
-                block.h * TILE_SIZE
-            );
-        }
+        // for (const block of blocks) {
+        //     const color = `hsla(${Math.random() * 360}deg, 50%, ${Math.random() * 50 + 25}%, 50%)`;
+        //     ctx.fillStyle = color;
+        //     ctx.fillRect(
+        //         block.x * TILE_SIZE,
+        //         block.y * TILE_SIZE,
+        //         block.w * TILE_SIZE,
+        //         block.h * TILE_SIZE
+        //     );
+        // }
     })
 </script>
