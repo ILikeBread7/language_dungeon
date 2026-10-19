@@ -43,7 +43,9 @@
         });
 
         console.log(dungeon.blockConnections)
-        dungeon.blockConnections.forEach(([ block1, block2 ]) => {
+        dungeon.blockConnections.forEach(([ block1Index, block2Index ]) => {
+            const block1 = dungeon.blocks[block1Index];
+            const block2 = dungeon.blocks[block2Index];
             console.log(block1.x, block1.y, block2.x, block2.y)
             ctx.beginPath();
             ctx.moveTo((block1.x + block1.w / 2) * TILE_SIZE, (block1.y + block1.h / 2) * TILE_SIZE);

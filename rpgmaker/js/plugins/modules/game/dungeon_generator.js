@@ -371,6 +371,7 @@ class DungeonGenerator {
      */
     static _createBlockConnections(blockAdjacencyMap) {
         const blocks = [...blockAdjacencyMap.keys()];
+        const blockToIndexMap = new Map(blocks.map((block, index) => [ block, index ]));
         const sections = blocks.map(block => [ block ]);
 
         /** @type {Map<DungeonSection, [DungeonSection]>} */
@@ -400,7 +401,7 @@ class DungeonGenerator {
             }
             sections.splice(randomSectionIndex, 1);
 
-            blockConnections.push(this._createBlockConnectionInfo(block, adjacentBlock));
+            blockConnections.push(this._createBlockConnectionInfo(block, adjacentBlock, blockToIndexMap));
         }
 
         return blockConnections;
@@ -410,14 +411,18 @@ class DungeonGenerator {
      * 
      * @param {DungeonSection} block1 
      * @param {DungeonSection} block2 
+     * @param {Map<DungeonSection, number>} blockToIndexMap 
      */
-    static _createBlockConnectionInfo(block1, block2) {
+    static _createBlockConnectionInfo(block1, block2, blockToIndexMap) {
         const adjacencyType = this._checkBlocksAdjacency(block1, block2);
+        const block1Index = blockToIndexMap.get(block1);
+        const block2Index = blockToIndexMap.get(block2);
+
         switch (adjacencyType) {
-            case BLOCK_ADJACENCY.TOP: return [ block1, block2, BLOCK_ADJACENCY.TOP ];
-            case BLOCK_ADJACENCY.BOTTOM: return [ block2, block1, BLOCK_ADJACENCY.TOP ];
-            case BLOCK_ADJACENCY.LEFT: return [ block1, block2, BLOCK_ADJACENCY.LEFT ];
-            case BLOCK_ADJACENCY.RIGHT: return [ block2, block1, BLOCK_ADJACENCY.LEFT ];
+            case BLOCK_ADJACENCY.TOP: return [ block1Index, block2Index, BLOCK_ADJACENCY.TOP ];
+            case BLOCK_ADJACENCY.BOTTOM: return [ block2Index, block1Index, BLOCK_ADJACENCY.TOP ];
+            case BLOCK_ADJACENCY.LEFT: return [ block1Index, block2Index, BLOCK_ADJACENCY.LEFT ];
+            case BLOCK_ADJACENCY.RIGHT: return [ block2Index, block1Index, BLOCK_ADJACENCY.LEFT ];
             default: throw new Error('Adjacent blocks are not adjacent. This should never happen. All is lost. Goodbye.');
         }
     }
