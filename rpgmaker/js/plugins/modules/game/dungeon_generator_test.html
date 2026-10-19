@@ -42,6 +42,15 @@
             });
         });
 
+        console.log(dungeon.blockConnections)
+        dungeon.blockConnections.forEach(([ block1, block2 ]) => {
+            console.log(block1.x, block1.y, block2.x, block2.y)
+            ctx.beginPath();
+            ctx.moveTo((block1.x + block1.w / 2) * TILE_SIZE, (block1.y + block1.h / 2) * TILE_SIZE);
+            ctx.lineTo((block2.x + block2.w / 2) * TILE_SIZE, (block2.y + block2.h / 2) * TILE_SIZE);
+            ctx.stroke();
+        });
+
         // const blocks = DungeonGenerator._createBlocks(
         //     dungeon.tiles,
         //     options,

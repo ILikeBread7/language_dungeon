@@ -19,6 +19,15 @@
  * @typedef {{ x: number, y: number, w: number, h: number }} DungeonSection
  */
 
+/**
+ * @typedef {{
+ *  top: [DungeonSection],
+ *  bottom: [DungeonSection],
+ *  left: [DungeonSection],
+ *  right: [DungeonSection]
+ * }} BlockAdjacency
+ */
+
 const SPACE = 'space';
 const ROOM = 'room';
 const PASS = 'pass';
@@ -48,12 +57,14 @@ class DungeonGenerator {
         const minBlockSize = options.minRoomSize + this.TOTAL_BLOCK_PADDING;
         const blocks = this._createBlocks(tiles, options, numOfBlocks, minBlockSize);
         const blockAdjacencyMap = this._createBlockAdjacencyMap(blocks);
+        const blockConnections = this._createBlockConnections(blockAdjacencyMap);
         const rooms = this._createRooms(blocks, options);
+
         this._applyRoomsToTiles(rooms, tiles);
 
         return {
             // this part is for dubegging only
-            blocks,
+            blocks, blockConnections,
 
             tiles,
             w: options.mapWidth,
@@ -352,6 +363,82 @@ class DungeonGenerator {
                 }
             }
         }
+    }
+
+    /**
+     * 
+     * @param {Map<DungeonSection, BlockAdjacency>} blockAdjacencyMap 
+     */
+    static _createBlockConnections(blockAdjacencyMap) {
+        const blocks = [...blockAdjacencyMap.keys()];
+        const sections = blocks.map(block => [ block ]);
+
+        /** @type {Map<DungeonSection, [DungeonSection]>} */
+        const blockToSectionMap = new Map();
+        for (let i = 0; i < blocks.length; i++) {
+            blockToSectionMap.set(blocks[i], sections[i]);
+        }
+
+        const blockConnections = [];
+
+        while (sections.length > 1) {
+            const randomSectionIndex = this._randomIndex(sections);
+            const section = sections[randomSectionIndex];
+            const randomBlockIndex = this._randomIndex(section);
+            const block = section[randomBlockIndex];
+
+            const adjacentBlocks = blockAdjacencyMap.get(block);
+            const adjacentBlock = this._randomAdjacentBlock(block, adjacentBlocks, blockToSectionMap);
+            if (!adjacentBlock) {
+                continue;
+            }
+            const adjacentSection = blockToSectionMap.get(adjacentBlock);
+
+            for (const block of section) {
+                adjacentSection.push(block);
+                blockToSectionMap.set(block, adjacentSection);
+            }
+            sections.splice(randomSectionIndex, 1);
+
+            blockConnections.push([ block, adjacentBlock ]);
+        }
+
+        return blockConnections;
+    }
+
+    /**
+     * 
+     * @param {[any]} array 
+     */
+    static _randomIndex(array) {
+        return Math.floor(Math.random() * array.length);
+    }
+
+    /**
+     * 
+     * @param {[any]} array 
+     */
+    static _randomElement(array) {
+        return array[this._randomIndex(array)];
+    }
+
+    /**
+     * @param {DungeonSection} block 
+     * @param {BlockAdjacency} blockAdjacency 
+     * @param {Map<DungeonSection, [DungeonSection]>} blockToSectionMap 
+     * @returns {DungeonSection|undefined}
+     */
+    static _randomAdjacentBlock(block, blockAdjacency, blockToSectionMap) {
+        const section = blockToSectionMap.get(block);
+
+        const allBlocks = [
+            ...blockAdjacency.top,
+            ...blockAdjacency.bottom,
+            ...blockAdjacency.left,
+            ...blockAdjacency.right
+        ].filter(block => blockToSectionMap.get(block) !== section);
+
+        return this._randomElement(allBlocks);
     }
 
 }
