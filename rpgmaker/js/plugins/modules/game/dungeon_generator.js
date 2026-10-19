@@ -52,6 +52,9 @@ class DungeonGenerator {
         this._applyRoomsToTiles(rooms, tiles);
 
         return {
+            // this part is for dubegging only
+            blocks,
+
             tiles,
             w: options.mapWidth,
             h: options.mapHeight
@@ -312,10 +315,10 @@ class DungeonGenerator {
             const maxHeight = Math.min(options.maxRoomSize, block.h - this.TOTAL_BLOCK_PADDING);
             const width = this._randomInRange(options.minRoomSize, maxWidth);
             const height = this._randomInRange(options.minRoomSize, maxHeight);
-            
-            const maxX = Math.floor((block.w - width) / 2) - this.BLOCK_PADDING;
+
+            const maxX = block.w - width - this.BLOCK_PADDING;
             const roomX = this._randomInRange(this.BLOCK_PADDING, maxX);
-            const maxY = Math.floor((block.h - height) / 2) - this.BLOCK_PADDING;
+            const maxY = block.h - height - this.BLOCK_PADDING;
             const roomY = this._randomInRange(this.BLOCK_PADDING, maxY);
 
             return {

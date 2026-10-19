@@ -51,15 +51,16 @@
         // console.dir(blocks);
         // console.log(blocks.filter(block => block.w < 10 || block.h < 10));
 
-        // for (const block of blocks) {
-        //     const color = `hsla(${Math.random() * 360}deg, 50%, ${Math.random() * 50 + 25}%, 50%)`;
-        //     ctx.fillStyle = color;
-        //     ctx.fillRect(
-        //         block.x * TILE_SIZE,
-        //         block.y * TILE_SIZE,
-        //         block.w * TILE_SIZE,
-        //         block.h * TILE_SIZE
-        //     );
-        // }
+        const blocks = dungeon.blocks;
+        for (const block of blocks) {
+            const color = `hsla(${Math.random() * 360}deg, 50%, ${Math.random() * 50 + 25}%, 50%)`;
+            ctx.fillStyle = color;
+            ctx.fillRect(
+                block.x * TILE_SIZE,
+                block.y * TILE_SIZE,
+                block.w * TILE_SIZE,
+                block.h * TILE_SIZE
+            );
+        }
     })
 </script>
