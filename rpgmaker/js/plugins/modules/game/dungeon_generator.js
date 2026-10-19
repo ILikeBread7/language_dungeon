@@ -39,7 +39,7 @@ const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
     RIGHT: 6
 });
 /**
- * @typedef {Enum<BLOCK_ADJACENCY>} BlockAdjacency
+ * @typedef {Enum<BLOCK_ADJACENCY>} BlockAdjacencyEnum
  */
 
 class DungeonGenerator {
@@ -293,7 +293,7 @@ class DungeonGenerator {
      * 
      * @param {DungeonSection} block1 
      * @param {DungeonSection} block2 
-     * @returns {BlockAdjacency} Adjacency of the second block relative to the first one
+     * @returns {BlockAdjacencyEnum} Adjacency of the second block relative to the first one
      */
     static _checkBlocksAdjacency(block1, block2) {
         const isAlignedHorizontally = block1.x + block1.w >= block2.x && block1.x <= block2.x + block2.w;
@@ -400,10 +400,26 @@ class DungeonGenerator {
             }
             sections.splice(randomSectionIndex, 1);
 
-            blockConnections.push([ block, adjacentBlock ]);
+            blockConnections.push(this._createBlockConnectionInfo(block, adjacentBlock));
         }
 
         return blockConnections;
+    }
+
+    /**
+     * 
+     * @param {DungeonSection} block1 
+     * @param {DungeonSection} block2 
+     */
+    static _createBlockConnectionInfo(block1, block2) {
+        const adjacencyType = this._checkBlocksAdjacency(block1, block2);
+        switch (adjacencyType) {
+            case BLOCK_ADJACENCY.TOP: return [ block1, block2, BLOCK_ADJACENCY.TOP ];
+            case BLOCK_ADJACENCY.BOTTOM: return [ block2, block1, BLOCK_ADJACENCY.TOP ];
+            case BLOCK_ADJACENCY.LEFT: return [ block1, block2, BLOCK_ADJACENCY.LEFT ];
+            case BLOCK_ADJACENCY.RIGHT: return [ block2, block1, BLOCK_ADJACENCY.LEFT ];
+            default: throw new Error('Adjacent blocks are not adjacent. This should never happen. All is lost. Goodbye.');
+        }
     }
 
     /**
