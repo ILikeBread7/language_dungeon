@@ -28,6 +28,14 @@
  * }} BlockAdjacency
  */
 
+/**
+ * @typedef {{
+ *  start: { x: number, y: number },
+ *  end: { x: number, y: number },
+ *  step: { dx: number, dy: number }
+ * }} DungeonRoad
+ */
+
 const SPACE = 'space';
 const ROOM = 'room';
 const PASS = 'pass';
@@ -59,8 +67,10 @@ class DungeonGenerator {
         const blockAdjacencyMap = this._createBlockAdjacencyMap(blocks);
         const blockConnections = this._createBlockConnections(blockAdjacencyMap);
         const rooms = this._createRooms(blocks, options);
-
+        const roads = this._createRoads(blocks, rooms, blockConnections);
+        
         this._applyRoomsToTiles(rooms, tiles);
+        this._applyRoadsToTiles(roads, tiles);
 
         return {
             // this part is for dubegging only
@@ -460,6 +470,180 @@ class DungeonGenerator {
         ].filter(block => blockToSectionMap.get(block) !== section);
 
         return this._randomElement(allBlocks);
+    }
+
+    /**
+     * 
+     * @param {[DungeonSection]} blocks 
+     * @param {[DungeonSection]} rooms 
+     * @param {[[ number, number, BlockAdjacencyEnum ]]} blockConnections 
+     */
+    static _createRoads(blocks, rooms, blockConnections) {
+        return blockConnections.flatMap(connection => {
+            const [ index1, index2, direction ] = connection;
+            const block1 = blocks[index1];
+            const room1 = rooms[index1];
+            const block2 = blocks[index2];
+            const room2 = rooms[index2];
+    
+            return this._createRoadBetween(block1, room1, block2, room2, direction);
+        });
+    }
+
+    /**
+     * 
+     * @param {DungeonSection} block1 
+     * @param {DungeonSection} room1 
+     * @param {DungeonSection} block2 
+     * @param {DungeonSection} room2 
+     * @param {BlockAdjacencyEnum} direction 
+     */
+    static _createRoadBetween(block1, room1, block2, room2, direction) {
+        const road1 = this._createRoadTowardsBlockEdge(block1, room1, direction);
+        const road2 = this._createRoadTowardsBlockEdge(block2, room2, this._getOppositeDirection(direction));
+        const connectingRoad = this._createConnectingRoad(road1, road2);
+        
+        return [
+            road1,
+            connectingRoad,
+            road2
+        ].filter(Boolean);
+    }
+
+    /**
+     * 
+     * @param {DungeonSection} block 
+     * @param {DungeonSection} room 
+     * @param {BlockAdjacencyEnum} direction 
+     */
+    static _createRoadTowardsBlockEdge(block, room, direction) {
+        let startX, endX, startY, endY;
+
+        if (direction === BLOCK_ADJACENCY.TOP || direction === BLOCK_ADJACENCY.BOTTOM) {
+            startX = this._randomInRange(room.x + 1, room.x + room.w - 1);
+        } else if (direction === BLOCK_ADJACENCY.LEFT) {
+            startX = room.x - 1;
+        } else {
+            startX = room.x + room.w;
+        }
+
+        if (direction === BLOCK_ADJACENCY.LEFT || direction === BLOCK_ADJACENCY.RIGHT) {
+            startY = this._randomInRange(room.y + 1, room.y + room.h - 1);
+        } else if (direction === BLOCK_ADJACENCY.TOP) {
+            startY = room.y - 1;
+        } else {
+            startY = room.y + room.h;
+        }
+
+        endX = startX;
+        endY = startY;
+
+        switch (direction) {
+            case BLOCK_ADJACENCY.TOP:
+                endY = block.y;
+            break;
+            case BLOCK_ADJACENCY.BOTTOM:
+                endY = block.y + block.h;
+            break;
+            case BLOCK_ADJACENCY.LEFT:
+                endX = block.x;
+            break;
+            case BLOCK_ADJACENCY.RIGHT:
+                endX = block.x + block.w;
+            break;
+        }
+
+        const step = this._getDirectionStep(direction);
+        return {
+            start: { x: startX, y: startY },
+            end: { x: endX, y: endY },
+            step
+        };
+    }
+
+    /**
+     * 
+     * @param {BlockAdjacencyEnum} direction 
+     */
+    static _getDirectionStep(direction) {
+        switch (direction) {
+            case BLOCK_ADJACENCY.TOP: return { dx: 0, dy: -1 };
+            case BLOCK_ADJACENCY.LEFT: return { dx: -1, dy: 0 };
+            case BLOCK_ADJACENCY.BOTTOM: return { dx: 0, dy: 1 };
+            case BLOCK_ADJACENCY.RIGHT: return { dx: 1, dy: 0 };
+            default: throw Error('Incorrect direction');
+        }
+    }
+
+    /**
+     * 
+     * @param {BlockAdjacencyEnum} direction 
+     */
+    static _getOppositeDirection(direction) {
+        return 10 - direction;
+    }
+
+    /**
+     * 
+     * @param {DungeonRoad} road1 
+     * @param {DungeonRoad} road2 
+     */
+    static _createConnectingRoad(road1, road2) {
+        let start = {}, end = {};
+        
+        const road1X = new Set([ road1.start.x, road1.end.x ]);
+        const road2X = new Set([ road2.start.x, road2.end.x ]);
+        const roadsXIntersection = road1X.intersection(road2X);
+
+        if (roadsXIntersection.size > 0) {
+            start.x = end.x = roadsXIntersection.values().next().value;
+        } else {
+            start.x = road1.end.x;
+            end.x = road2.start.x;
+        }
+
+        const road1Y = new Set([ road1.start.y, road1.end.y ]);
+        const road2Y = new Set([ road2.start.y, road2.end.y ]);
+        const roadsYIntersection = road1Y.intersection(road2Y);
+        
+        if (roadsYIntersection.size > 0) {
+            start.y = end.y = roadsYIntersection.values().next().value;
+        } else {
+            start.y = road1.end.y;
+            end.y = road2.start.y;
+        }
+
+        const step = {
+            dx: Math.sign(end.x - start.x),
+            dy: Math.sign(end.y - start.y)
+        };
+
+        if (step.dx === 0  && step.dy === 0) {
+            return undefined;
+        }
+
+        return { start, end, step };
+    }
+
+
+    /**
+     * 
+     * @param {[DungeonRoad]} roads 
+     * @param {DungeonTiles} tiles 
+     */
+    static _applyRoadsToTiles(roads, tiles) {
+        for (const road of roads) {
+            const { start, end, step } = road;
+
+            for (
+                let { x, y } = start;
+                x !== end.x || y !== end.y;
+                (x += step.dx), (y += step.dy)
+            ) {
+                tiles[y][x] = PASS;
+            }
+            tiles[end.y][end.x] = PASS;
+        }
     }
 
 }
