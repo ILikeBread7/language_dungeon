@@ -1315,6 +1315,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 const SPACE = 'space';
 const ROOM = 'room';
 const PASS = 'pass';
+
 const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
     NONE: 0,
     TOP: 8,
@@ -1328,7 +1329,7 @@ const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
 
 class DungeonGenerator {
 
-    static BLOCK_PADDING = 3;
+    static BLOCK_PADDING = 5;
     static TOTAL_BLOCK_PADDING = this.BLOCK_PADDING * 2;
 
     /**
