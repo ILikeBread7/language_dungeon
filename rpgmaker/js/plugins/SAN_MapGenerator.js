@@ -453,7 +453,7 @@ Game_MapGenerator.prototype.setRateEvents = function() {
             for (let i = 0; i < maxSpawn; i++) {
                 if (this.randBool(rateRoom)) {
                     var event = new Game_Event($gameMap.mapId(), mapDataEvent.id);
-                    this.setEvent(event, 'room', room);
+                    this.setEvent(event, [ 'room' ], room);
                 }
             }
         }, this);
@@ -485,7 +485,7 @@ Game_MapGenerator.prototype.setRateEvents = function() {
                 const randomRoomIndex = Math.floor(Math.random() * eventsPerRoom.length);
                 const randomRoomData = eventsPerRoom[randomRoomIndex];
                 const event = new Game_Event($gameMap.mapId(), mapDataEvent.id);
-                this.setEvent(event, 'room', randomRoomData.room);
+                this.setEvent(event, [ 'room' ], randomRoomData.room);
                 randomRoomData.eventsNumber++;
                 if (randomRoomData.eventsNumber >= (randomRoomData.isStartRoom ? maxInStartRoom : maxPerRoom)) {
                     eventsPerRoom.splice(randomRoomIndex, 1);
@@ -539,11 +539,11 @@ Game_MapGenerator.prototype.refreshWallAndRoofUpper = function(x, y) {
         }
         this._symbolMap[x][y - this._wallHeight] = 'roof';
     } else {
-        for (var wH = 0; wH < h; wH++) {
-            if (!this.isGround(x, y - wH)) {
-                this._symbolMap[x][y - wH] = 'rubble';
-            }
-        }
+        // for (var wH = 0; wH < h; wH++) {
+        //     if (!this.isGround(x, y - wH)) {
+        //         this._symbolMap[x][y - wH] = 'rubble';
+        //     }
+        // }
     }
 };
 
@@ -563,11 +563,11 @@ Game_MapGenerator.prototype.refreshWallAndRoofDowner = function(x, y) {
             }
         }
     } else {
-        for (var wH = 0; wH < h; wH++) {
-            if (!this.isGround(x, y + wH) && !this.isWall(x, y)) {
-                this._symbolMap[x][y + wH] = 'rubble';
-            }
-        }
+        // for (var wH = 0; wH < h; wH++) {
+        //     if (!this.isGround(x, y + wH) && !this.isWall(x, y)) {
+        //         this._symbolMap[x][y + wH] = 'rubble';
+        //     }
+        // }
     }
 };
 
@@ -1329,7 +1329,7 @@ const BLOCK_ADJACENCY = /** @type {const} */ Object.freeze({
 
 class DungeonGenerator {
 
-    static BLOCK_PADDING = 5;
+    static BLOCK_PADDING = 3;
     static TOTAL_BLOCK_PADDING = this.BLOCK_PADDING * 2;
 
     /**
@@ -1940,9 +1940,33 @@ Game_Map.prototype.generateDungeon = function(options) {
     this._mapGenerator.setup();
 }
 
-Game_MapGenerator.prototype.setDungeonInfo = function(symbolMap, rooms) {
+Game_MapGenerator.prototype.setDungeonInfo = function(tiles, rooms) {
     this._rooms = rooms;
-    this._symbolMap = symbolMap;
+    this._symbolMap = swapArrayCoordinates(tiles);
+}
+
+/**
+ * 
+ * @param {[[any]]} source 
+ * @returns {[[any]]} Array with swapped x and y coordinates
+ */
+function swapArrayCoordinates(source) {
+    const result = [];
+    const originalRowsNumber = source.length;
+    const originalColsNumber = source[0].length;
+
+    for (let i = 0; i < originalColsNumber; i++) {
+        const row = [];
+
+        for (let j = 0; j < originalRowsNumber; j++) {
+            row.push(source[j][i]);
+        }
+
+        result.push(row);
+
+    }
+
+    return result;
 }
 
 })();

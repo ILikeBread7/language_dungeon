@@ -10,7 +10,7 @@ var $plugins =
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
 {"name":"EventFloatingText","status":false,"description":"Displays floating text above events on the map.","parameters":{}},
 {"name":"ILB_QuickTest","status":false,"description":"Auto starts the game","parameters":{}},
-{"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"2","MinRoomSize":"4","MaxRoomSize":"10","MinRooms":"5","MaxRooms":"7","ShowOuterWall":"OFF"}},
+{"name":"SAN_MapGenerator","status":true,"description":"自動マップ生成 1.1.9\n自動的にマップを生成しイベントを配置します。","parameters":{"WallHight":"1","MinRoomSize":"4","MaxRoomSize":"10","MinRooms":"5","MaxRooms":"7","ShowOuterWall":"OFF"}},
 {"name":"VE_DiagonalMovement","status":true,"description":"v1.00 - Allows diagonal movement for player and events.","parameters":{"Diagonal Adjust":"true","Diagonal Events":"true","Diagonal Fix":"false","Diagonal Trigger":"true","Corner Passability":"false\r"}},
 {"name":"ILB_CustomFunctions","status":true,"description":"Exposes a global object $f to store custom functions for use in script calls.","parameters":{}},
 {"name":"SimpleDungeonMinimap","status":true,"description":"Dungeon Minimap (SAN_MapGenerator) – PMD Style\nClean ES6 version + enemies + items","parameters":{"Tile size":"12","Event show distance":"3","X offset":"Math.floor(Graphics.width / 4)","Y offset":"Math.floor(Graphics.height / 4)"}},
