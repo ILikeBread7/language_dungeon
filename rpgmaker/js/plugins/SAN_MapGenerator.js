@@ -1935,14 +1935,15 @@ Game_Map.prototype.generateDungeon = function(options) {
         options.mapWidth ??= $dataMap.width;
         options.mapHeight ??= $dataMap.height;
         const dungeon = DungeonGenerator.generate(options);
-        this.setDungeonInfo(dungeon.tiles, dungeon.rooms);
+        this.setDungeonInfo(dungeon.tiles, dungeon.rooms, dungeon.roads);
     }).bind(this._mapGenerator);
     this._mapGenerator.setup();
 }
 
-Game_MapGenerator.prototype.setDungeonInfo = function(tiles, rooms) {
+Game_MapGenerator.prototype.setDungeonInfo = function(tiles, rooms, roads) {
     this._rooms = rooms;
     this._symbolMap = swapArrayCoordinates(tiles);
+    this._passes = convertRoadsToPasses(roads);
 }
 
 /**
@@ -1967,6 +1968,19 @@ function swapArrayCoordinates(source) {
     }
 
     return result;
+}
+
+/**
+ * 
+ * @param {[DungeonRoad]} roads 
+ */
+function convertRoadsToPasses(roads) {
+    return roads.map(road => ({
+        x: Math.min(road.start.x, road.end.x),
+        y: Math.min(road.start.y, road.end.y),
+        w: Math.abs(road.start.x - road.end.x) + 1,
+        h: Math.abs(road.start.y - road.end.y) + 1
+    }));
 }
 
 })();
