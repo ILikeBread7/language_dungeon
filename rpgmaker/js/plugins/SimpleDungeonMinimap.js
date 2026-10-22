@@ -74,17 +74,17 @@ const parameters = PluginManager.parameters('SimpleDungeonMinimap');
 const tileSize = Number(parameters['Tile size'] || 10);
 const eventShowDistance = Number(parameters['Event show distance'] || 0);
 
-// Timeout needed to parse the parameters after the engine has properly started,
-// not when the plugins are added.
-let offsets = { x:0, y: 0 };
-setTimeout(() => {
-    offsets.x = eval(parameters['X offset']) || 0;
-    offsets.y = eval(parameters['Y offset']) || 0;
-});
+let offsets = { x: 0, y: 0 };
 
 class Sprite_DungeonMinimap extends Sprite {
     constructor() {
         super();
+        if (!offsets.isSet) {
+            offsets.x = eval(parameters['X offset']) || 0;
+            offsets.y = eval(parameters['Y offset']) || 0;
+            offsets.isSet = true;
+        }
+
         this.bitmap = new Bitmap(Graphics.width, Graphics.height);
         this._tileSize = tileSize;
         this.x = offsets.x;
@@ -141,9 +141,10 @@ class Sprite_DungeonMinimap extends Sprite {
     }
 
     drawTileWalls(x, y, s) {
+        const offset = $gameMap.mapGenerator()._offset;
         const ctx = this.bitmap._context;
-        const px = x * s;
-        const py = y * s;
+        const px = (x - offset.x) * s;
+        const py = (y - offset.y) * s;
 
         ctx.save();
         ctx.strokeStyle = 'white';
@@ -205,11 +206,12 @@ class Sprite_DungeonMinimap extends Sprite {
     }
 
     drawDot(x, y, color) {
+        const offset = $gameMap.mapGenerator()._offset;
         const s = this._tileSize;
         const ctx = this.bitmap._context;
 
-        const px = x * s + s / 2;
-        const py = y * s + s / 2;
+        const px = (x - offset.x) * s + s / 2;
+        const py = (y - offset.y) * s + s / 2;
 
         ctx.save();
         ctx.fillStyle = color;

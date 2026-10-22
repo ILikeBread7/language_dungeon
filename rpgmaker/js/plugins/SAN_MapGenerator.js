@@ -1935,15 +1935,17 @@ Game_Map.prototype.generateDungeon = function(options) {
         options.mapWidth ??= $dataMap.width;
         options.mapHeight ??= $dataMap.height;
         const dungeon = DungeonGenerator.generate(options);
-        this.setDungeonInfo(dungeon.tiles, dungeon.rooms, dungeon.roads);
+        const offset = { x: Math.floor((options.mapWidth - options.width) / 2), y: Math.floor((options.mapHeight - options.height) / 2) };
+        this.setDungeonInfo(dungeon.tiles, dungeon.rooms, dungeon.roads, offset);
     }).bind(this._mapGenerator);
     this._mapGenerator.setup();
 }
 
-Game_MapGenerator.prototype.setDungeonInfo = function(tiles, rooms, roads) {
+Game_MapGenerator.prototype.setDungeonInfo = function(tiles, rooms, roads, offset) {
     this._rooms = rooms;
     this._symbolMap = swapArrayCoordinates(tiles);
     this._passes = convertRoadsToPasses(roads);
+    this._offset = offset;
 }
 
 /**
