@@ -555,7 +555,11 @@ class DungeonGenerator {
          * @param {number} [tolerance=0] Default 0
          */
         function comparePoints(point1, point2, tolerance = 0) {
-            return Math.abs(point1.x - point2.x) <= tolerance && Math.abs(point1.y - point2.y) <= tolerance;
+            const xDist = Math.abs(point1.x - point2.x);
+            const yDist = Math.abs(point1.y - point2.y);
+
+            return xDist <= tolerance && yDist === 0
+                || yDist <= tolerance && xDist === 0;
         }
     }
 
