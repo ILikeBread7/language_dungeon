@@ -73,9 +73,12 @@ class DungeonGenerator {
         this._applyRoadsToTiles(roads, tiles);
 
         return {
-            // this part is for dubegging only
-            blocks, blockConnections,
+            // for debuggins only
+            blockConnections,
 
+            blocks,
+            rooms,
+            roads,
             tiles,
             w: options.mapWidth,
             h: options.mapHeight
@@ -479,29 +482,46 @@ class DungeonGenerator {
      * @param {[[ number, number, BlockAdjacencyEnum ]]} blockConnections 
      */
     static _createRoads(blocks, rooms, blockConnections) {
-        return blockConnections.flatMap(connection => {
+        const roads = [];
+
+        for (const connection of blockConnections) {
             const [ index1, index2, direction ] = connection;
             const block1 = blocks[index1];
             const room1 = rooms[index1];
             const block2 = blocks[index2];
             const room2 = rooms[index2];
-    
-            return this._createRoadBetween(block1, room1, block2, room2, direction);
-        });
+
+            const newRoads = this._createRoadBetween(block1, room1, block2, room2, direction, roads);
+            roads.push(...newRoads);
+        }
+
+        return roads;
     }
 
     /**
      * 
      * @param {DungeonSection} block1 
-     * @param {DungeonSection} room1 
+     * @param {DungeonRoad} room1 
      * @param {DungeonSection} block2 
-     * @param {DungeonSection} room2 
+     * @param {DungeonRoad} room2 
      * @param {BlockAdjacencyEnum} direction 
+     * @param {[DungeonRoad]} roads Already generated roads
+     * @returns {[DungeonRoad]}
      */
-    static _createRoadBetween(block1, room1, block2, room2, direction) {
-        const road1 = this._createRoadTowardsBlockEdge(block1, room1, direction);
-        const road2 = this._createRoadTowardsBlockEdge(block2, room2, this._getOppositeDirection(direction));
-        const connectingRoad = this._createConnectingRoad(road1, road2);
+    static _createRoadBetween(block1, room1, block2, room2, direction, roads) {
+        let road1 = this._createRoadTowardsBlockEdge(block1, room1, direction);
+        let road2 = this._createRoadTowardsBlockEdge(block2, room2, this._getOppositeDirection(direction));
+        
+        const closeRoad1 = this._findCloseRoad(road1, roads);
+        if (closeRoad1) {
+            road1 = undefined;
+        }
+        const closeRoad2 = this._findCloseRoad(road2, roads);
+        if (closeRoad2) {
+            road2 = undefined;
+        }
+
+        const connectingRoad = this._createConnectingRoad(road1 || closeRoad1, road2 || closeRoad2);
         
         return [
             road1,
@@ -512,9 +532,39 @@ class DungeonGenerator {
 
     /**
      * 
+     * @param {DungeonRoad} road 
+     * @param {[DungeonRoad]} roads 
+     */
+    static _findCloseRoad(road, roads) {
+        return roads.find(existingRoad => isCloseRoad(road, existingRoad));
+
+        /**
+         * 
+         * @param {DungeonRoad} road1 
+         * @param {DungeonRoad} road2 
+         */
+        function isCloseRoad(road1, road2) {
+            const tolerance = 2;
+            return comparePoints(road1.start, road2.start, tolerance);
+        }
+
+        /**
+         * 
+         * @param {{ x: number, y: number }} point1 
+         * @param {{ x: number, y: number }} point2 
+         * @param {number} [tolerance=0] Default 0
+         */
+        function comparePoints(point1, point2, tolerance = 0) {
+            return Math.abs(point1.x - point2.x) <= tolerance && Math.abs(point1.y - point2.y) <= tolerance;
+        }
+    }
+
+    /**
+     * 
      * @param {DungeonSection} block 
-     * @param {DungeonSection} room 
+     * @param {DungeonRoad} room 
      * @param {BlockAdjacencyEnum} direction 
+     * @returns {DungeonRoad}
      */
     static _createRoadTowardsBlockEdge(block, room, direction) {
         let startX, endX, startY, endY;
@@ -554,6 +604,12 @@ class DungeonGenerator {
         }
 
         const step = this._getDirectionStep(direction);
+        if (step.dx < 0 || step.dy < 0) {
+            step.dx = -step.dx;
+            step.dy = -step.dy;
+            [ startX, startY, endX, endY ] = [ endX, endY, startX, startY ];
+        }
+
         return {
             start: { x: startX, y: startY },
             end: { x: endX, y: endY },
@@ -587,6 +643,7 @@ class DungeonGenerator {
      * 
      * @param {DungeonRoad} road1 
      * @param {DungeonRoad} road2 
+     * @returns {DungeonRoad}
      */
     static _createConnectingRoad(road1, road2) {
         let start = {}, end = {};
