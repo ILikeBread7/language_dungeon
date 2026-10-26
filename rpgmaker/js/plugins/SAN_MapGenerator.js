@@ -434,8 +434,8 @@ Game_MapGenerator.prototype.setRateEvents = function() {
         return !!event && !!event.meta.RateMap;
     });
     mapDataRateMapEvents.forEach(function(mapDataEvent) {
-        const maxSpawn = Number(mapDataEvent.meta.MaxSpawn || 1);
-        const rateMap = parseFloat(mapDataEvent.meta.RateMap);
+        const maxSpawn = takeValue(mapDataEvent.meta.MaxSpawn || 1, mapDataEvent);
+        const rateMap = takeValue(mapDataEvent.meta.RateMap, mapDataEvent);
         for (let i = 0; i < maxSpawn; i++) {
             if (this.randBool(rateMap)) {
                 var event = new Game_Event($gameMap.mapId(), mapDataEvent.id);
@@ -447,8 +447,8 @@ Game_MapGenerator.prototype.setRateEvents = function() {
         return !!event && !!event.meta.RateRoom;
     });
     mapDataRateRoomEvents.forEach(function(mapDataEvent) {
-        const maxSpawn = Number(mapDataEvent.meta.MaxSpawn || 1);
-        const rateRoom = parseFloat(mapDataEvent.meta.RateRoom);
+        const maxSpawn = takeValue(mapDataEvent.meta.MaxSpawn || 1, mapDataEvent);
+        const rateRoom = takeValue(mapDataEvent.meta.RateRoom, mapDataEvent);
         this._rooms.forEach(function(room) {
             for (let i = 0; i < maxSpawn; i++) {
                 if (this.randBool(rateRoom)) {
@@ -462,13 +462,13 @@ Game_MapGenerator.prototype.setRateEvents = function() {
     $dataMap.events
         .filter(event => !!event && !!event.meta.maxPerMap)
         .forEach(mapDataEvent => {
-            const maxPerMap = Number(mapDataEvent.meta.maxPerMap);
-            const maxPerRoom = Number(mapDataEvent.meta.maxPerRoom);
+            const maxPerMap = takeValue(mapDataEvent.meta.maxPerMap, mapDataEvent);
+            const maxPerRoom = takeValue(mapDataEvent.meta.maxPerRoom, mapDataEvent);
             if (maxPerRoom === 0 || maxPerMap === 0) {
                 return;
             }
-            const minPerMap = Number(mapDataEvent.meta.minPerMap || 0);
-            const maxInStartRoom = Number(mapDataEvent.meta.maxInStartRoom || maxPerRoom);
+            const minPerMap = takeValue(mapDataEvent.meta.minPerMap || 0, mapDataEvent);
+            const maxInStartRoom = takeValue(mapDataEvent.meta.maxInStartRoom || maxPerRoom, mapDataEvent);
 
             const { x: startX, y: startY } = this._startXY;
             const startRoom = this.roomByXY(startX, startY);
@@ -2041,6 +2041,30 @@ function convertRoadsToPasses(roads) {
         w: Math.abs(road.start.x - road.end.x) + 1,
         h: Math.abs(road.start.y - road.end.y) + 1
     }));
+}
+
+/**
+ * 
+ * @param {string|number} valueString 
+ * @param {[any]} data 
+ */
+function takeValue(valueString, data) {
+    const number = Number(valueString);
+    if (!isNaN(number)) {
+        return number;
+    }
+
+    let value = window;
+    const parts = valueString.split('.');
+    for (const part of parts) {
+        const prop = value[part];
+        if (prop instanceof Function) {
+            value = prop(data);
+        } else {
+            value = prop;
+        }
+    }
+    return value;
 }
 
 })();
