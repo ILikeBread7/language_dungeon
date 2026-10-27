@@ -1318,7 +1318,7 @@ var $f = $f || {};
             $gameMap.eraseEvent(enemyEvent.eventId());
 
         } else {
-            enemyEvent.quiz.isStunned = !isArrowHit;
+            // enemyEvent.quiz.isStunned = !isArrowHit;
             enemyEvent.quiz.isHit = true;
             $f.setEnemyText(enemyEvent);
         }
@@ -1649,7 +1649,7 @@ var $f = $f || {};
     }
 
     $f.getBagLimit = () => {
-        return 3;
+        return 5;
     }
 
     const _Game_Party_consumeItem = Game_Party.prototype.consumeItem;
