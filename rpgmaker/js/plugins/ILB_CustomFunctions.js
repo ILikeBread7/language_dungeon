@@ -1723,4 +1723,8 @@ var $f = $f || {};
             event.unlock = baseUnlock.bind(event);
         }
     }
+
+    $f.maxEnemiesPerMap = () => {
+        return 5 + Math.floor($nv.currentFloor ** 0.75);
+    };
 })();
