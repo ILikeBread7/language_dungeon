@@ -98,6 +98,7 @@ class Sprite_DungeonMinimap extends Sprite {
 
         if (!$gameMap.isGeneratedMap || !$gameMap.isGeneratedMap()) return;
 
+        this._drawnWallsSet = new Set();
         this.drawRooms();
         this.drawPasses();
         this.drawEvents();
@@ -150,28 +151,28 @@ class Sprite_DungeonMinimap extends Sprite {
         ctx.strokeStyle = 'white';
         ctx.lineWidth = 1;
 
-        if (!$gameMap.isPassable(x, y, 8)) {
+        if (!$gameMap.isPassable(x, y, 8) && !this._checkAndUpdateWallDrawn(x, y, 8)) {
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(px + s, py);
             ctx.stroke();
         }
 
-        if (!$gameMap.isPassable(x, y, 6)) {
+        if (!$gameMap.isPassable(x, y, 6) && !this._checkAndUpdateWallDrawn(x, y, 6)) {
             ctx.beginPath();
             ctx.moveTo(px + s, py);
             ctx.lineTo(px + s, py + s);
             ctx.stroke();
         }
 
-        if (!$gameMap.isPassable(x, y, 2)) {
+        if (!$gameMap.isPassable(x, y, 2) && !this._checkAndUpdateWallDrawn(x, y, 2)) {
             ctx.beginPath();
             ctx.moveTo(px, py + s);
             ctx.lineTo(px + s, py + s);
             ctx.stroke();
         }
 
-        if (!$gameMap.isPassable(x, y, 4)) {
+        if (!$gameMap.isPassable(x, y, 4) && !this._checkAndUpdateWallDrawn(x, y, 4)) {
             ctx.beginPath();
             ctx.moveTo(px, py);
             ctx.lineTo(px, py + s);
@@ -221,6 +222,27 @@ class Sprite_DungeonMinimap extends Sprite {
         ctx.restore();
 
         this.bitmap._setDirty();
+    }
+
+    _checkAndUpdateWallDrawn(x, y, direction) {
+        const key = this._createWallDrawnKey(x, y, direction);
+        if (this._drawnWallsSet.has(key)) {
+            return true;
+        }
+        this._drawnWallsSet.add(key);
+        return false;
+    }
+
+    _createWallDrawnKey(x, y, direction) {
+        if (direction === 6) {  // right
+            direction = 4; // left
+            x++;
+        } else if (direction === 2) {   // down
+            direction = 8; // up
+            y++;
+        }
+
+        return `${x},${y},${direction}`;
     }
 }
 
