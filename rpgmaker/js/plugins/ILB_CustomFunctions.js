@@ -110,6 +110,10 @@ var $f = $f || {};
                 continue;
             }
 
+            if (event.quiz.isFrozen) {
+                continue;
+            }
+
             if (event.quiz.isStunned) {
                 event.quiz.isStunned = false;
                 continue;
@@ -1335,7 +1339,8 @@ var $f = $f || {};
     const RANDOM_DROPS = [
         { item: 'arrow', min: 1, max: 5 },
         { item: 'potion' },
-        { item: 'areaAttack' }
+        { item: 'areaAttack' },
+        { item: 'freeze' }
     ];
 
     function randomDropItem() {
@@ -1691,13 +1696,7 @@ var $f = $f || {};
     const AREA_ATTACK_DISTANCE = 3;
     $f.areaAttack = () => {
         const playerRoom = $gamePlayer.currentRoom();
-        const enemies = $gameMap.events().filter(
-            event => event && !event._erased && event.event().meta.enemy
-                && (
-                    (playerRoom && playerRoom === event.currentRoom())
-                    || (distance($gamePlayer, event) <= AREA_ATTACK_DISTANCE)
-                )
-        ).sort((enemy1, enemy2) => distance($gamePlayer, enemy1) - distance($gamePlayer, enemy2));
+        const enemies = findEnemiesInRangeSorted(playerRoom, AREA_ATTACK_DISTANCE);
 
         $ns.areaAttack = true;
         for (const enemy of enemies) {
@@ -1713,6 +1712,31 @@ var $f = $f || {};
                 }
             );
         }
+    }
+
+    const FREEZE_DISTANCE = 3;
+    $f.freezeEnemies = () => {
+        const playerRoom = $gamePlayer.currentRoom();
+        const enemies = findEnemiesInRangeSorted(playerRoom, FREEZE_DISTANCE);
+
+        for (const enemy of enemies) {
+            enemy.quiz.isFrozen = true;
+        }
+    }
+
+    function findEnemiesInRange(playerRoom, range = 3) {
+        return $gameMap.events().filter(
+            event => event && !event._erased && event.event().meta.enemy
+                && (
+                    (playerRoom && playerRoom === event.currentRoom())
+                    || (distance($gamePlayer, event) <= range)
+                )
+        );
+    }
+
+    function findEnemiesInRangeSorted(playerRoom, range) {
+        return findEnemiesInRange(playerRoom, range)
+            .sort((enemy1, enemy2) => distance($gamePlayer, enemy1) - distance($gamePlayer, enemy2));
     }
 
     function onUnlock(event, listener) {
