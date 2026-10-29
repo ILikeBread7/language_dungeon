@@ -271,7 +271,12 @@ var $f = $f || {};
     $f.setEnemyTexts = () => {
         $characterLabels.clear();
         alreadyAsked = [];
-        $gameMap.events().forEach($f.setEnemyText);
+        $gameMap.events().forEach(event => {
+            $f.setEnemyText(event);
+            if (event.quiz) {
+                event.quiz.hp = event.event().meta.maxHp;
+            }
+        });
         const portalEnemy = $gameMap.events()
             .find(event => event.event() && event.event().meta && event.event().meta.enemy);
         portalEnemy.quiz.portalEnemy = true;
@@ -1302,26 +1307,43 @@ var $f = $f || {};
         spriteset._tilemap.addChild(sprite);
     }
 
-    $f.enemyHit = (enemyEvent, isArrowHit) => {
+    $f.enemyHit = (enemyEvent, damage, isCorrectAnswer, isArrowHit) => {
         if (enemyEvent.quiz.answeredWrong.length === 0) {
             $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
         } else {
             enemyEvent.quiz.answeredWrong = [];
         }
 
-        if (enemyEvent.quiz.isHit) {
+        enemyEvent.quiz.hp -= damage;
+        enemyEvent.quiz.isHit = true;
+        if (enemyEvent.quiz.hp <= 0) {
             if (enemyEvent.quiz.portalEnemy) {
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
-            } else if (Math.random() < 0.1) {
-                $f.placeItemEvent(enemyEvent.x, enemyEvent.y, 'potion');
+            } else if (Math.random() < 0.2) {
+                const dropItemData = randomDropItem();
+                $f.placeItemEvent(enemyEvent.x, enemyEvent.y, dropItemData, randomDropAmount(dropItemData));
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
-
-        } else {
+        } else if (isCorrectAnswer) {
             // enemyEvent.quiz.isStunned = !isArrowHit;
-            enemyEvent.quiz.isHit = true;
             $f.setEnemyText(enemyEvent);
         }
+    }
+
+    const RANDOM_DROPS = [
+        { item: 'arrow', min: 1, max: 5 },
+        { item: 'potion' },
+        { item: 'areaAttack' }
+    ];
+
+    function randomDropItem() {
+        return RANDOM_DROPS[Math.floor((Math.random() ** 2) * RANDOM_DROPS.length)];
+    }
+
+    function randomDropAmount(dropData) {
+        const min = dropData.min ?? 1;
+        const max = dropData.max ?? 1;
+        return Math.floor((Math.random() ** 2) * (max - min)) + min;
     }
 
     $f.useFloorItem = itemId => {
