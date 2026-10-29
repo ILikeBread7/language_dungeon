@@ -1697,7 +1697,7 @@ var $f = $f || {};
                     (playerRoom && playerRoom === event.currentRoom())
                     || (distance($gamePlayer, event) <= AREA_ATTACK_DISTANCE)
                 )
-        );
+        ).sort((enemy1, enemy2) => distance($gamePlayer, enemy1) - distance($gamePlayer, enemy2));
 
         $ns.areaAttack = true;
         for (const enemy of enemies) {
