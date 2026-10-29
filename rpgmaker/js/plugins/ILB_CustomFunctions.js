@@ -1308,10 +1308,12 @@ var $f = $f || {};
     }
 
     $f.enemyHit = (enemyEvent, damage, isCorrectAnswer, isArrowHit) => {
-        if (enemyEvent.quiz.answeredWrong.length === 0) {
-            $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
-        } else {
-            enemyEvent.quiz.answeredWrong = [];
+        if (isCorrectAnswer) {
+            if (enemyEvent.quiz.answeredWrong.length === 0) {
+                $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
+            } else {
+                enemyEvent.quiz.answeredWrong = [];
+            }
         }
 
         enemyEvent.quiz.hp -= damage;
@@ -1321,7 +1323,7 @@ var $f = $f || {};
                 $f.placePortal(enemyEvent.x, enemyEvent.y);
             } else if (Math.random() < 0.2) {
                 const dropItemData = randomDropItem();
-                $f.placeItemEvent(enemyEvent.x, enemyEvent.y, dropItemData, randomDropAmount(dropItemData));
+                $f.placeItemEvent(enemyEvent.x, enemyEvent.y, dropItemData.item, randomDropAmount(dropItemData));
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
         } else if (isCorrectAnswer) {
