@@ -278,12 +278,9 @@ var $f = $f || {};
         $gameMap.events().forEach(event => {
             $f.setEnemyText(event);
             if (event.quiz) {
-                event.quiz.hp = event.event().meta.maxHp;
-                if (Math.random() < 0.5) {
-                    event.quiz.enemyType = 'test';
-                } else {
-                    event.quiz.enemyType = 'bat';
-                }
+                const enemyType = getRandomEnemyType();
+                event.quiz.enemyType = enemyType.type;
+                event.quiz.hp = enemyType.data.maxHp;
             }
         });
         const portalEnemy = $gameMap.events()
@@ -1749,11 +1746,27 @@ var $f = $f || {};
         return 5 + Math.floor($nv.currentFloor ** 0.75);
     };
 
+    $f.ENEMY_TYPES = Object.freeze({
+        BAT: 'bat',
+        TEST: 'test'
+    });
+
+    $f.ENEMY_DATA = new Map([
+        [ $f.ENEMY_TYPES.BAT, { maxHp: 40 } ],
+        [ $f.ENEMY_TYPES.TEST, { maxHp: 50 } ]
+    ]);
+
+    function getRandomEnemyType() {
+        const types = Object.values($f.ENEMY_TYPES);
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        return { type: randomType, data: $f.ENEMY_DATA.get(randomType) };
+    }
+
     const _Game_Event_findProperPageIndex = Game_Event.prototype.findProperPageIndex;
     Game_Event.prototype.findProperPageIndex = function() {
         switch (this.quiz?.enemyType) {
-            case 'bat': return 0;
-            case 'test': return 1;
+            case $f.ENEMY_TYPES.BAT: return 0;
+            case $f.ENEMY_TYPES.TEST: return 1;
             default: return _Game_Event_findProperPageIndex.call(this);
         }
     }
