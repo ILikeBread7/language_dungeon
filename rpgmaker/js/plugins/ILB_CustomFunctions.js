@@ -279,6 +279,11 @@ var $f = $f || {};
             $f.setEnemyText(event);
             if (event.quiz) {
                 event.quiz.hp = event.event().meta.maxHp;
+                if (Math.random() < 0.5) {
+                    event.quiz.enemyType = 'test';
+                } else {
+                    event.quiz.enemyType = 'bat';
+                }
             }
         });
         const portalEnemy = $gameMap.events()
@@ -1402,14 +1407,6 @@ var $f = $f || {};
                 .map(([ itemName, amount ]) => ({ ...$dataItems.find(item => itemName === item?.meta?.item), amount }));
     }
 
-    const _Game_Switches_value = Game_Switches.prototype.value;
-    Game_Switches.prototype.value = function(switchId) {
-        if (switchId === 4) {   // isFloorItem switch
-            return isFloorItem();
-        }
-        return _Game_Switches_value.call(this, switchId);
-    };
-
     function pickRandom(array, start = 0, amount = array.length - start) {
         amount = Math.min(amount, array.length - start);
         const randomIndex = start + Math.floor(Math.random() * amount);
@@ -1751,4 +1748,14 @@ var $f = $f || {};
     $f.maxEnemiesPerMap = () => {
         return 5 + Math.floor($nv.currentFloor ** 0.75);
     };
+
+    const _Game_Event_findProperPageIndex = Game_Event.prototype.findProperPageIndex;
+    Game_Event.prototype.findProperPageIndex = function() {
+        switch (this.quiz?.enemyType) {
+            case 'bat': return 0;
+            case 'test': return 1;
+            default: return _Game_Event_findProperPageIndex.call(this);
+        }
+    }
+
 })();
