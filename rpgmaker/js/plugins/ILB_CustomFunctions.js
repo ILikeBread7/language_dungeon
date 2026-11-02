@@ -98,7 +98,7 @@ var $f = $f || {};
     const distanceToFollow = 5;
     let currentEnemyIndex = 0;
     function moveEnemies() {
-        if ($ns.portalUsed) {
+        if ($ns.portalUsed || $ns.areaAttack) {
             return;
         }
 
@@ -1735,20 +1735,27 @@ var $f = $f || {};
         const playerRoom = $gamePlayer.currentRoom();
         const enemies = findEnemiesInRangeSorted(playerRoom, AREA_ATTACK_DISTANCE);
 
-        $ns.areaAttack = true;
-        for (const enemy of enemies) {
-            enemy.start();
-        }
-        
         if (enemies.length > 0) {
-            onUnlock(
-                enemies[enemies.length - 1],
-                () => {
-                    $ns.areaAttack = false;
-                    $f.moveEnemies();
-                }
-            );
+            $ns.areaAttack = true;
+            areaAttackStartEnemyEvents(enemies);
+        } else {
+            $f.moveEnemies();
         }
+    }
+
+    function areaAttackStartEnemyEvents(enemies, index = 0) {
+        const enemy = enemies[index];
+        const nextEnemy = enemies[index + 1];
+
+        if (nextEnemy) {
+            onUnlock(enemy, () => areaAttackStartEnemyEvents(enemies, index + 1));
+        } else {
+            onUnlock(enemy, () => {
+                $ns.areaAttack = false;
+                $f.moveEnemies();
+            });
+        }
+        enemy.start();
     }
 
     const FREEZE_DISTANCE = 3;
