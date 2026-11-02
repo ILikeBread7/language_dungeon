@@ -1734,7 +1734,10 @@ var $f = $f || {};
     $f.areaAttack = () => {
         const playerRoom = $gamePlayer.currentRoom();
         const enemies = findEnemiesInRangeSorted(playerRoom, AREA_ATTACK_DISTANCE);
+        handleAreaAttackEnemies(enemies);
+    }
 
+    function handleAreaAttackEnemies(enemies) {
         if (enemies.length > 0) {
             $ns.areaAttack = true;
             areaAttackStartEnemyEvents(enemies);
