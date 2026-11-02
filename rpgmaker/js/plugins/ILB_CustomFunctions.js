@@ -121,7 +121,7 @@ var $f = $f || {};
 
             event.setMoveSpeed(realMoveSpeed);
             const playerDistance = distance($gamePlayer, event);
-            if (playerDistance === 1) {
+            if (playerDistance === 1 && isTrigerrable(event)) {
                 event.quiz.isAttacking = true;
                 event.start();
                 currentEnemyIndex++;
@@ -136,6 +136,49 @@ var $f = $f || {};
     }
 
     $f.moveEnemies = moveEnemies;
+
+    /**
+     * @param {{ x: number, y: number }} target 
+     * @returns 
+     */
+    function isTrigerrable(target) {
+        if ($gamePlayer.x === target.x || $gamePlayer.y === target.y) {
+            return true;
+        }
+
+        const [ xDirection, xDelta ] = ($gamePlayer.x > target.x) ? [ 4, 1 ] : [ 6, -1 ];
+        const [ yDirection, yDelta ] = ($gamePlayer.y > target.y) ? [ 8, 1 ] : [ 2, -1 ];
+
+        return $gameMap.isPassable(target.x, target.y + yDelta, $gamePlayer.reverseDir(xDirection))
+            && $gameMap.isPassable(target.x + xDelta, target.y, $gamePlayer.reverseDir(yDirection));
+    }
+
+    const _Game_CharacterBase_checkEventTriggerTouchFront = Game_CharacterBase.prototype.checkEventTriggerTouchFront;
+    Game_CharacterBase.prototype.checkEventTriggerTouchFront = function(direction) {
+        const target = findTarget(this);
+        if (target && !isTrigerrable(target)) {
+            return;
+        }
+        _Game_CharacterBase_checkEventTriggerTouchFront.call(this, direction);
+    }
+
+    const _Game_Player_checkEventTriggerThere = Game_Player.prototype.checkEventTriggerThere;
+    Game_Player.prototype.checkEventTriggerThere = function(triggers) {
+        const target = findTarget(this);
+        if (target && !isTrigerrable(target)) {
+            return;
+        }
+        _Game_Player_checkEventTriggerThere.call(this, triggers);
+    }
+
+    function findTarget(player) {
+        switch (player._diagonal) {
+            case 1: return { x: player.x - 1, y: player.y + 1 };
+            case 7: return { x: player.x - 1, y: player.y - 1 };
+            case 9: return { x: player.x + 1, y: player.y - 1 };
+            case 3: return { x: player.x + 1, y: player.y + 1 };
+        }
+    }
 
     function moveEnemy(enemy, player, playerDistance) {
         const initialValue = 1;
