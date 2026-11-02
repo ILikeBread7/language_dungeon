@@ -1801,8 +1801,8 @@ var $f = $f || {};
         }, new Map());
 
     $f.ENEMY_DATA = new Map([
-        [ $f.ENEMY_TYPES.BAT, { maxHp: 40 } ],
-        [ $f.ENEMY_TYPES.TEST, { maxHp: 50 } ]
+        [ $f.ENEMY_TYPES.BAT, { maxHp: 30 } ],
+        [ $f.ENEMY_TYPES.TEST, { maxHp: 40 } ]
     ]);
 
     function getRandomEnemyType() {
