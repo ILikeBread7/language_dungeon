@@ -392,8 +392,7 @@ var $f = $f || {};
             answers: answers,
             correct: correctIndex,
             incorrect: incorrectIndexes,
-            answeredWrong: [],
-            incorrectAnswersToMark: -(goodAnswers.get(randomQuestion.question) || [ 0 ])[0]
+            answeredWrong: []
         });
 
         setExistingEnemyText(event);
@@ -420,9 +419,12 @@ var $f = $f || {};
             const answer = $gameVariables.value(index);
             $gameVariables.setValue(index, /*html*/`<span style="color:${INCORRECT_COLOR}">${answer}</span>`);
         });
-        const incorrectAnswersToMark = Math.min(quiz.incorrectAnswersToMark, 2);
+        const numberOfHintItems = $gameParty.numItems($dataItems[12]);  // 12 = Hint item id
+        const incorrectAnswersToMark = Math.min(Math.max(-(goodAnswers.get(quiz.question) || [ 0 ])[0], 0) + numberOfHintItems, 2);
         for (let i = 0; i < incorrectAnswersToMark; i++) {
-            $gameVariables.setValue(quiz.incorrect[i] + 12, INCORRECT_COLOR);
+            const index = quiz.incorrect[i] + answerVarsOffset;
+            const answer = $gameVariables.value(index);
+            $gameVariables.setValue(index, /*html*/`<span style="color:${INCORRECT_COLOR}">${answer}</span>`);
         }
 
         $nv.correctAnswerIndex = quiz.correct;
@@ -1386,7 +1388,8 @@ var $f = $f || {};
         { item: 'potion' },
         { item: 'areaAttack' },
         { item: 'freeze' },
-        { item: 'revive' }
+        { item: 'revive' },
+        { item: 'hint' }
     ];
 
     function randomDropItem() {
