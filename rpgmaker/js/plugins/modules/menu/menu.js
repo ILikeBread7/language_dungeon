@@ -365,7 +365,7 @@ function createItemChoices() {
                 : Math.min(amount, maxAmount - partyAmount),
             consumable: itemData.consumable,
             multiple: itemData.meta.multiple,
-            canUse: () => !isItemSwap,
+            canUse: () => !isItemSwap && itemData.occasion !== 3,   // occasion 3 = Never
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
             enabledPickUp: () => !hasFullAmount && (!$f.isBagFull() || (itemData.meta.multiple && $gameParty.hasItem(itemData))),
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,

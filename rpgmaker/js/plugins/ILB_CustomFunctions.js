@@ -1385,7 +1385,8 @@ var $f = $f || {};
         { item: 'arrow', min: 1, max: 5 },
         { item: 'potion' },
         { item: 'areaAttack' },
-        { item: 'freeze' }
+        { item: 'freeze' },
+        { item: 'revive' }
     ];
 
     function randomDropItem() {
