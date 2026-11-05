@@ -1855,6 +1855,32 @@ var $f = $f || {};
             return;
         }
 
+        const randomTile = findRandomRoomTile(rooms);
+        if (!randomTile) {
+            return false;
+        }
+
+        const { x, y } = randomTile;
+        $gamePlayer.setPosition(x, y);
+        DungeonMinimap.visit(x, y);
+        $gamePlayer.center(x, y);
+    }
+
+    const WARP_DISTANCE = 3;
+    $f.warpEnemies = () => {
+        const generator = $gameMap._mapGenerator;
+        if (!generator) {
+            return;
+        }
+
+        const enemies = findEnemiesInRange($gamePlayer.currentRoom(), WARP_DISTANCE);
+        for (const enemy of enemies) {
+            const { x, y } = findRandomRoomTile(generator._rooms) || enemy;
+            enemy.setPosition(x, y);
+        }
+    }
+
+    function findRandomRoomTile(rooms) {
         let retries = 10;
         do {
             const room = rooms[Math.floor(Math.random() * rooms.length)];
@@ -1866,13 +1892,10 @@ var $f = $f || {};
                 continue;
             }
 
-            $gamePlayer.setPosition(x, y);
-            DungeonMinimap.visit(x, y);
-            $gamePlayer.center(x, y);
-            return true;
+            return { x, y };
         } while(retries--);
 
-        return false;
+        return null;
     }
 
 })();
