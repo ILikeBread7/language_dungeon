@@ -1771,9 +1771,17 @@ var $f = $f || {};
         const enemies = findEnemiesInRangeSorted(playerRoom, FREEZE_DISTANCE);
 
         for (const enemy of enemies) {
-            enemy.quiz.isFrozen = true;
+            if (!enemy.quiz.isFrozen) {
+                toggleFrozenImage(enemy);
+                enemy.quiz.isFrozen = true;
+            }
         }
     }
+
+    function toggleFrozenImage(character) {
+        character.setImage(character._characterName, (character._characterIndex + 4) % 8);
+    }
+    $f.toggleFrozenImage = toggleFrozenImage;
 
     function findEnemiesInRange(playerRoom, range = 3) {
         return $gameMap.events().filter(
