@@ -76,6 +76,12 @@ Game_Actor.prototype.setHp = function(hp) {
     updateHp(this);
 }
 
+const _Game_BattlerBase_recoverAll = Game_BattlerBase.prototype.recoverAll;
+Game_BattlerBase.prototype.recoverAll = function() {
+    _Game_BattlerBase_recoverAll.call(this);
+    updateHp(this);
+}
+
 const _Game_Actor_changeExp = Game_Actor.prototype.changeExp;
 Game_Actor.prototype.changeExp = function() {
     const oldLevel = this._level;
