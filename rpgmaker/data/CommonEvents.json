@@ -22,5 +22,6 @@ null,
 {"id":20,"list":[{"code":355,"indent":0,"parameters":["$f.areaAttack();"]},{"code":0,"indent":0,"parameters":[]}],"name":"areaAttack","switchId":1,"trigger":0},
 {"id":21,"list":[{"code":221,"indent":0,"parameters":[]},{"code":117,"indent":0,"parameters":[4]},{"code":222,"indent":0,"parameters":[]},{"code":0,"indent":0,"parameters":[]}],"name":"portalItem","switchId":1,"trigger":0},
 {"id":22,"list":[{"code":355,"indent":0,"parameters":["$f.freezeEnemies();"]},{"code":117,"indent":0,"parameters":[8]},{"code":0,"indent":0,"parameters":[]}],"name":"freeze","switchId":1,"trigger":0},
-{"id":23,"list":[{"code":314,"indent":0,"parameters":[0,0]},{"code":126,"indent":0,"parameters":[14,1,0,1]},{"code":126,"indent":0,"parameters":[15,0,0,1]},{"code":117,"indent":0,"parameters":[8]},{"code":0,"indent":0,"parameters":[]}],"name":"heal","switchId":1,"trigger":0}
+{"id":23,"list":[{"code":314,"indent":0,"parameters":[0,0]},{"code":126,"indent":0,"parameters":[14,1,0,1]},{"code":126,"indent":0,"parameters":[15,0,0,1]},{"code":117,"indent":0,"parameters":[8]},{"code":0,"indent":0,"parameters":[]}],"name":"heal","switchId":1,"trigger":0},
+{"id":24,"list":[{"code":355,"indent":0,"parameters":["$f.teleportPlayer();"]},{"code":250,"indent":0,"parameters":[{"name":"Up1","volume":90,"pitch":100,"pan":0}]},{"code":0,"indent":0,"parameters":[]}],"name":"teleport","switchId":1,"trigger":0}
 ]

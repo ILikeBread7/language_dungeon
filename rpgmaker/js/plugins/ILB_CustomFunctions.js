@@ -1843,4 +1843,36 @@ var $f = $f || {};
         return _Game_Event_findProperPageIndex.call(this);
     }
 
+    $f.teleportPlayer = () => {
+        const generator = $gameMap._mapGenerator;
+        if (!generator) {
+            return;
+        }
+
+        const playerRoom = $gamePlayer.currentRoom();
+        const rooms = generator._rooms.filter(room => room !== playerRoom);
+        if (rooms.length === 0) {
+            return;
+        }
+
+        let retries = 10;
+        do {
+            const room = rooms[Math.floor(Math.random() * rooms.length)];
+            const [ x, y ] = [
+                Math.floor(Math.random() * room.w) + room.x,
+                Math.floor(Math.random() * room.h) + room.y
+            ];
+            if ($gameMap.eventsXy(x, y).length !== 0) {
+                continue;
+            }
+
+            $gamePlayer.setPosition(x, y);
+            DungeonMinimap.visit(x, y);
+            $gamePlayer.center(x, y);
+            return true;
+        } while(retries--);
+
+        return false;
+    }
+
 })();
