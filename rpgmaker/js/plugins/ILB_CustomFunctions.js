@@ -296,12 +296,6 @@ var $f = $f || {};
         $ns.attackCancelled = false;
     }
 
-    const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
-    Game_Party.prototype.increaseSteps = function () {
-        _Game_Party_increaseSteps.call(this);
-        moveEnemies();
-    };
-
     Scene_Map.prototype.checkGameover = function() {
         if ($gameParty.isAllDead()) {
             $gameTemp.reserveCommonEvent(7); // Game Over Common Event
@@ -1909,6 +1903,64 @@ var $f = $f || {};
             minRoomSize: Math.min(2 + Math.floor(Math.sqrt($nv.currentFloor)), 5),
             maxRoomSize: Math.min(Math.floor(8 + $nv.currentFloor / 3), 15)
         });
+
+        const hasMonsterHouse = Math.random() < 10.75;
+        if (hasMonsterHouse) {
+            const generator = $gameMap._mapGenerator;
+            const { x: startX, y: startY } = generator._startXY;
+            const startRoom = generator.roomByXY(startX, startY);
+            const rooms = $gameMap._mapGenerator._rooms.filter(room => room !== startRoom);
+            if (rooms.length > 0) {
+                rooms[Math.floor(Math.random() * rooms.length)].isMonsterHouse = true;
+            }
+        }
+    }
+
+    const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
+    Game_Party.prototype.increaseSteps = function () {
+        _Game_Party_increaseSteps.call(this);
+        if (!$gameMap._mapGenerator) {
+            return;
+        }
+
+        moveEnemies();
+
+        const room = $gamePlayer.currentRoom();
+        if (room?.isMonsterHouse) {
+            room.isMonsterHouse = false;
+            createMonsterHouse(room);
+        }
+    };
+
+    function createMonsterHouse(room) {
+        const NUM_OF_ENEMIES = 7;
+        const baseEnemyEvent = $dataMap.events.find(event => event?.meta?.enemy);
+        for (let i = 0; i < NUM_OF_ENEMIES; i++) {
+            let retries = 10;
+            do {
+                const [ x, y ] = [
+                    Math.floor(Math.random() * room.w) + room.x,
+                    Math.floor(Math.random() * room.h) + room.y
+                ];
+                if (x === $gamePlayer.x && y === $gamePlayer.y) {
+                    continue;
+                }
+                if ($gameMap.eventsXy(x, y).some(event => event.quiz)) {
+                    continue;
+                }
+
+                spawnEnemy(baseEnemyEvent, getRandomEnemyType(), x, y);
+                break;
+            } while(retries-- > 0);
+        }
+    }
+
+    function spawnEnemy(baseEnemyEvent, enemyData, x, y) {
+        const event = new Game_Event($gameMap.mapId(), baseEnemyEvent.id);
+        $f.setEnemyText(event);
+        event.quiz.enemyType = enemyData.type;
+        event.quiz.hp = enemyData.data.maxHp;
+        addEvent(event, x, y);
     }
 
 })();
