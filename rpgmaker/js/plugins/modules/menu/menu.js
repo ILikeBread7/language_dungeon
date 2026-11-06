@@ -355,6 +355,8 @@ function createItemChoices() {
         const maxAmount = $gameParty.maxItems(itemData);
         const partyAmount = $gameParty.numItems(itemData);
         const hasFullAmount = partyAmount >= maxAmount;
+        const isRegisteredItem = sceneItemType === SCENE_ITEM_TYPES.ITEMS && ($nv.registeredItemId === item.id || $nv.registeredItemId === Number(itemData.meta.baseItemId));
+        const canUse = () => !isItemSwap && itemData.occasion !== 3;   // occasion 3 = Never
         return {
             text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${amount}`,
             explanation: item.description,
@@ -363,9 +365,11 @@ function createItemChoices() {
             maxAmount: sceneItemType === SCENE_ITEM_TYPES.ITEMS
                 ? amount
                 : Math.min(amount, maxAmount - partyAmount),
+            cssClass: isRegisteredItem ? 'registered-item' : '',
             consumable: itemData.consumable,
             multiple: itemData.meta.multiple,
-            canUse: () => !isItemSwap && itemData.occasion !== 3,   // occasion 3 = Never
+            canUse,
+            canRegister: () => canUse() && sceneItemType !== SCENE_ITEM_TYPES.FLOOR,
             canPickUp: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.FLOOR,
             enabledPickUp: () => !hasFullAmount && (!$f.isBagFull() || (itemData.meta.multiple && $gameParty.hasItem(itemData))),
             canDrop: () => !isItemSwap && sceneItemType === SCENE_ITEM_TYPES.ITEMS && !!item.meta.item,
@@ -424,6 +428,12 @@ function createItemsMenuEventListeners() {
             break;
             default: f.useInventoryItem(itemId);
         }
+    });
+
+    itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_REGISTERED, event => {
+        goBackFromItemsMenu();
+        const itemId = event.detail.itemId;
+        $nv.registeredItemId = itemId;
     });
     
     itemsMenu.element.addEventListener(ITEMS_MENU_EVENTS.ITEM_DROPPED, event => {

@@ -8,6 +8,7 @@ import { AreYouSureComponent } from './are_you_sure.js';
 export const ITEM_DIALOG_CHOICES = /** @type {const} */ Object.freeze({
     PICK_UP: { text: 'Pick up' },
     USE: { text: 'Use' },
+    REGISTER: { text: 'Register' },
     DROP: { text: 'Drop' },
     SWAP: { text: 'Swap' },
     CANCEL: { text: 'Cancel' }
@@ -67,6 +68,7 @@ export class ItemUseDialogComponent extends BaseComponent {
         ITEM_DIALOG_CHOICES.PICK_UP.isVisible = itemUseOptions.canPickUp;
         ITEM_DIALOG_CHOICES.PICK_UP.isEnabled = itemUseOptions.enabledPickUp;
         ITEM_DIALOG_CHOICES.SWAP.isVisible = itemUseOptions.canSwap;
+        ITEM_DIALOG_CHOICES.REGISTER.isVisible = itemUseOptions.canRegister;
     }
 
     get choicesList() {

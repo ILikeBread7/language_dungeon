@@ -1407,11 +1407,11 @@ var $f = $f || {};
     }
 
     $f.useRegisteredInventoryItem = () => {
-        const registeredItemId = 8; // 8 = arrow, for testing
-        if ($gameParty.numItems($dataItems[registeredItemId]) === 0) {
+        const itemId = $nv.registeredItemId;
+        if ($gameParty.numItems($dataItems[itemId]) === 0) {
             return;
         }
-        $f.useInventoryItem(registeredItemId);
+        $f.useInventoryItem(itemId);
     }
 
     function useItem(itemId) {

@@ -367,3 +367,7 @@ full-gamelog-component {
 .bag-full {
     color: red;
 }
+
+.registered-item::after {
+    content: ' [R]';
+}

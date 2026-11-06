@@ -8,7 +8,7 @@ import { ItemUseDialogComponent, ITEM_DIALOG_CHOICES } from './item_use_dialog.j
 
 /**
  * @typedef { { name: string, amount: number, maxAmount: number, consumable: boolean, multiple: boolean } } ItemInfo
- * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean, enabledPickUp: () => boolean, canSwap: () => boolean } } ItemUseOptions
+ * @typedef { { canUse: () => boolean, canDrop: () => boolean, canPickUp: () => boolean, enabledPickUp: () => boolean, canSwap: () => boolean, canRegister: () => boolean } } ItemUseOptions
  * @typedef { import('../../message/components/choices_list.js').ChoiceListChoice & ItemUseOptions & ItemInfo } ItemChoice
  */
 
@@ -18,6 +18,7 @@ const BAG_INFO_CSS_CLASS = 'bag-info';
 
 export const ITEMS_MENU_EVENTS = /** @type {const} */ Object.freeze({
     ITEM_USED: 'itemused',
+    ITEM_REGISTERED: 'itemregistered',
     ITEM_DROPPED: 'itemdropped',
     ITEM_PICKED_UP: 'itempickedup',
     ITEM_SWAP: 'itemswap',
@@ -158,6 +159,9 @@ export class ItemsMenuComponent extends BaseComponent {
         switch (choice.id) {
             case ITEM_DIALOG_CHOICES.USE.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_USED, { detail: { itemId } }));
+            break;
+            case ITEM_DIALOG_CHOICES.REGISTER.id:
+                this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_REGISTERED, { detail: { itemId } }));
             break;
             case ITEM_DIALOG_CHOICES.DROP.id:
                 this.dispatchEvent(new CustomEvent(ITEMS_MENU_EVENTS.ITEM_DROPPED, { detail: { itemId } }));
