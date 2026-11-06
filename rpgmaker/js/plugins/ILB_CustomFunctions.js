@@ -1406,6 +1406,14 @@ var $f = $f || {};
         $gameParty.consumeItem($dataItems[itemId]);
     }
 
+    $f.useRegisteredInventoryItem = () => {
+        const registeredItemId = 8; // 8 = arrow, for testing
+        if ($gameParty.numItems($dataItems[registeredItemId]) === 0) {
+            return;
+        }
+        $f.useInventoryItem(registeredItemId);
+    }
+
     function useItem(itemId) {
         const actor = $gameParty.leader();
         const item = $dataItems[itemId];
