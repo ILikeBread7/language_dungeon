@@ -1904,7 +1904,7 @@ var $f = $f || {};
             maxRoomSize: Math.min(Math.floor(8 + $nv.currentFloor / 3), 15)
         });
 
-        const hasMonsterHouse = Math.random() < 10.75;
+        const hasMonsterHouse = Math.random() < 0.25;
         if (hasMonsterHouse) {
             const generator = $gameMap._mapGenerator;
             const { x: startX, y: startY } = generator._startXY;
