@@ -1898,4 +1898,17 @@ var $f = $f || {};
         return null;
     }
 
+    $f.generateDungeon = () => {
+        const height = 25 + $nv.currentFloor * 5;
+        const minRooms = Math.floor(3 + $nv.currentFloor * 0.5);
+        $gameMap.generateDungeon({
+        width: Math.floor(height * 5 / 3),
+        height,
+        minRooms,
+        maxRooms: Math.floor(minRooms * 5 / 3),
+        minRoomSize: Math.min(2 + Math.floor(Math.sqrt($nv.currentFloor)), 5),
+        maxRoomSize: Math.min(Math.floor(8 + $nv.currentFloor / 3), 15)
+        });
+    }
+
 })();
