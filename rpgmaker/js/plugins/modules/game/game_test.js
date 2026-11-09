@@ -1,19 +1,20 @@
 import { FullGamelogComponent } from '../common/components/full_gamelog_component.js';
 import { GamelogComponent } from '../common/components/gamelog_component.js';
 import { DungeonHudComponent } from './components/dungeon_hud.js';
+import { QuizComponent } from './components/quiz.js';
 
-DungeonHudComponent.register();
-const hud = new DungeonHudComponent();
-hud.dungeonHudComponentSetValues({ floor: 1, maxHp: 99, hp: 70 });
-document.body.appendChild(hud);
+// DungeonHudComponent.register();
+// const hud = new DungeonHudComponent();
+// hud.dungeonHudComponentSetValues({ floor: 1, maxHp: 99, hp: 70 });
+// document.body.appendChild(hud);
 
-setTimeout(() => {
-    hud.dungeonHudComponentSetValues({ hp: 99 });
-}, 1000);
+// setTimeout(() => {
+//     hud.dungeonHudComponentSetValues({ hp: 99 });
+// }, 1000);
 
-GamelogComponent.register();
-const log = new GamelogComponent();
-document.body.appendChild(log);
+// GamelogComponent.register();
+// const log = new GamelogComponent();
+// document.body.appendChild(log);
 
 // setTimeout(() => {
 //     const text = [];
@@ -23,21 +24,39 @@ document.body.appendChild(log);
 //     }
 // }, 1000);
 
-(async () => {
-    for (let i = 1; i <= 10; i++) {
-        await log.gamelogComponentAddLog('Test');
-    }
-})();
+// (async () => {
+//     for (let i = 1; i <= 10; i++) {
+//         await log.gamelogComponentAddLog('Test');
+//     }
+// })();
 
 
-FullGamelogComponent.register();
-const fullLog = new FullGamelogComponent();
-document.body.appendChild(fullLog);
+// FullGamelogComponent.register();
+// const fullLog = new FullGamelogComponent();
+// document.body.appendChild(fullLog);
 
-const text = [];
-for (let i = 1; i <= 20; i++) {
-    text.push(`Test line #${i}`);
-}
-fullLog.fullGamelogComponentShow(text.join('\n'));
+// const text = [];
+// for (let i = 1; i <= 20; i++) {
+//     text.push(`Test line #${i}`);
+// }
+// fullLog.fullGamelogComponentShow(text.join('\n'));
 
 // setInterval(() => fullLog.fullGamelogComponentScrollUp())
+
+QuizComponent.register();
+const quiz = new QuizComponent();
+document.body.appendChild(quiz);
+
+quiz.quizComponentSetValues({
+    question: 'Test question',
+    answers: [
+        'Answer 1',
+        'Answer 2',
+        'Answer 3',
+        'Answer 4'
+    ],
+    exampleSentence: 'Text example sentence'
+});
+
+quiz.quizComponentSelectDown();
+quiz.quizComponentConfirm();
