@@ -82,7 +82,18 @@ export class QuizComponent extends BaseComponent {
             right: createButtonWithClass(QUIZ_RIGHT_CLASS),
             down: createButtonWithClass(QUIZ_DOWN_CLASS)
         };
-        Object.values(this._buttons).forEach(button => this._buttonsContainer.appendChild(button));
+        Object.values(this._buttons).forEach(button => {
+            this._buttonsContainer.appendChild(button);
+            
+            button.addEventListener('pointerover', event => {
+                this._selectButton(button);
+            });
+
+            button.addEventListener('click', event => {
+                this._selectButton(button);
+                this.quizComponentConfirm();
+            });
+        });
         this._exampleSentenceContainer = document.createElement('div');
 
         this.append(
@@ -145,7 +156,6 @@ export class QuizComponent extends BaseComponent {
         }
         const index = Number(selectedButton.dataset.index);
         this._promiseResolve.resolve({ cancelled: false, index });
-        return index;
     }
 
     quizComponentCancel() {
