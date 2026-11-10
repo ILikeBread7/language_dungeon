@@ -47,7 +47,7 @@ QuizComponent.register();
 const quiz = new QuizComponent();
 document.body.appendChild(quiz);
 
-quiz.quizComponentSetValues({
+quiz.quizComponentStart({
     question: 'Test question',
     answers: [
         'Answer 1',
@@ -55,8 +55,22 @@ quiz.quizComponentSetValues({
         'Answer 3',
         'Answer 4'
     ],
-    exampleSentence: 'Text example sentence'
-});
+    exampleSentence: 'Text example sentence',
+    // criticalTimer: 0.54
+}).then(result => console.log(result));
 
-quiz.quizComponentSelectDown();
-quiz.quizComponentConfirm();
+// quiz.quizComponentSelectDown();
+// quiz.quizComponentConfirm();
+
+let criticalTimer = 1;
+function updateTimer() {
+    quiz.quizComponentUpdateCriticalTimer(criticalTimer);
+    if (criticalTimer <= 0) {
+        return;
+    }
+
+    setTimeout(updateTimer, 50 / 3);
+    criticalTimer -= 0.005;
+}
+
+updateTimer();
