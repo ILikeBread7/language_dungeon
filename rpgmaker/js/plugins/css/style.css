@@ -371,3 +371,21 @@ full-gamelog-component {
 .registered-item::after {
     content: ' [R]';
 }
+
+hideable-component:has(quiz-component) {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+}
+
+.quiz-answers {
+    width: 80%;
+    margin: auto;
+}
+
+.quiz-button {
+    border: solid 1px black;
+}
+
+.quiz-example {
+    text-align: center;
+}

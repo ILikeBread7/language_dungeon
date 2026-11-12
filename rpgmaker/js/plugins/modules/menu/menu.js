@@ -230,6 +230,7 @@ export function initializeMainMenu(container = document.body) {
 
     QuizComponent.register();
     quiz = new HideableOpenable(new QuizComponent());
+    quiz.topElement.classList.add('vertical-center');
     quizSelectable = new SelectableQuiz(quiz.element);
     window.$quiz = {
         /**

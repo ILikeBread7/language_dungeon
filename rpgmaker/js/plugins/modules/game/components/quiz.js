@@ -12,6 +12,7 @@ const QUIZ_CRITICAL_CONTAINER_CLASS = 'quiz-critical-container';
 const QUIZ_CRITICAL_COUNTER_CLASS = 'quiz-critical-counter';
 const QUIZ_CRITICAL_COUNTER_CONTENT_CLASS = 'quiz-critical-counter-content';
 const QUIZ_CRITICAL_CHANCE_CLASS = 'quiz-critical-chance';
+const QUIZ_EXAMPLE_CLASS = 'quiz-example';
 
 /** @typedef {{question: string, answers: [string], exampleSentence: string, criticalTimer: number }} QuizValues */
 
@@ -150,6 +151,7 @@ export class QuizComponent extends BaseComponent {
         this._buttonsContainer.appendChild(this._criticalTimeContainer);
 
         this._exampleSentenceContainer = document.createElement('div');
+        this._exampleSentenceContainer.classList.add(QUIZ_EXAMPLE_CLASS);
 
         this.append(
             this._questionContainer,
