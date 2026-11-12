@@ -251,6 +251,9 @@ export function initializeMainMenu(container = document.body) {
             quiz.closeAndHide();
             isWaitingForQuiz = false;
             return answer;
+        },
+        get criticalTimer() {
+            return criticalTimer;
         }
     };
 
