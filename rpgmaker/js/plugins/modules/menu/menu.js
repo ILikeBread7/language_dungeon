@@ -3,8 +3,10 @@ import { HideableOpenable } from '../common/helpers/hideable_openable.js';
 import { SelectableChoicesList } from '../common/helpers/selectable_choices_list.js';
 import { SelectableFullGamelog } from '../common/helpers/selectable_full_gamelog.js';
 import { SelectableOptionsMenu } from '../common/helpers/selectable_options_menu.js';
+import { SelectableQuiz } from '../common/helpers/selectable_quiz.js';
 import { selectableNonCancellable } from '../common/helpers/selectable_restricted.js';
 import { SelectableScrollableList } from '../common/helpers/selectable_scrollable_list.js';
+import { QuizComponent } from '../game/components/quiz.js';
 import { fullGamelog } from '../game/game.js';
 import { CHOICES_LIST_EVENTS, ChoicesListComponent } from '../message/components/choices_list.js';
 import { addChoiceIds, takeAreYouSure } from '../message/components/utils.js';
@@ -52,6 +54,16 @@ let titleMenu;
  * @type {HideableOpenable<SaveMenuComponent>}
  */
 let saveMenu;
+
+/**
+ * @type {HideableOpenable<QuizComponent>}
+ */
+let quiz;
+let isWaitingForQuiz = false;
+/**
+ * @type {SelectableInterface}
+ */
+let quizSelectable;
 
 /**
  * @type {import('../common/helpers/selectable_interface.js').SelectableInterface}
@@ -214,14 +226,53 @@ export function initializeMainMenu(container = document.body) {
         selectedSavefileId = id;
     });
 
+    QuizComponent.register();
+    quiz = new HideableOpenable(new QuizComponent());
+    quizSelectable = new SelectableQuiz(quiz.element);
+    window.$quiz = {
+        /**
+         * 
+         * @param {import('./components/quiz.js').QuizValues} values 
+         */
+        async start(values) {
+            const interpreter = $gameMap._interpreter;
+            if (!interpreter) {
+                return null;
+            }
+            
+            isWaitingForQuiz = true;
+            interpreter.setWaitMode('quiz');
+            quiz.showAndOpen();
+            const answer = await quiz.element.quizComponentStart(values);
+            quiz.closeAndHide();
+            isWaitingForQuiz = false;
+            return answer;
+        }
+    };
+
     container.append(
         mainMenu.topElement,
         areYouSure.topElement,
         optionsMenu.topElement,
         itemsMenu.topElement,
         titleMenu.topElement,
-        saveMenu.topElement
+        saveMenu.topElement,
+        quiz.topElement
     );
+}
+
+const _Game_Interpreter_updateWaitMode = Game_Interpreter.prototype.updateWaitMode;
+Game_Interpreter.prototype.updateWaitMode = function() {
+    return isWaitingForQuiz || _Game_Interpreter_updateWaitMode.call(this);
+}
+
+const _Scene_Map_update = Scene_Map.prototype.update;
+Scene_Map.prototype.update = function() {
+    _Scene_Map_update.call(this);
+    if (isWaitingForQuiz) {
+        selectable = quizSelectable;
+        handleMenuInputs();
+    }
 }
 
 Scene_Menu.prototype.start = function() {

@@ -165,6 +165,7 @@ export class QuizComponent extends BaseComponent {
      */
     quizComponentSetValues(values) {
         this._questionContainer.innerHTML = values.question;
+        this._deselectButtons();
         const buttons = Object.values(this._buttons);
         values.answers.forEach((answer, index) => {
             const button = buttons[index];
