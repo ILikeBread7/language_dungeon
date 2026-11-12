@@ -60,6 +60,8 @@ let saveMenu;
  */
 let quiz;
 let isWaitingForQuiz = false;
+let lastCriticalTimerUpdate = 0;
+let criticalTimer = 0;
 /**
  * @type {SelectableInterface}
  */
@@ -232,7 +234,7 @@ export function initializeMainMenu(container = document.body) {
     window.$quiz = {
         /**
          * 
-         * @param {import('./components/quiz.js').QuizValues} values 
+         * @param {import('../game/components/quiz.js').QuizValues} values 
          */
         async start(values) {
             const interpreter = $gameMap._interpreter;
@@ -243,6 +245,8 @@ export function initializeMainMenu(container = document.body) {
             isWaitingForQuiz = true;
             interpreter.setWaitMode('quiz');
             quiz.showAndOpen();
+            criticalTimer = values.criticalTimer ?? 1;
+            lastCriticalTimerUpdate = performance.now();
             const answer = await quiz.element.quizComponentStart(values);
             quiz.closeAndHide();
             isWaitingForQuiz = false;
@@ -270,8 +274,13 @@ const _Scene_Map_update = Scene_Map.prototype.update;
 Scene_Map.prototype.update = function() {
     _Scene_Map_update.call(this);
     if (isWaitingForQuiz) {
+        const now = performance.now();
         selectable = quizSelectable;
         handleMenuInputs();
+        const timerSeconds = 5;
+        criticalTimer -= (now - lastCriticalTimerUpdate) / 1000 / timerSeconds;
+        quiz.element.quizComponentUpdateCriticalTimer(criticalTimer);
+        lastCriticalTimerUpdate = now;
     }
 }
 
@@ -928,6 +937,7 @@ Scene_Map.prototype.start = function() {
     mapStartActions = [];
 
     removeMenuBackdrop();
+    lastCriticalTimerUpdate = performance.now();
 }
 
 function toggleSceneItemType() {
