@@ -1352,7 +1352,7 @@ var $f = $f || {};
         spriteset._tilemap.addChild(sprite);
     }
 
-    $f.enemyHit = (enemyEvent, damage, isCorrectAnswer, isArrowHit) => {
+    $f.enemyHit = (enemyEvent, damage, isCorrectAnswer) => {
         if (isCorrectAnswer) {
             if (enemyEvent.quiz.answeredWrong.length === 0) {
                 $f.rememberProgress(enemyEvent.quiz.question, quizLevel, true);
@@ -1372,7 +1372,10 @@ var $f = $f || {};
             }
             $gameMap.eraseEvent(enemyEvent.eventId());
         } else if (isCorrectAnswer) {
-            // enemyEvent.quiz.isStunned = !isArrowHit;
+            if (!$ns.arrowHit && !$ns.areaAttack) {
+                const stunItemsNumber = $gameParty.numItems($dataItems[18]);
+                enemyEvent.quiz.isStunned = Math.random() < $f.chanceCalc(0.1, stunItemsNumber);
+            }
             $f.setEnemyText(enemyEvent);
         }
     }
@@ -1969,6 +1972,10 @@ var $f = $f || {};
         event.quiz.enemyType = enemyData.type;
         event.quiz.hp = enemyData.data.maxHp;
         addEvent(event, x, y);
+    }
+
+    $f.chanceCalc = (baseChance, modifier) => {
+        return 1 - ((1 - baseChance) ** (modifier + 1));
     }
 
 })();
