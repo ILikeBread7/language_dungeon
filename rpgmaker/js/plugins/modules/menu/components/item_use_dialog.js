@@ -37,18 +37,20 @@ export class ItemUseDialogComponent extends BaseComponent {
      */
     async itemUseDialogStart(explanation, itemInfo) {
         let choices = Object.values(ITEM_DIALOG_CHOICES);
-        if (itemInfo.consumable && itemInfo.amount > 1) {
-            choices = choices
-                .map(choice => {
-                    if (choice.id === ITEM_DIALOG_CHOICES.CANCEL.id) {
-                        return choice;
-                    }
-                    const amount = itemInfo.multiple && choice.id !== ITEM_DIALOG_CHOICES.USE.id
-                        ? itemInfo.maxAmount
-                        : 1;
-                    return { ...choice, text: `${choice.text} (${amount})` };
-                });
-        }
+        choices = choices
+            .map(choice => {
+                if (
+                    choice.id === ITEM_DIALOG_CHOICES.CANCEL.id
+                    || (itemInfo.amount === 1)
+                ) {
+                    return choice;
+                }
+
+                const amount = itemInfo.multiple && choice.id !== ITEM_DIALOG_CHOICES.USE.id
+                    ? itemInfo.maxAmount
+                    : 1;
+                return { ...choice, text: `${choice.text} (${amount})` };
+            });
 
         const choicePromise = this._dialog.areYouSureTakeChoice({
             explanation,
