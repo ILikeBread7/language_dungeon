@@ -1978,4 +1978,17 @@ var $f = $f || {};
         return 1 - ((1 - baseChance) ** (modifier + 1));
     }
 
+    $f.playerDamage = () => {
+        const minDamage = 15;
+        const maxDamage = 25;
+        const powerBoosts = $gameParty.numItems($dataItems[19]);
+        
+        let damage = Math.random() * (maxDamage - minDamage) + minDamage;
+        damage *= 1.2 ** powerBoosts;
+        if ($ns.isCriticalHit) {
+            damage *= 2;
+        }
+        return Math.floor(damage);
+    }
+
 })();

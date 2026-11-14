@@ -281,7 +281,8 @@ Scene_Map.prototype.update = function() {
         const now = performance.now();
         selectable = quizSelectable;
         handleMenuInputs();
-        const timerSeconds = 5;
+        const criticalTimerBoosts = $gameParty.numItems($dataItems[20]);
+        const timerSeconds = 5 + criticalTimerBoosts * 2; 
         criticalTimer -= (now - lastCriticalTimerUpdate) / 1000 / timerSeconds;
         quiz.element.quizComponentUpdateCriticalTimer(criticalTimer);
         lastCriticalTimerUpdate = now;
