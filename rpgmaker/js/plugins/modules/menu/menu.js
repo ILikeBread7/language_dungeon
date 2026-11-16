@@ -422,8 +422,28 @@ function createItemChoices() {
         const hasFullAmount = partyAmount >= maxAmount;
         const isRegisteredItem = sceneItemType === SCENE_ITEM_TYPES.ITEMS && ($nv.registeredItemId === item.id || $nv.registeredItemId === Number(itemData.meta.baseItemId));
         const canUse = () => !isItemSwap && itemData.occasion !== 3;   // occasion 3 = Never
+        
+        let text = item.name;
+        const switchName = item.meta.switch;
+        if (switchName) {
+            const activeText = $ns[switchName] ? 'Active' : 'Inactive';
+            text += ` (${activeText})`;
+        } else {
+            text += ` x${amount}`;
+        }
+        const variableName = item.meta.variable;
+        if (variableName) {
+            const uses = $nv[variableName];
+            text += ` ${uses}`;
+
+            const maxUses = item.meta.max;
+            if (maxUses) {
+                text += `/${maxUses}`;
+            }
+        }
+
         return {
-            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${item.name} x${amount}`,
+            text: `<div class="item-icon" style="--icon-x:${iconX};--icon-y:${iconY}"></div> ${text}`,
             explanation: item.description,
             id: item.id,
             amount,
