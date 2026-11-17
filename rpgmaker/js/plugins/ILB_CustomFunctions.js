@@ -1818,7 +1818,7 @@ var $f = $f || {};
 
     $f.ENEMY_TYPES = Object.freeze({
         BAT: 'bat',
-        TEST: 'test'
+        EXPLODES: 'explodes'
     });
 
     const ENEMY_TYPE_TO_INDEX_MAP = Object.values($f.ENEMY_TYPES)
@@ -1829,7 +1829,7 @@ var $f = $f || {};
 
     $f.ENEMY_DATA = new Map([
         [ $f.ENEMY_TYPES.BAT, { maxHp: 30 } ],
-        [ $f.ENEMY_TYPES.TEST, { maxHp: 40 } ]
+        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, explodes: true } ]
     ]);
 
     function getRandomEnemyType() {
@@ -1989,6 +1989,30 @@ var $f = $f || {};
             damage *= 2;
         }
         return Math.floor(damage);
+    }
+
+    $f.hitAllAdjacent = ({ x, y }) => {
+        const DAMAGE = 20;
+
+        for (let hitY = y - 1; hitY <= y + 1; hitY++) {
+            for (let hitX = x - 1; hitX <= x + 1; hitX++) {
+                if (hitX === x && hitY === y) {
+                    continue;
+                }
+                if ($gamePlayer.x === hitX && $gamePlayer.y === hitY) {
+                    $gameParty.leader().gainHp(-DAMAGE);
+                    $characterLabels.addDamageLabel($gamePlayer, DAMAGE);
+                    $gamelog.add(`Player took ${DAMAGE} explosion damage!`);
+                    continue;
+                }
+                const enemy = $gameMap.eventsXy(hitX, hitY).filter(event => !event._erased && event.quiz)?.[0];
+                if (enemy) {
+                    $f.enemyHit(enemy, DAMAGE);
+                    $characterLabels.addDamageLabel(enemy, DAMAGE);
+                    $gamelog.add(`Enemy took ${DAMAGE} explosion damage!`);
+                }
+            }
+        }
     }
 
 })();
