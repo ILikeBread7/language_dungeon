@@ -1828,7 +1828,7 @@ var $f = $f || {};
         }, new Map());
 
     $f.ENEMY_DATA = new Map([
-        [ $f.ENEMY_TYPES.BAT, { maxHp: 30 } ],
+        [ $f.ENEMY_TYPES.BAT, { maxHp: 30, countersArrows: true } ],
         [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, explodes: true } ]
     ]);
 
