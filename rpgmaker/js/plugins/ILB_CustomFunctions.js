@@ -28,6 +28,8 @@ var $f = $f || {};
 
 (function () {
 
+    $f.lambdas = $f.lambdas || {};
+
     const UNKNOWN_WORD_SCORE_THRESHOLD = 3;
 
     const _Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
@@ -1400,11 +1402,13 @@ var $f = $f || {};
     }
 
     $f.useFloorItem = itemId => {
+        $ns.isUsingFloorItem = true;
         useItem(itemId);
         addItemUsedLog($dataItems[itemId]);
     }
 
     $f.useInventoryItem = itemId => {
+        $ns.isUsingFloorItem = false;
         useItem(itemId);
         $gameParty.consumeItem($dataItems[itemId]);
     }
@@ -1415,6 +1419,14 @@ var $f = $f || {};
             return;
         }
         $f.useInventoryItem(itemId);
+    }
+
+    $f.removeUsedFloorItem = (itemData, itemEvent) => {
+        if (itemData.meta.multiple && itemEvent.itemAmount > 1) {
+            itemEvent.itemAmount--;
+        } else {
+            itemEvent.erase();
+        }
     }
 
     function useItem(itemId) {

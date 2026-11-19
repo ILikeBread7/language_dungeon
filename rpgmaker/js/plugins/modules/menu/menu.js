@@ -504,10 +504,13 @@ function createItemsMenuEventListeners() {
                 const y = $gamePlayer.y;
                 const itemEvent = $gameMap.eventsXy(x, y)
                     .findLast(event => event && !event._erased && event.event()?.meta?.item === itemData.meta.item);
-                if (itemData.meta.multiple && itemEvent.itemAmount > 1) {
-                    itemEvent.itemAmount--;
+                if (itemData.meta.canFail) {   // If item can fail, the item is responsible for deleting itself
+                    $f.lambdas.removeUsedFloorItem = () => {
+                        $f.removeUsedFloorItem(itemData, itemEvent);
+                        delete $f.lambdas.removeUsedFloorItem;
+                    };
                 } else {
-                    itemEvent.erase();
+                    $f.removeUsedFloorItem(itemData, itemEvent);
                 }
                 f.useFloorItem(itemId);
             break;
