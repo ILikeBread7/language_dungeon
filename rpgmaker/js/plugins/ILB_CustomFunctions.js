@@ -1834,8 +1834,8 @@ var $f = $f || {};
     });
 
     $f.ENEMY_DATA = new Map([
-        [ $f.ENEMY_TYPES.BAT, { maxHp: 30, countersArrows: true } ],
-        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, explodes: true } ]
+        [ $f.ENEMY_TYPES.BAT, { maxHp: 30, attack: 20, countersArrows: true } ],
+        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, attack: 15, explodes: true } ]
     ]);
 
     const ENEMY_TYPE_TO_INDEX_MAP = Object.values($f.ENEMY_TYPES)
@@ -2001,6 +2001,16 @@ var $f = $f || {};
             damage *= 2;
         }
         return Math.floor(damage);
+    }
+
+    $f.enemyDamage = enemyData => {
+        const VARIANCE = 0.25;
+        const defenseBoosts = $gameParty.numItems($dataItems[21]);
+        const attack = enemyData.attack * (0.8 ** defenseBoosts);
+
+        const minDamage = attack *  (1 - VARIANCE);
+        const maxDamage = attack *  (1 + VARIANCE);
+        return Math.floor(Math.random() * (maxDamage - minDamage) + minDamage);
     }
 
     $f.hitAllAdjacent = ({ x, y }) => {
