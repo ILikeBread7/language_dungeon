@@ -1833,16 +1833,16 @@ var $f = $f || {};
         EXPLODES: 'explodes'
     });
 
+    $f.ENEMY_DATA = new Map([
+        [ $f.ENEMY_TYPES.BAT, { maxHp: 30, countersArrows: true } ],
+        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, explodes: true } ]
+    ]);
+
     const ENEMY_TYPE_TO_INDEX_MAP = Object.values($f.ENEMY_TYPES)
         .reduce((acc, curr, index) => {
             acc.set(curr, index);
             return acc;
         }, new Map());
-
-    $f.ENEMY_DATA = new Map([
-        [ $f.ENEMY_TYPES.BAT, { maxHp: 30, countersArrows: true } ],
-        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, explodes: true } ]
-    ]);
 
     function getRandomEnemyType() {
         const types = Object.values($f.ENEMY_TYPES);
