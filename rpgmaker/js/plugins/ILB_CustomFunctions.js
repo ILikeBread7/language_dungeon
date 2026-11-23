@@ -2047,4 +2047,15 @@ var $f = $f || {};
         }
     }
 
+    $f.arrowCanPass = arrowEvent => {
+        const diagonal = arrowEvent._diagonal;
+        const directions = diagonal
+            ? [
+                ((diagonal === 1 || diagonal === 7) ? 4 : 6),
+                ((diagonal === 1 || diagonal === 3) ? 2 : 8)
+            ]
+            : [ arrowEvent.direction() ]
+        return directions.every(direction => $gameMap.isPassable(arrowEvent.x, arrowEvent.y, direction));
+    };
+
 })();
