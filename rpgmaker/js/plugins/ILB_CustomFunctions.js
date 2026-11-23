@@ -1838,12 +1838,14 @@ var $f = $f || {};
 
     $f.ENEMY_TYPES = Object.freeze({
         BAT: 'bat',
-        EXPLODES: 'explodes'
+        EXPLODES: 'explodes',
+        AREA: 'area'
     });
 
     $f.ENEMY_DATA = new Map([
         [ $f.ENEMY_TYPES.BAT, { maxHp: 30, attack: 20, countersArrows: true } ],
-        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, attack: 15, explodes: true } ]
+        [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, attack: 15, explodes: true } ],
+        [ $f.ENEMY_TYPES.AREA, { maxHp: 40, attack: 15, countersArea: true } ]
     ]);
 
     const ENEMY_TYPE_TO_INDEX_MAP = Object.values($f.ENEMY_TYPES)
