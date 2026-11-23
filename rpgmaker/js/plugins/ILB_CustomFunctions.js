@@ -100,7 +100,7 @@ var $f = $f || {};
     const distanceToFollow = 5;
     let currentEnemyIndex = 0;
     function moveEnemies() {
-        if ($ns.portalUsed || $ns.areaAttack) {
+        if ($ns.portalUsed || $ns.areaAttack || $ns.arrowHit) {
             return;
         }
 
@@ -290,11 +290,10 @@ var $f = $f || {};
 
         this.quiz.isAttacking = false;
 
-        if (!$ns.attackCancelled && !$ns.areaAttack) {
+        if (!$ns.attackCancelled && !$ns.areaAttack && !$ns.arrowHit) {
             moveEnemies();
         }
 
-        $ns.arrowHit = false;
         $ns.attackCancelled = false;
     }
 
@@ -1761,26 +1760,29 @@ var $f = $f || {};
     function handleAreaAttackEnemies(enemies) {
         if (enemies.length > 0) {
             $ns.areaAttack = true;
-            areaAttackStartEnemyEvents(enemies);
+            startEnemyEvents(enemies);
         } else {
             $f.moveEnemies();
         }
     }
 
-    function areaAttackStartEnemyEvents(enemies, index = 0) {
+    function startEnemyEvents(enemies, index = 0) {
         const enemy = enemies[index];
         const nextEnemy = enemies[index + 1];
 
         if (nextEnemy) {
-            onUnlock(enemy, () => areaAttackStartEnemyEvents(enemies, index + 1));
+            onUnlock(enemy, () => startEnemyEvents(enemies, index + 1));
         } else {
             onUnlock(enemy, () => {
                 $ns.areaAttack = false;
+                $ns.arrowHit = false;
                 $f.moveEnemies();
             });
         }
         enemy.start();
     }
+
+    $f.startEnemyEvents = startEnemyEvents;
 
     const FREEZE_DISTANCE = 3;
     $f.freezeEnemies = () => {
