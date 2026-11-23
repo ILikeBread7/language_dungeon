@@ -1753,6 +1753,7 @@ var $f = $f || {};
     $f.areaAttack = () => {
         const areaAttackRange = 3 + $gameParty.numItems($dataItems[24]) * 2;
         const enemies = findEnemiesInRangeSorted(areaAttackRange);
+        enemies.forEach((enemy, index) => setTimeout(() => enemy.requestAnimation(1), index * 200));
         handleAreaAttackEnemies(enemies);
     }
 
