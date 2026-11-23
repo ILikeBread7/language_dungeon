@@ -1750,10 +1750,9 @@ var $f = $f || {};
 
     $f.addItemUsedLog = addItemUsedLog;
 
-    const AREA_ATTACK_DISTANCE = 3;
     $f.areaAttack = () => {
-        const playerRoom = $gamePlayer.currentRoom();
-        const enemies = findEnemiesInRangeSorted(playerRoom, AREA_ATTACK_DISTANCE);
+        const areaAttackRange = 3 + $gameParty.numItems($dataItems[24]) * 2;
+        const enemies = findEnemiesInRangeSorted(areaAttackRange);
         handleAreaAttackEnemies(enemies);
     }
 
@@ -1787,7 +1786,7 @@ var $f = $f || {};
     const FREEZE_DISTANCE = 3;
     $f.freezeEnemies = () => {
         const playerRoom = $gamePlayer.currentRoom();
-        const enemies = findEnemiesInRangeSorted(playerRoom, FREEZE_DISTANCE);
+        const enemies = findEnemiesInRangeOrSameRoom(playerRoom, FREEZE_DISTANCE);
 
         for (const enemy of enemies) {
             if (!enemy.quiz.isFrozen) {
@@ -1802,7 +1801,19 @@ var $f = $f || {};
     }
     $f.toggleFrozenImage = toggleFrozenImage;
 
-    function findEnemiesInRange(playerRoom, range = 3) {
+    function findEnemiesInRange(range = 3) {
+        return $gameMap.events().filter(
+            event => event && !event._erased && event.event().meta.enemy
+                && distance($gamePlayer, event) <= range
+        );
+    }
+
+    function findEnemiesInRangeSorted(range) {
+        return findEnemiesInRange(range)
+            .sort((enemy1, enemy2) => distance($gamePlayer, enemy1) - distance($gamePlayer, enemy2));
+    }
+
+    function findEnemiesInRangeOrSameRoom(playerRoom, range = 3) {
         return $gameMap.events().filter(
             event => event && !event._erased && event.event().meta.enemy
                 && (
@@ -1810,11 +1821,6 @@ var $f = $f || {};
                     || (distance($gamePlayer, event) <= range)
                 )
         );
-    }
-
-    function findEnemiesInRangeSorted(playerRoom, range) {
-        return findEnemiesInRange(playerRoom, range)
-            .sort((enemy1, enemy2) => distance($gamePlayer, enemy1) - distance($gamePlayer, enemy2));
     }
 
     function onUnlock(event, listener) {
@@ -1892,7 +1898,7 @@ var $f = $f || {};
             return;
         }
 
-        const enemies = findEnemiesInRange($gamePlayer.currentRoom(), WARP_DISTANCE);
+        const enemies = findEnemiesInRangeOrSameRoom($gamePlayer.currentRoom(), WARP_DISTANCE);
         for (const enemy of enemies) {
             const { x, y } = findRandomRoomTile(generator._rooms) || enemy;
             enemy.setPosition(x, y);
