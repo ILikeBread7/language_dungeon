@@ -1779,7 +1779,13 @@ var $f = $f || {};
                 $f.moveEnemies();
             });
         }
-        enemy.start();
+        
+        if (enemy.page()) {
+            enemy.start();
+        } else {
+            // Fix for a weird bug
+            enemy.unlock();
+        }
     }
 
     $f.startEnemyEvents = startEnemyEvents;
