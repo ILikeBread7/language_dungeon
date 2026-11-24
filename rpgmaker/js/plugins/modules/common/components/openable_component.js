@@ -1,3 +1,4 @@
+import { PromiseResolve } from '../helpers/promise_resolve.js';
 import { BaseComponent } from './base_component.js';
 
 const INTERMEDIATE_OPEN_STATE = /** @type {const} */ Object.freeze({
@@ -72,7 +73,11 @@ export class OpenableComponent extends BaseComponent {
             return;
         }
 
-        return new Promise((resolve) => {
+        if (this._promise) {
+            await this._promise;
+        }
+
+        this._promise = new Promise((resolve) => {
             this.dataset.currentState = currentState;
             this.dataset.targetState = targetState;
     
@@ -83,10 +88,13 @@ export class OpenableComponent extends BaseComponent {
     
                 this.dataset.currentState = targetState;
                 this.removeEventListener('transitionend', listener);
+                delete this._promise;
                 resolve();
             };
             this.addEventListener('transitionend', listener);
         });
+
+        return this._promise;
     }
 
 }
