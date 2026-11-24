@@ -389,3 +389,18 @@ hideable-component:has(quiz-component) {
 .quiz-example {
     text-align: center;
 }
+
+.gold {
+    margin-left: 1em;
+
+    &::before {
+        content: 'G: ';
+        color: gold;
+    }
+}
+
+.bag-items {
+    &::before {
+        content: 'Items: ';
+    }
+}

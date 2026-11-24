@@ -484,7 +484,8 @@ function createBagInfo() {
     const bagFullCssClass = isBagFull ? 'bag-full' : '';
 
     return /*html*/`
-        <span class="${bagFullCssClass}">Items: <span class="bag-items-count">${itemsCount}</span> / <span class="bag-limit">${bagLimit}</span></span>
+        <span class="bag-items ${bagFullCssClass}"><span class="bag-items-count">${itemsCount}</span> / <span class="bag-limit">${bagLimit}</span></span>
+        <span class="gold">${$gameParty.gold()}</span>
     `;
 }
 
