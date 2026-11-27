@@ -2105,6 +2105,8 @@ var $f = $f || {};
      * @returns 
      */
     $f.itemRateRoom = itemEventData => {
+        return 1;   // For testing
+
         const itemName = itemEventData.meta.item;
 
         if ($ns.isBossFloor) {
