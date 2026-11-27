@@ -130,6 +130,7 @@ var $f = $f || {};
                 return;
             }
             moveEnemy(event, $gamePlayer, playerDistance);
+            applyPoisonDamage(event);
         }
 
         if (currentEnemyIndex >= events.length) {
@@ -2105,7 +2106,7 @@ var $f = $f || {};
      * @returns 
      */
     $f.itemRateRoom = itemEventData => {
-        return 1;   // For testing
+        // return 1;   // For testing
 
         const itemName = itemEventData.meta.item;
 
@@ -2114,5 +2115,27 @@ var $f = $f || {};
         }
         return 0.1;
     }
+
+    $f.applyPoison = (enemyEvent) => {
+        const poisonStacks = $gameParty.numItems($dataItems[28]);
+        enemyEvent.quiz.poison = Math.max(poisonStacks, enemyEvent.quiz.poison || 0);
+    }
+
+    function applyPoisonDamage(enemyEvent) {
+        const poisonStacks = enemyEvent.quiz.poison || 0;
+
+        if (poisonStacks <= 0) {
+            return;
+        }
+
+        const enemyData = $f.ENEMY_DATA.get(enemyEvent.quiz.enemyType);
+        const maxHp = enemyData.maxHp;
+        const poisonDamage = Math.max(Math.floor(maxHp * (0.05 * poisonStacks)), 1);
+        $f.enemyHit(enemyEvent, poisonDamage);
+        $characterLabels.addDamageLabel(enemyEvent, poisonDamage);
+        $gamelog.add(`Enemy took ${poisonDamage} poison damage!`);
+    }
+
+    $f.applyPoisonDamage = applyPoisonDamage;
 
 })();
