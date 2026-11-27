@@ -108,7 +108,7 @@ var $f = $f || {};
         const realMoveSpeed = $gamePlayer.realMoveSpeed();
         for (; currentEnemyIndex < events.length; currentEnemyIndex++) {
             const event = events[currentEnemyIndex];
-            if (!event || event._erased || event.isMoving() || !event.event().meta || !event.event().meta.enemy) {
+            if (!event || event._erased || !event.event().meta || !event.event().meta.enemy) {
                 continue;
             }
 
