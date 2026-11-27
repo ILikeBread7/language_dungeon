@@ -316,7 +316,9 @@ var $f = $f || {};
         $gameMap.events().forEach(event => {
             $f.setEnemyText(event);
             if (event.quiz) {
-                const enemyType = getRandomEnemyType();
+                const enemyType = $ns.isBossFloor
+                    ? { type: $f.BOSS_TYPES.BOSS, data: $f.ENEMY_DATA.get($f.BOSS_TYPES.BOSS) }
+                    : getRandomEnemyTypeWithData();
                 event.quiz.enemyType = enemyType.type;
                 event.quiz.hp = enemyType.data.maxHp;
             }
@@ -1840,6 +1842,9 @@ var $f = $f || {};
     }
 
     $f.maxEnemiesPerMap = () => {
+        if ($ns.isBossFloor) {
+            return 1;
+        }
         return 5 + Math.floor($nv.currentFloor ** 0.75);
     };
 
@@ -1849,22 +1854,34 @@ var $f = $f || {};
         AREA: 'area'
     });
 
+    $f.BOSS_TYPES = Object.freeze({
+        BOSS: 'boss'
+    });
+
     $f.ENEMY_DATA = new Map([
         [ $f.ENEMY_TYPES.BAT, { maxHp: 30, attack: 20, countersArrows: true } ],
         [ $f.ENEMY_TYPES.EXPLODES, { maxHp: 40, attack: 15, explodes: true } ],
-        [ $f.ENEMY_TYPES.AREA, { maxHp: 40, attack: 15, countersArea: true } ]
+        [ $f.ENEMY_TYPES.AREA, { maxHp: 40, attack: 15, countersArea: true } ],
+
+        [ $f.BOSS_TYPES.BOSS, { maxHp: 80, attack: 30 } ]
     ]);
 
-    const ENEMY_TYPE_TO_INDEX_MAP = Object.values($f.ENEMY_TYPES)
+    const ENEMY_TYPE_TO_INDEX_MAP = [ ...Object.values($f.ENEMY_TYPES), ...Object.values($f.BOSS_TYPES) ]
         .reduce((acc, curr, index) => {
             acc.set(curr, index);
             return acc;
         }, new Map());
 
-    function getRandomEnemyType() {
+    Object.values($f.BOSS_TYPES).forEach(type => $f.ENEMY_DATA.get(type).boss = true);
+
+    function getRandomEnemyTypeWithData() {
         const types = Object.values($f.ENEMY_TYPES);
         const randomType = types[Math.floor(Math.random() * types.length)];
-        return { type: randomType, data: $f.ENEMY_DATA.get(randomType) };
+        return getEnemyTypeWithData(randomType);
+    }
+
+    function getEnemyTypeWithData(type) {
+        return { type, data: $f.ENEMY_DATA.get(type) };
     }
 
     const _Game_Event_findProperPageIndex = Game_Event.prototype.findProperPageIndex;
@@ -1956,6 +1973,23 @@ var $f = $f || {};
         }
     }
 
+    $f.generateBossDungeon = () => {
+        const width = 20;
+        const height = 20;
+        const roomsNumber = 1;
+        const roomSize = 18;
+
+        $gameMap.generateDungeon({
+            width,
+            height,
+            minRooms: roomsNumber,
+            maxRooms: roomsNumber,
+            minRoomSize: roomSize,
+            maxRoomSize: roomSize,
+            boss: $f.BOSS_TYPES.BOSS
+        });
+    }
+
     const _Game_Party_increaseSteps = Game_Party.prototype.increaseSteps;
     Game_Party.prototype.increaseSteps = function () {
         _Game_Party_increaseSteps.call(this);
@@ -1989,7 +2023,7 @@ var $f = $f || {};
                     continue;
                 }
 
-                spawnEnemy(baseEnemyEvent, getRandomEnemyType(), x, y);
+                spawnEnemy(baseEnemyEvent, getRandomEnemyTypeWithData(), x, y);
                 break;
             } while(retries-- > 0);
         }
