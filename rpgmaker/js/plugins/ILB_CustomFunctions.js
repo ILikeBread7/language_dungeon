@@ -2099,4 +2099,18 @@ var $f = $f || {};
         return directions.every(direction => $gameMap.isPassable(arrowEvent.x, arrowEvent.y, direction));
     };
 
+    /**
+     * 
+     * @param {{meta: { item: string }}} itemEventData 
+     * @returns 
+     */
+    $f.itemRateRoom = itemEventData => {
+        const itemName = itemEventData.meta.item;
+
+        if ($ns.isBossFloor) {
+            return 0;
+        }
+        return 0.1;
+    }
+
 })();
